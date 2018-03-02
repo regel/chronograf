@@ -1,6 +1,8 @@
 ## v1.4.3.0 [unreleased]
 ### Features
 ### UI Improvements
+1. [#2910](https://github.com/influxdata/chronograf/pull/2910): Redesign system notifications
+
 ### Bug Fixes
 
 
