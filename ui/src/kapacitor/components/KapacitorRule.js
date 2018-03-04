@@ -1,4 +1,6 @@
 import React, {PropTypes, Component} from 'react'
+import {connect} from 'react-redux'
+import {bindActionCreators} from 'redux'
 
 import NameSection from 'src/kapacitor/components/NameSection'
 import ValuesSection from 'src/kapacitor/components/ValuesSection'
@@ -11,6 +13,7 @@ import {createRule, editRule} from 'src/kapacitor/apis'
 import buildInfluxQLQuery from 'utils/influxql'
 import {timeRanges} from 'shared/data/timeRanges'
 import {DEFAULT_RULE_ID} from 'src/kapacitor/constants'
+import {publishNotification as publishNotificationAction} from 'shared/actions/notifications'
 
 class KapacitorRule extends Component {
   constructor(props) {
@@ -27,7 +30,7 @@ class KapacitorRule extends Component {
 
   handleCreate = pathname => {
     const {
-      addFlashMessage,
+      publishNotification,
       queryConfigs,
       rule,
       source,
@@ -43,18 +46,25 @@ class KapacitorRule extends Component {
     createRule(kapacitor, newRule)
       .then(() => {
         router.push(pathname || `/sources/${source.id}/alert-rules`)
-        addFlashMessage({type: 'success', text: 'Rule successfully created'})
+        publishNotification({
+          type: 'success',
+          icon: 'checkmark',
+          duration: 5000,
+          message: 'Rule successfully created',
+        })
       })
       .catch(() => {
-        addFlashMessage({
-          type: 'error',
+        publishNotification({
+          type: 'danger',
+          icon: 'alert-triangle',
+          duration: 10000,
           text: 'There was a problem creating the rule',
         })
       })
   }
 
   handleEdit = pathname => {
-    const {addFlashMessage, queryConfigs, rule, router, source} = this.props
+    const {publishNotification, queryConfigs, rule, router, source} = this.props
     const updatedRule = Object.assign({}, rule, {
       query: queryConfigs[rule.queryID],
     })
@@ -62,14 +72,18 @@ class KapacitorRule extends Component {
     editRule(updatedRule)
       .then(() => {
         router.push(pathname || `/sources/${source.id}/alert-rules`)
-        addFlashMessage({
+        publishNotification({
           type: 'success',
+          icon: 'checkmark',
+          duration: 5000,
           text: `${rule.name} successfully saved!`,
         })
       })
       .catch(e => {
-        addFlashMessage({
-          type: 'error',
+        publishNotification({
+          type: 'danger',
+          icon: 'alert-triangle',
+          duration: 10000,
           text: `There was a problem saving ${rule.name}: ${e.data.message}`,
         })
       })
@@ -233,7 +247,7 @@ KapacitorRule.propTypes = {
   queryConfigs: shape({}).isRequired,
   queryConfigActions: shape({}).isRequired,
   ruleActions: shape({}).isRequired,
-  addFlashMessage: func.isRequired,
+  publishNotification: func.isRequired,
   ruleID: string.isRequired,
   handlersFromConfig: arrayOf(shape({})).isRequired,
   router: shape({
@@ -243,4 +257,8 @@ KapacitorRule.propTypes = {
   configLink: string.isRequired,
 }
 
-export default KapacitorRule
+const mapDispatchToProps = dispatch => ({
+  publishNotification: bindActionCreators(publishNotificationAction, dispatch),
+})
+
+export default connect(null, mapDispatchToProps)(KapacitorRule)

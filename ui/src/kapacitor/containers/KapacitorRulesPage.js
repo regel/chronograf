@@ -77,7 +77,6 @@ KapacitorRulesPage.propTypes = {
     deleteRule: func.isRequired,
     updateRuleStatus: func.isRequired,
   }).isRequired,
-  addFlashMessage: func,
 }
 
 const mapStateToProps = state => {

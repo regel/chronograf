@@ -1,5 +1,9 @@
 import React, {Component, PropTypes} from 'react'
 import {withRouter} from 'react-router'
+import {connect} from 'react-redux'
+import {bindActionCreators} from 'redux'
+
+import {publishNotification as publishNotificationAction} from 'shared/actions/notifications'
 
 import {
   getKapacitor,
@@ -44,8 +48,10 @@ class KapacitorPage extends Component {
       this.setState({exists: true})
     } catch (error) {
       this.setState({exists: false})
-      this.props.addFlashMessage({
-        type: 'error',
+      this.props.publishNotification({
+        type: 'danger',
+        icon: 'alert-triangle',
+        duration: 10000,
         text: 'Could not connect to Kapacitor. Check settings.',
       })
     }
@@ -67,7 +73,7 @@ class KapacitorPage extends Component {
   handleSubmit = e => {
     e.preventDefault()
     const {
-      addFlashMessage,
+      publishNotification,
       source,
       source: {kapacitors = []},
       params,
@@ -79,8 +85,10 @@ class KapacitorPage extends Component {
     const isNew = !params.id
 
     if (isNew && isNameTaken) {
-      addFlashMessage({
-        type: 'error',
+      publishNotification({
+        type: 'danger',
+        icon: 'alert-triangle',
+        duration: 10000,
         text: `There is already a Kapacitor configuration named "${kapacitor.name}"`,
       })
       return
@@ -91,11 +99,18 @@ class KapacitorPage extends Component {
         .then(({data}) => {
           this.setState({kapacitor: data})
           this.checkKapacitorConnection(data)
-          addFlashMessage({type: 'success', text: 'Kapacitor Updated!'})
+          publishNotification({
+            type: 'success',
+            icon: 'checkmark',
+            duration: 5000,
+            message: 'Kapacitor Updated!',
+          })
         })
         .catch(() => {
-          addFlashMessage({
-            type: 'error',
+          publishNotification({
+            type: 'danger',
+            icon: 'alert-triangle',
+            duration: 10000,
             text: 'There was a problem updating the Kapacitor record',
           })
         })
@@ -106,14 +121,18 @@ class KapacitorPage extends Component {
           this.setState({kapacitor: data})
           this.checkKapacitorConnection(data)
           router.push(`/sources/${source.id}/kapacitors/${data.id}/edit`)
-          addFlashMessage({
+          publishNotification({
             type: 'success',
+            icon: 'checkmark',
+            duration: 5000,
             text: 'Kapacitor Created! Configuring endpoints is optional.',
           })
         })
         .catch(() => {
-          addFlashMessage({
-            type: 'error',
+          publishNotification({
+            type: 'danger',
+            icon: 'alert-triangle',
+            duration: 10000,
             text: 'There was a problem creating the Kapacitor record',
           })
         })
@@ -140,7 +159,7 @@ class KapacitorPage extends Component {
   }
 
   render() {
-    const {source, addFlashMessage, location, params} = this.props
+    const {source, location, params} = this.props
     const hash = (location && location.hash) || (params && params.hash) || ''
     const {kapacitor, exists} = this.state
     return (
@@ -151,7 +170,6 @@ class KapacitorPage extends Component {
         onReset={this.handleResetToDefaults}
         kapacitor={kapacitor}
         source={source}
-        addFlashMessage={addFlashMessage}
         exists={exists}
         hash={hash}
       />
@@ -162,7 +180,7 @@ class KapacitorPage extends Component {
 const {array, func, shape, string} = PropTypes
 
 KapacitorPage.propTypes = {
-  addFlashMessage: func,
+  publishNotification: func.isRequired,
   params: shape({
     id: string,
   }).isRequired,
@@ -177,4 +195,8 @@ KapacitorPage.propTypes = {
   location: shape({pathname: string, hash: string}).isRequired,
 }
 
-export default withRouter(KapacitorPage)
+const mapDispatchToProps = dispatch => ({
+  publishNotification: bindActionCreators(publishNotificationAction, dispatch),
+})
+
+export default connect(null, mapDispatchToProps)(withRouter(KapacitorPage))

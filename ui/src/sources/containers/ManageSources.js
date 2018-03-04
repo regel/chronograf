@@ -8,6 +8,7 @@ import {
   setActiveKapacitorAsync,
   deleteKapacitorAsync,
 } from 'shared/actions/sources'
+import {publishNotification as publishNotificationAction} from 'shared/actions/notifications'
 
 import FancyScrollbar from 'shared/components/FancyScrollbar'
 import SourceIndicator from 'shared/components/SourceIndicator'
@@ -35,18 +36,22 @@ class ManageSources extends Component {
   }
 
   handleDeleteSource = source => () => {
-    const {addFlashMessage} = this.props
+    const {publishNotification} = this.props
 
     try {
       this.props.removeAndLoadSources(source)
-      addFlashMessage({
+      publishNotification({
         type: 'success',
-        text: `Deleted source ${source.name}`,
+        icon: 'checkmark',
+        duration: 5000,
+        message: `Deleted source ${source.name}`,
       })
     } catch (e) {
-      addFlashMessage({
-        type: 'error',
-        text: 'Could not remove source from Chronograf',
+      publishNotification({
+        type: 'danger',
+        icon: 'alert-triangle',
+        duration: 10000,
+        message: 'Could not remove source from Chronograf',
       })
     }
   }
@@ -100,7 +105,7 @@ ManageSources.propTypes = {
     }),
   }),
   sources: array,
-  addFlashMessage: func,
+  publishNotification: func.isRequired,
   removeAndLoadSources: func.isRequired,
   fetchKapacitors: func.isRequired,
   setActiveKapacitor: func.isRequired,
@@ -116,6 +121,7 @@ const mapDispatchToProps = dispatch => ({
   fetchKapacitors: bindActionCreators(fetchKapacitorsAsync, dispatch),
   setActiveKapacitor: bindActionCreators(setActiveKapacitorAsync, dispatch),
   deleteKapacitor: bindActionCreators(deleteKapacitorAsync, dispatch),
+  publishNotification: bindActionCreators(publishNotificationAction, dispatch),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ManageSources)

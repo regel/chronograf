@@ -116,17 +116,10 @@ class KapacitorForm extends Component {
 
   // TODO: move these to another page.  they dont belong on this page
   renderAlertOutputs() {
-    const {exists, kapacitor, addFlashMessage, source, hash} = this.props
+    const {exists, kapacitor, source, hash} = this.props
 
     if (exists) {
-      return (
-        <AlertTabs
-          source={source}
-          kapacitor={kapacitor}
-          addFlashMessage={addFlashMessage}
-          hash={hash}
-        />
-      )
+      return <AlertTabs source={source} kapacitor={kapacitor} hash={hash} />
     }
 
     return (
@@ -161,7 +154,6 @@ KapacitorForm.propTypes = {
     password: string,
   }).isRequired,
   source: shape({}).isRequired,
-  addFlashMessage: func.isRequired,
   exists: bool.isRequired,
   hash: string.isRequired,
 }

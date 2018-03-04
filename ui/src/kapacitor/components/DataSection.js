@@ -96,7 +96,6 @@ DataSection.propTypes = {
   query: shape({
     id: string.isRequired,
   }).isRequired,
-  addFlashMessage: func,
   actions: shape({
     chooseNamespace: func.isRequired,
     chooseMeasurement: func.isRequired,
