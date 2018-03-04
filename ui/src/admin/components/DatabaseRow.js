@@ -1,5 +1,10 @@
 import React, {PropTypes, Component} from 'react'
+import {connect} from 'react-redux'
+import {bindActionCreators} from 'redux'
+
 import onClickOutside from 'react-onclickoutside'
+
+import {publishNotification as publishNotificationAction} from 'shared/actions/notifications'
 
 import {formatRPDuration} from 'utils/formatting'
 import YesNoButtons from 'shared/components/YesNoButtons'
@@ -98,7 +103,7 @@ class DatabaseRow extends Component {
 
   getInputValues = () => {
     const {
-      notify,
+      publishNotification,
       retentionPolicy: {name: currentName},
       isRFDisplayed,
     } = this.props
@@ -109,7 +114,12 @@ class DatabaseRow extends Component {
     const replication = isRFDisplayed ? +this.replication.value.trim() : 1
 
     if (!duration || (isRFDisplayed && !replication)) {
-      notify('error', 'Fields cannot be empty')
+      publishNotification({
+        type: 'danger',
+        icon: 'alert-triangle',
+        duration: 10000,
+        message: 'Fields cannot be empty',
+      })
       return
     }
 
@@ -260,8 +270,12 @@ DatabaseRow.propTypes = {
   onCreate: func,
   onUpdate: func,
   onDelete: func,
-  notify: func,
+  publishNotification: func.isRequired,
   isRFDisplayed: bool,
 }
 
-export default onClickOutside(DatabaseRow)
+const mapDispatchToProps = dispatch => ({
+  publishNotification: bindActionCreators(publishNotificationAction, dispatch),
+})
+
+export default connect(null, mapDispatchToProps)(onClickOutside(DatabaseRow))

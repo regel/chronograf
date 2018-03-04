@@ -11,7 +11,6 @@ const {func, shape, bool} = PropTypes
 
 const DatabaseTable = ({
   database,
-  notify,
   isRFDisplayed,
   onEditDatabase,
   onKeyDownDatabase,
@@ -35,7 +34,6 @@ const DatabaseTable = ({
     >
       <DatabaseTableHeader
         database={database}
-        notify={notify}
         onEdit={onEditDatabase}
         onCancel={onCancelDatabase}
         onDelete={onDeleteDatabase}
@@ -73,7 +71,6 @@ const DatabaseTable = ({
               return (
                 <DatabaseRow
                   key={rp.links.self}
-                  notify={notify}
                   database={database}
                   retentionPolicy={rp}
                   onCreate={onCreateRetentionPolicy}
@@ -95,7 +92,6 @@ const DatabaseTable = ({
 DatabaseTable.propTypes = {
   onEditDatabase: func,
   database: shape(),
-  notify: func,
   isRFDisplayed: bool,
   isAddRPDisabled: bool,
   onKeyDownDatabase: func,

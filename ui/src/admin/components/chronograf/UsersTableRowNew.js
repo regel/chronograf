@@ -1,4 +1,8 @@
 import React, {Component, PropTypes} from 'react'
+import {connect} from 'react-redux'
+import {bindActionCreators} from 'redux'
+
+import {publishNotification as publishNotificationAction} from 'shared/actions/notifications'
 
 import Dropdown from 'shared/components/Dropdown'
 
@@ -59,10 +63,12 @@ class UsersTableRowNew extends Component {
 
     if (e.key === 'Enter') {
       if (preventCreate) {
-        return this.props.notify(
-          'warning',
-          'User must have a name and provider'
-        )
+        return this.props.publishNotification({
+          type: 'warning',
+          icon: 'alert-triangle',
+          duration: 5000,
+          message: 'User must have a name and provider',
+        })
       }
       this.handleConfirmCreateUser()
     }
@@ -144,7 +150,11 @@ UsersTableRowNew.propTypes = {
   }),
   onBlur: func.isRequired,
   onCreateUser: func.isRequired,
-  notify: func.isRequired,
+  publishNotification: func.isRequired,
 }
 
-export default UsersTableRowNew
+const mapDispatchToProps = dispatch => ({
+  publishNotification: bindActionCreators(publishNotificationAction, dispatch),
+})
+
+export default connect(null, mapDispatchToProps)(UsersTableRowNew)

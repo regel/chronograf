@@ -83,7 +83,6 @@ class AllUsersTable extends Component {
       onCreateUser,
       authConfig,
       meID,
-      notify,
       onDeleteUser,
       isLoading,
     } = this.props
@@ -153,7 +152,6 @@ class AllUsersTable extends Component {
                     organizations={organizations}
                     onBlur={this.handleBlurCreateUserRow}
                     onCreateUser={onCreateUser}
-                    notify={notify}
                   />
                 : null}
             </tbody>
@@ -208,7 +206,6 @@ AllUsersTable.propTypes = {
     superAdminNewUsers: bool,
   }),
   meID: string.isRequired,
-  notify: func.isRequired,
   isLoading: bool.isRequired,
 }
 

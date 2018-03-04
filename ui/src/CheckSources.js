@@ -14,7 +14,7 @@ import {showDatabases} from 'shared/apis/metaQuery'
 
 import {getSourcesAsync} from 'shared/actions/sources'
 import {errorThrown as errorThrownAction} from 'shared/actions/errors'
-import {publishNotification} from 'shared/actions/notifications'
+import {publishNotification as publishNotificationAction} from 'shared/actions/notifications'
 
 import {DEFAULT_HOME_PAGE} from 'shared/constants'
 
@@ -69,7 +69,7 @@ class CheckSources extends Component {
       errorThrown,
       sources,
       auth: {isUsingAuth, me, me: {organizations = [], currentOrganization}},
-      notify,
+      publishNotification,
       getSources,
     } = nextProps
     const {isFetching} = nextState
@@ -84,10 +84,13 @@ class CheckSources extends Component {
     }
 
     if (!isFetching && isUsingAuth && !organizations.length) {
-      notify(
-        'error',
-        'You have been removed from all organizations. Please contact your administrator.'
-      )
+      publishNotification({
+        type: 'danger',
+        icon: 'alert-triangle',
+        duration: 10000,
+        message:
+          'You have been removed from all organizations. Please contact your administrator.',
+      })
       return router.push('/purgatory')
     }
 
@@ -95,7 +98,12 @@ class CheckSources extends Component {
       me.superAdmin &&
       !organizations.find(o => o.id === currentOrganization.id)
     ) {
-      notify('error', 'You were removed from your current organization')
+      publishNotification({
+        type: 'danger',
+        icon: 'alert-triangle',
+        duration: 10000,
+        message: 'You were removed from your current organization',
+      })
       return router.push('/purgatory')
     }
 
@@ -117,7 +125,12 @@ class CheckSources extends Component {
           return router.push(`/sources/${sources[0].id}/${restString}`)
         }
         // if you're a viewer and there are no sources, go to purgatory.
-        notify('error', 'Organization has no sources configured')
+        publishNotification({
+          type: 'danger',
+          icon: 'alert-triangle',
+          duration: 10000,
+          message: 'Organization has no sources configured',
+        })
         return router.push('/purgatory')
       }
 
@@ -222,7 +235,7 @@ CheckSources.propTypes = {
       }),
     }),
   }),
-  notify: func.isRequired,
+  publishNotification: func.isRequired,
 }
 
 CheckSources.childContextTypes = {
@@ -247,7 +260,7 @@ const mapStateToProps = ({sources, auth}) => ({
 const mapDispatchToProps = dispatch => ({
   getSources: bindActionCreators(getSourcesAsync, dispatch),
   errorThrown: bindActionCreators(errorThrownAction, dispatch),
-  notify: bindActionCreators(publishNotification, dispatch),
+  publishNotification: bindActionCreators(publishNotificationAction, dispatch),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(
