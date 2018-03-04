@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 
 import * as adminChronografActionCreators from 'src/admin/actions/chronograf'
-import {publishAutoDismissingNotification} from 'shared/dispatchers'
+import {publishNotification as publishNotificationAction} from 'shared/actions/notifications'
 
 import ProvidersTable from 'src/admin/components/chronograf/ProvidersTable'
 
@@ -81,7 +81,7 @@ ProvidersPage.propTypes = {
   actions: shape({
     loadOrganizationsAsync: func.isRequired,
   }),
-  notify: func.isRequired,
+  publishNotification: func.isRequired,
 }
 
 const mapStateToProps = ({
@@ -95,7 +95,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = dispatch => ({
   actions: bindActionCreators(adminChronografActionCreators, dispatch),
-  notify: bindActionCreators(publishAutoDismissingNotification, dispatch),
+  publishNotification: bindActionCreators(publishNotificationAction, dispatch),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProvidersPage)

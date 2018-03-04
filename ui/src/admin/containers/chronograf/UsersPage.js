@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 
 import * as adminChronografActionCreators from 'src/admin/actions/chronograf'
-import {publishAutoDismissingNotification} from 'shared/dispatchers'
+import {publishNotification as publishNotificationAction} from 'shared/actions/notifications'
 
 import UsersTable from 'src/admin/components/chronograf/UsersTable'
 
@@ -61,7 +61,7 @@ class UsersPage extends Component {
       organizations,
       meID,
       users,
-      notify,
+      publishNotification,
     } = this.props
     const {isLoading} = this.state
 
@@ -77,7 +77,7 @@ class UsersPage extends Component {
         onCreateUser={this.handleCreateUser}
         onUpdateUserRole={this.handleUpdateUserRole}
         onDeleteUser={this.handleDeleteUser}
-        notify={notify}
+        publishNotification={publishNotification}
         isLoading={isLoading}
       />
     )
@@ -104,7 +104,7 @@ UsersPage.propTypes = {
     updateUserAsync: func.isRequired,
     deleteUserAsync: func.isRequired,
   }),
-  notify: func.isRequired,
+  publishNotification: func.isRequired,
 }
 
 const mapStateToProps = ({links, adminChronograf: {organizations, users}}) => ({
@@ -115,7 +115,7 @@ const mapStateToProps = ({links, adminChronograf: {organizations, users}}) => ({
 
 const mapDispatchToProps = dispatch => ({
   actions: bindActionCreators(adminChronografActionCreators, dispatch),
-  notify: bindActionCreators(publishAutoDismissingNotification, dispatch),
+  publishNotification: bindActionCreators(publishNotificationAction, dispatch),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(UsersPage)

@@ -28,7 +28,7 @@ import AdminTabs from 'src/admin/components/AdminTabs'
 import SourceIndicator from 'shared/components/SourceIndicator'
 import FancyScrollbar from 'shared/components/FancyScrollbar'
 
-import {publishAutoDismissingNotification} from 'shared/dispatchers'
+import {publishNotification as publishNotificationAction} from 'shared/actions/notifications'
 
 const isValidUser = user => {
   const minLen = 3
@@ -72,9 +72,14 @@ class AdminInfluxDBPage extends Component {
   }
 
   handleSaveUser = async user => {
-    const {notify} = this.props
+    const {publishNotification} = this.props
     if (!isValidUser(user)) {
-      notify('error', 'Username and/or password too short')
+      publishNotification({
+        type: 'danger',
+        icon: 'alert-triangle',
+        duration: 10000,
+        message: 'Username and/or password too short',
+      })
       return
     }
     if (user.isNew) {
@@ -85,9 +90,14 @@ class AdminInfluxDBPage extends Component {
   }
 
   handleSaveRole = async role => {
-    const {notify} = this.props
+    const {publishNotification} = this.props
     if (!isValidRole(role)) {
-      notify('error', 'Role name too short')
+      publishNotification({
+        type: 'danger',
+        icon: 'alert-triangle',
+        duration: 10000,
+        message: 'Role name too short',
+      })
       return
     }
     if (role.isNew) {
@@ -228,7 +238,7 @@ AdminInfluxDBPage.propTypes = {
   updateUserPermissions: func,
   updateUserRoles: func,
   updateUserPassword: func,
-  notify: func,
+  publishNotification: func.isRequired,
 }
 
 const mapStateToProps = ({adminInfluxDB: {users, roles, permissions}}) => ({
@@ -264,7 +274,7 @@ const mapDispatchToProps = dispatch => ({
   ),
   updateUserRoles: bindActionCreators(updateUserRolesAsync, dispatch),
   updateUserPassword: bindActionCreators(updateUserPasswordAsync, dispatch),
-  notify: bindActionCreators(publishAutoDismissingNotification, dispatch),
+  publishNotification: bindActionCreators(publishNotificationAction, dispatch),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(AdminInfluxDBPage)
