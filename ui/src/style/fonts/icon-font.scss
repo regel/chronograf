@@ -7,12 +7,7 @@
 
 @font-face {
   font-family: 'icomoon';
-  src:    url('icomoon.eot');
-  src:    url('icomoon.eot') format('embedded-opentype'),
-      url('icomoon.woff2') format('woff2'),
-      url('icomoon.ttf') format('truetype'),
-      url('icomoon.woff') format('woff'),
-      url('icomoon.svg') format('svg');
+  src: url('icomoon.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -88,6 +83,7 @@
   &.heroku:before {content: "\e947";}
   &.heroku-simple:before {content: "\e948";}
   &.keynote:before {content: "\e93a";}
+  &.loudml:before {content: "\e956";}
   &.maximize:before {content: "\e91f";}
   &.minimize:before {content: "\e920";}
   &.oauth:before {content: "\e94f";}

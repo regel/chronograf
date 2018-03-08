@@ -113,6 +113,13 @@ const SideNav = React.createClass({
             />
           </NavBlock>
           <NavBlock
+            icon="loudml"
+            link={`${sourcePrefix}/loudml`}
+            location={location}
+          >
+            <NavHeader link={`${sourcePrefix}/loudml`} title={'LoudML'} />
+          </NavBlock>
+          <NavBlock
             matcher="alerts"
             icon="alert-triangle"
             link={`${sourcePrefix}/alert-rules`}

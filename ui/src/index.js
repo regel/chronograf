@@ -24,6 +24,7 @@ import {HostsPage, HostPage} from 'src/hosts'
 import DataExplorer from 'src/data_explorer'
 import {DashboardsPage, DashboardPage} from 'src/dashboards'
 import AlertsApp from 'src/alerts'
+import {LoudMLApp, ModelPage} from 'src/loudml'
 import {
   KapacitorPage,
   KapacitorRulePage,
@@ -172,6 +173,12 @@ const Root = React.createClass({
                 <Route
                   path="admin-chronograf"
                   component={AdminChronografPage}
+                />
+                <Route path="loudml" component={LoudMLApp} />
+                <Route path="loudml/models/new" component={ModelPage} />
+                <Route
+                  path="loudml/models/edit/:modelName"
+                  component={ModelPage}
                 />
                 <Route path="admin-influxdb" component={AdminInfluxDBPage} />
                 <Route path="manage-sources" component={ManageSources} />

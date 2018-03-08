@@ -59,6 +59,8 @@ const AJAX = async (
         : addBasepath(`${links[resource]}`, excludeBasepath)
     }
 
+    console.error(url)
+
     const response = await axios({
       url,
       method,
