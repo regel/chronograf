@@ -321,9 +321,10 @@ class DatasourceSection extends Component {
           }
         })
 
+        /*
         if (state.datasources.length === 1) {
           state.datasource = state.datasources[0].text
-        }
+        }*/
         this.setState(state)
       })
       .catch(() => this.setState({error: true}))
@@ -546,7 +547,7 @@ class Model extends Component {
       .catch(e => {
         addFlashMessage({
           type: 'error',
-          text: `There was a problem saving ${model.name}: ${e.data}`,
+          text: `There was a problem saving ${model.name}: ${e}`,
         })
       })
   }
