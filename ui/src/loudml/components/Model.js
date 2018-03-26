@@ -584,7 +584,9 @@ class Model extends Component {
                   {modelName &&
                     <TrainSection modelName={modelName} train={this.train()} />}
                   {modelName && <StartSection start={this.start()} />}
-                  <DatasourceSection datasource={model.default_datasource} />
+                  <DatasourceSection
+                    datasource={model.default_datasource}
+                  />
                   <ModelParamsSection
                     model={model}
                     onEdit={this.onEdit(model)}
