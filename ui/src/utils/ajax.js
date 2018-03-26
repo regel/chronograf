@@ -84,7 +84,6 @@ export const getAJAX = async url => {
       url: addBasepath(url),
     })
   } catch (error) {
-    console.error(error)
     throw error
   }
 }
