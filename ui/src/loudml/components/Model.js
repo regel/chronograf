@@ -290,7 +290,7 @@ class FeaturesSection extends Component {
         <h3 className="model-section--heading">Features</h3>
         <div className="model-section--body">
           <div className="model-section--row">
-            <div className="panel panel-solid">
+            <div className="panel panel-solid" style={{width: "200px"}}>
               <button
                 className="btn btn-sm btn-primary"
                 onClick={this.addFeature}
