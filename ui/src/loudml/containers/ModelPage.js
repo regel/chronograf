@@ -6,6 +6,8 @@ import * as modelActionCreators from 'src/loudml/actions/view'
 import {getModel} from 'src/loudml/apis'
 
 import {bindActionCreators} from 'redux'
+import {notify as notifyAction} from 'shared/actions/notifications'
+
 import Model from 'src/loudml/components/Model'
 
 class ModelPage extends Component {
@@ -30,7 +32,14 @@ class ModelPage extends Component {
   }
 
   render() {
-    const {params, source, modelActions, addFlashMessage, router} = this.props
+    const {
+      params,
+      source,
+      modelActions,
+      notify,
+      addFlashMessage,
+      router,
+    } = this.props
     const {model} = this.state
 
     if (params.modelName && model === undefined) {
@@ -44,6 +53,7 @@ class ModelPage extends Component {
         router={router}
         model={model}
         modelActions={modelActions}
+        notify={notify}
         addFlashMessage={addFlashMessage}
         modelName={params.modelName}
         configLink={`/loudml/models/edit/${params.modelName}`}
@@ -67,6 +77,7 @@ ModelPage.propTypes = {
   modelActions: shape({
     getModel: func.isRequired,
   }).isRequired,
+  notify: func.isRequired,
   params: shape({
     modelName: string,
   }),
@@ -78,6 +89,7 @@ const mapStateToProps = model => ({
 
 const mapDispatchToProps = dispatch => ({
   modelActions: bindActionCreators(modelActionCreators, dispatch),
+  notify: bindActionCreators(notifyAction, dispatch),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ModelPage)

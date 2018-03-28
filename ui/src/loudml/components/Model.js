@@ -10,6 +10,22 @@ import {createModel, updateModel, train, start} from 'src/loudml/apis'
 
 const {arrayOf, func, shape, string} = PropTypes
 
+import {FIVE_SECONDS, INFINITE} from 'shared/constants/index'
+
+const successNotif = message => ({
+  type: 'success',
+  message,
+  duration: FIVE_SECONDS,
+  icon: 'checkmark',
+})
+
+const errorNotif = message => ({
+  type: 'error',
+  message,
+  duration: INFINITE,
+  icon: 'alert-triangle',
+})
+
 class TrainSection extends Component {
   constructor(props) {
     super(props)
@@ -138,7 +154,6 @@ class Feature extends Component {
   render() {
     const {feature} = this.props
     const metrics = ['avg', 'count', 'med', 'sum', 'min', 'max']
-    console.error(feature)
     return (
       <tr>
         <td>
@@ -354,7 +369,7 @@ class DatasourceSection extends Component {
       <Dropdown
         items={datasources}
         onChoose={this.onChoose}
-        selected={datasource}
+        selected={datasource || datasources[0].text}
         className="dropdown-stretch"
       />
     )
@@ -477,34 +492,28 @@ class Model extends Component {
 
   train = () => {
     return (from, to) => {
-      const {modelName, addFlashMessage} = this.props
+      const {modelName, notify} = this.props
 
       train(modelName, from, to)
         .then(() => {
-          addFlashMessage({type: 'success', text: 'Training started'})
+          notify(successNotif('Training started'))
         })
         .catch(error => {
-          addFlashMessage({
-            type: 'error',
-            text: error.data || 'Could not start model training',
-          })
+          notify(errorNotif(error.data || 'Could not start model training'))
         })
     }
   }
 
   start = () => {
     return () => {
-      const {modelName, addFlashMessage} = this.props
+      const {modelName, notify} = this.props
 
       start(modelName)
         .then(() => {
-          addFlashMessage({type: 'success', text: 'Prediction job started'})
+          notify(successNotif('Prediction job started'))
         })
         .catch(error => {
-          addFlashMessage({
-            type: 'error',
-            text: error.data || 'Could not start prediction job',
-          })
+          notify(errorNotif(error.data || 'Could not start prediction job'))
         })
     }
   }
@@ -533,19 +542,16 @@ class Model extends Component {
   }
 
   handleCreate = () => {
-    const {addFlashMessage, router, source} = this.props
+    const {router, source, notify} = this.props
     const model = this.getData()
 
     createModel(model)
       .then(() => {
         router.push(`/sources/${source.id}/loudml`)
-        addFlashMessage({type: 'success', text: 'Model successfully created'})
+        notify(successNotif('Model successfully created'))
       })
       .catch(error => {
-        addFlashMessage({
-          type: 'error',
-          text: error.data || 'There was a problem creating the model',
-        })
+        notify(errorNotif(error.data || 'There was a problem creating the model'))
       })
   }
 
@@ -554,21 +560,17 @@ class Model extends Component {
   }
 
   handleUpdate = () => {
-    const {addFlashMessage} = this.props
+    const {notify} = this.props
     const model = this.getData()
 
     updateModel(model)
       .then(() => {
-        addFlashMessage({
-          type: 'success',
-          text: `${model.name} successfully saved!`,
-        })
+        notify(successNotif(`${model.name} successfully saved!`))
       })
       .catch(e => {
-        addFlashMessage({
-          type: 'error',
-          text: `There was a problem saving ${model.name}: ${e.data}`,
-        })
+        notify(
+          errorNotif(`There was a problem saving ${model.name}: ${e.data}`)
+        )
       })
   }
 
@@ -636,8 +638,8 @@ Model.propTypes = {
   model: shape({
     values: shape({}),
   }).isRequired,
-  addFlashMessage: func.isRequired,
   modelName: string,
+  notify: func.isRequired,
 }
 
 export default Model
