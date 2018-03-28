@@ -45,7 +45,6 @@ class TrainSection extends Component {
   train = () => {
     return () => {
       const {from, to} = this.state
-      console.error('train')
       this.props.train(from, to)
     }
   }
@@ -133,7 +132,6 @@ class Feature extends Component {
 
   handleEdit = feature => {
     return e => {
-      console.error(e)
       this.props.onEdit(feature, {[e.target.name]: e.target.value})
     }
   }
@@ -194,7 +192,7 @@ class Feature extends Component {
             name="metric"
             onChoose={this.onMetricChoose(feature)}
             items={metrics.map(m => ({text: m}))}
-            selected={feature.metric || 'avg'}
+            selected={feature.metric}
             className="dropdown-stretch"
             style={{width: '100px'}}
           />
@@ -266,17 +264,16 @@ class FeaturesSection extends Component {
 
   addFeature = () => {
     const {features} = this.state
-    features.push({})
+    features.push({
+      metric: 'avg',
+    })
     this.setState({features})
   }
 
   deleteFeature = toDelete => {
     let {features} = this.state
 
-    console.error(features)
     features = features.filter(feature => feature.name !== toDelete.name)
-    console.error(features)
-
     this.setState({features})
   }
 
@@ -350,8 +347,6 @@ class DatasourceSection extends Component {
   }
 
   onChoose = e => {
-    console.error("sec")
-    console.error(e.text)
     this.props.onChoose(e.text)
   }
 
