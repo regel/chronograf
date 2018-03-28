@@ -390,18 +390,18 @@ DatasourceSection.propTypes = {
   onChoose: func,
 }
 
-const ModelParamsSection = ({model, onEdit}) =>
+const ModelParamsSection = ({model, onEditStr, onEditNumber}) =>
   <div className="model-section">
     <h3 className="model-section--heading">Model parameters</h3>
     <div className="model-section--body">
       <div className="model-section--row">
         <p>Max iterations</p>
         <input
-          type="text"
+          type="number"
           name="max_evals"
           className="form-control input-md form-malachite"
           value={model.max_evals}
-          onChange={onEdit}
+          onChange={onEditNumber}
           placeholder="ex: 100"
         />
       </div>
@@ -412,7 +412,7 @@ const ModelParamsSection = ({model, onEdit}) =>
           name="bucket_interval"
           className="form-control input-md form-malachite"
           value={model.bucket_interval}
-          onChange={onEdit}
+          onChange={onEditStr}
           placeholder="ex: 30s, 20m, 1h, 1d, ..."
         />
       </div>
@@ -423,7 +423,7 @@ const ModelParamsSection = ({model, onEdit}) =>
           name="span"
           className="form-control input-md form-malachite"
           value={model.span}
-          onChange={onEdit}
+          onChange={onEditNumber}
           placeholder="ex: 5"
         />
       </div>
@@ -432,7 +432,8 @@ const ModelParamsSection = ({model, onEdit}) =>
 
 ModelParamsSection.propTypes = {
   model: shape({}),
-  onEdit: func.isRequired,
+  onEditStr: func.isRequired,
+  onEditNumber: func.isRequired,
 }
 
 const PredictParamsSection = ({model, onEdit}) =>
@@ -514,10 +515,19 @@ class Model extends Component {
     }
   }
 
-  onEdit = model => {
+  onEditStr = model => {
     return e => {
       model = Object.assign({}, this.defaults, model, {
         [e.target.name]: e.target.value,
+      })
+      this.setState({model})
+    }
+  }
+
+  onEditNumber = model => {
+    return e => {
+      model = Object.assign({}, this.defaults, model, {
+        [e.target.name]: Number(e.target.value),
       })
       this.setState({model})
     }
@@ -597,7 +607,7 @@ class Model extends Component {
                 <div className="model-builder">
                   <NameSection
                     modelName={modelName}
-                    onEdit={this.onEdit(model)}
+                    onEdit={this.onEditStr(model)}
                   />
                   {modelName &&
                     <TrainSection modelName={modelName} train={this.train()} />}
@@ -608,7 +618,8 @@ class Model extends Component {
                   />
                   <ModelParamsSection
                     model={model}
-                    onEdit={this.onEdit(model)}
+                    onEditStr={this.onEditStr(model)}
+                    onEditNumber={this.onEditNumber(model)}
                   />
                   <FeaturesSection
                     ref={ref => (this.features = ref)}
@@ -616,7 +627,7 @@ class Model extends Component {
                   />
                   <PredictParamsSection
                     model={model}
-                    onEdit={this.onEdit(model)}
+                    onEdit={this.onEditStr(model)}
                   />
                 </div>
               </div>
