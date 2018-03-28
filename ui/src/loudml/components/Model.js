@@ -330,16 +330,17 @@ class DatasourceSection extends Component {
   componentDidMount() {
     getDatasources()
       .then(res => {
+        const {datasource, onChoose} = this.props
         const state = {datasources: []}
 
-        res.data.forEach(datasource => {
-          if (datasource.type === 'influxdb') {
-            state.datasources.push({text: datasource.name})
+        res.data.forEach(ds => {
+          if (ds.type === 'influxdb') {
+            state.datasources.push({text: ds.name})
           }
         })
 
-        if (state.datasources.length === 1) {
-          state.datasource = state.datasources[0].text
+        if (!datasource || state.datasources.length === 1) {
+          onChoose(state.datasources[0].text)
         }
         this.setState(state)
       })
