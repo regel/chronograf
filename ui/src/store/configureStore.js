@@ -12,6 +12,7 @@ import sharedReducers from 'shared/reducers'
 import dataExplorerReducers from 'src/data_explorer/reducers'
 import adminReducers from 'src/admin/reducers'
 import kapacitorReducers from 'src/kapacitor/reducers'
+import loudmlReducers from 'src/loudml/reducers'
 import dashboardUI from 'src/dashboards/reducers/ui'
 import cellEditorOverlay from 'src/dashboards/reducers/cellEditorOverlay'
 import overlayTechnology from 'src/shared/reducers/overlayTechnology'
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
   ...sharedReducers,
   ...dataExplorerReducers,
   ...kapacitorReducers,
+  ...loudmlReducers,
   ...adminReducers,
   dashboardUI,
   cellEditorOverlay,
