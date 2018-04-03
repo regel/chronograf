@@ -1,0 +1,17 @@
+import {getModels as getModelsAJAX} from 'src/loudml/apis'
+import {errorThrown} from 'shared/actions/errors'
+
+export const loadModels = models => ({
+  type: 'LOUDML_LOAD_MODELS',
+  payload: models,
+})
+
+// async actions
+export const loadModelsAsync = () => async dispatch => {
+  try {
+    const {data} = await getModelsAJAX()
+    dispatch(loadModels(data))
+  } catch (error) {
+    dispatch(errorThrown(error))
+  }
+}
