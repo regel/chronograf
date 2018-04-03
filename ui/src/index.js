@@ -30,6 +30,7 @@ import {
   KapacitorRulesPage,
   TickscriptPage,
 } from 'src/kapacitor'
+import {LoudMLPage} from 'src/loudml'
 import {AdminChronografPage, AdminInfluxDBPage} from 'src/admin'
 import {SourcePage, ManageSources} from 'src/sources'
 import NotFound from 'shared/components/NotFound'
@@ -158,6 +159,7 @@ const Root = React.createClass({
                 path="kapacitors/:id/edit:hash"
                 component={KapacitorPage}
               />
+              <Route path="loudml" component={LoudMLPage} />
               <Route path="admin-chronograf" component={AdminChronografPage} />
               <Route path="admin-influxdb" component={AdminInfluxDBPage} />
               <Route path="manage-sources" component={ManageSources} />
