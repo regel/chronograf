@@ -119,6 +119,13 @@ const SideNav = React.createClass({
             Alert History
           </NavListItem>
         </NavBlock>
+        <NavBlock
+          icon="loudml-bold"
+          link={`${sourcePrefix}/loudml`}
+          location={location}
+        >
+          <NavHeader link={`${sourcePrefix}/loudml`} title={'LoudML'} />
+        </NavBlock>
 
         <Authorized
           requiredRole={ADMIN_ROLE}
