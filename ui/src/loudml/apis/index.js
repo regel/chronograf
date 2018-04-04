@@ -50,6 +50,18 @@ export const updateModel = async model => {
   }
 }
 
+export const deleteModel = async name => {
+  try {
+    return await AJAX({
+      method: 'DELETE',
+      url: `/loudml/api/models/${name}`,
+    })
+  } catch (error) {
+    console.error(error)
+    throw error
+  }
+}
+
 export const getDatasources = async () => {
   try {
     return await AJAX({
