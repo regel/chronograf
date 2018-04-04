@@ -34,7 +34,7 @@ import {
   KapacitorRulesPage,
   TickscriptPage,
 } from 'src/kapacitor'
-import {LoudMLPage} from 'src/loudml'
+import {LoudMLPage, ModelPage} from 'src/loudml'
 import {AdminChronografPage, AdminInfluxDBPage} from 'src/admin'
 import {SourcePage, ManageSources} from 'src/sources'
 import {CheckServices} from 'src/flux'
@@ -153,7 +153,10 @@ class Root extends PureComponent<{}, State> {
                 path="kapacitors/:id/edit:hash"
                 component={KapacitorPage}
               />
-              <Route path="loudml" component={LoudMLPage} />
+              <Route path="loudml/models/new" component={ModelPage} />
+              <Route path="loudml/models/:name/edit"
+                component={ModelPage}
+              />
               <Route
                 path="admin-chronograf/:tab"
                 component={AdminChronografPage}
