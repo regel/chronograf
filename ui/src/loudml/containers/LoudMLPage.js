@@ -3,12 +3,20 @@ import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import {Link} from 'react-router'
 import {bindActionCreators} from 'redux'
-import {loadModelsAsync} from 'src/loudml/actions'
+import {
+  loadModelsAsync,
+  removeAndLoadModels,
+} from 'src/loudml/actions'
 
 import FancyScrollbar from 'shared/components/FancyScrollbar'
 import DeleteConfirmTableCell from 'shared/components/DeleteConfirmTableCell'
 
 import {notify as notifyAction} from 'shared/actions/notifications'
+
+import {
+  notifyModelDeleted,
+  notifyModelDeleteFailed,
+} from 'src/loudml/notifications'
 
 class LoudMLPage extends Component {
   constructor(props) {
@@ -20,8 +28,16 @@ class LoudMLPage extends Component {
     loadModels()
   }
 
-  handleDeleteModel() {
-    console.error('delete')
+  handleDeleteModel = model => {
+    const {notify} = this.props
+    const {name} = model.settings
+
+    try {
+      this.props.removeAndLoadModels(name)
+      notify(notifyModelDeleted())
+    } catch (e) {
+      notify(notifyModelDeleteFailed(name))
+    }
   }
 
   renderModelsTable() {
@@ -133,7 +149,8 @@ LoudMLPage.propTypes = {
     }),
   }).isRequired,
   models: arrayOf(shape()),
-  loadModels: func,
+  loadModels: func.isRequired,
+  removeAndLoadModels: func.isRequired,
   notify: func.isRequired,
 }
 
@@ -144,6 +161,7 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = dispatch => ({
+  removeAndLoadModels: bindActionCreators(removeAndLoadModels, dispatch),
   loadModels: bindActionCreators(loadModelsAsync, dispatch),
   notify: bindActionCreators(notifyAction, dispatch),
 })

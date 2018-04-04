@@ -26,6 +26,13 @@ export const notifyModelCreationFailed = (name, message) => notifyError(
   `cannot create '${name}' model: ${message}`,
 )
 
+export const notifyModelDeleted = () => notifySuccess("model deleted")
+
+export const notifyModelDeleteFailed = (name, message) => notifyError(
+  TEN_SECONDS,
+  `cannot delete '${name}' model: ${message}`,
+)
+
 export const notifyModelUpdated = () => notifySuccess("model updated")
 
 export const notifyModelUpdateFailed = (name, message) => notifyError(
