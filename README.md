@@ -224,3 +224,21 @@ The swagger JSON document is in `server/swagger.json`
 
 Please see the [contributing guide](CONTRIBUTING.md) for details on contributing
 to Chronograf.
+
+## LoudML
+
+1. Install LoudML from source or packages.
+2. Configure and start LoudML on default address `localhost:8080`
+3. Go to `chronograf/ui`
+4. Setup dependencies
+
+```bash
+npm install
+npm build
+```
+
+5. Un chronograf UI in dev mode:
+
+```bash
+yarn start:hmr
+````
