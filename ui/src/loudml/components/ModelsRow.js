@@ -43,6 +43,8 @@ const ModelsRow = ({
                         onStart={onStart(model.settings.name)}
                         onStop={onStop(model.settings.name)}
                         running={model.settings.run!==undefined}
+                        disabled={model.state.trained===false
+                            &&model.settings.run===undefined}
                     />
                     <TimeJobButton
                         startLabel='Train'
