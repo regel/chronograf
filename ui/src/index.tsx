@@ -153,9 +153,7 @@ class Root extends PureComponent<{}, State> {
               />
               <Route path="loudml" component={LoudMLPage} />
               <Route path="loudml/models/new" component={ModelPage} />
-              <Route path="loudml/models/:name/edit"
-                component={ModelPage}
-              />
+              <Route path="loudml/models/:name/edit" component={ModelPage}/>
               <Route
                 path="admin-chronograf/:tab"
                 component={AdminChronografPage}
