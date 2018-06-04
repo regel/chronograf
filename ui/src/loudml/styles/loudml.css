@@ -1,0 +1,15 @@
+
+.jobs-container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.time-job--button .custom-time--overlay {
+    right: 0;
+    position: relative;
+    top: 5px;
+}
+
+.time-job--button .custom-time--container {
+    top: 0;
+}
