@@ -7,6 +7,7 @@ const JobButton = ({
     onStart,
     onStop,
     running,
+    disabled,
 }) => {
     function handleClick() {
         if (running) {
@@ -19,7 +20,8 @@ const JobButton = ({
     return (
         <button className="btn btn-xs btn-default table--show-on-row-hover"
             href="#"
-            onClick={handleClick}>
+            onClick={handleClick}
+            disabled={disabled}>
             {running ? stopLabel : startLabel}
         </button>
     )
@@ -31,6 +33,7 @@ JobButton.propTypes = {
     onStart: PropTypes.func.isRequired,
     onStop: PropTypes.func.isRequired,
     running: PropTypes.bool.isRequired,
+    disabled: PropTypes.bool.isRequired,
 }
 
 export default JobButton
