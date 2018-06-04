@@ -1,15 +1,11 @@
-const initialState = {
-  models: null,
-}
+import { combineReducers } from 'redux'
 
-const loudml = (state = initialState, action) => {
-  switch (action.type) {
-    case 'LOUDML_LOAD_MODELS': {
-      return {...state, models: action.payload}
-    }
-  }
+import models from 'src/loudml/reducers/models'
+import jobs from 'src/loudml/reducers/jobs'
 
-  return state
-}
+const loudml = combineReducers({
+  models,
+  jobs
+})
 
 export default {loudml}

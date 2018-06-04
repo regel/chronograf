@@ -161,9 +161,7 @@ const Root = React.createClass({
               />
               <Route path="loudml" component={LoudMLPage} />
               <Route path="loudml/models/new" component={ModelPage} />
-              <Route path="loudml/models/:name/edit"
-                component={ModelPage}
-              />
+              <Route path="loudml/models/:name/edit" component={ModelPage}/>
               <Route path="admin-chronograf" component={AdminChronografPage} />
               <Route path="admin-influxdb" component={AdminInfluxDBPage} />
               <Route path="manage-sources" component={ManageSources} />
