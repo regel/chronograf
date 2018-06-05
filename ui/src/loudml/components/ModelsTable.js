@@ -19,6 +19,7 @@ class ModelsTable extends Component {
       onTrain,
       onForecast,
       onStop,
+      onStopTrain,
     } = this.props
     
     return (
@@ -41,6 +42,7 @@ class ModelsTable extends Component {
                 onStop={onStop}
                 onStart={onPredict}
                 onTrain={onTrain}
+                onStopTrain={onStopTrain}
                 onDelete={this.onDelete}
               />
             )
@@ -117,6 +119,7 @@ ModelsTable.propTypes = {
   onTrain: func.isRequired,
   onForecast: func.isRequired,
   onStop: func.isRequired,
+  onStopTrain: func.isRequired,
 }
 
 export default ModelsTable
