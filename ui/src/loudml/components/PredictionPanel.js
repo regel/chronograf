@@ -52,22 +52,26 @@ const PredictionPanel = ({
         <div className="form-group col-xs-12 col-sm-6">
           <label>Seasonality</label>
           <div className="form-control-static">
-            <input
-              type="checkbox"
-              id="daytime"
-              name="seasonality"
-              checked={model.seasonality.daytime}
-              onChange={handleSeasonality}
-            />
-            <label htmlFor="daytime">Daytime</label>
-            <input
-              type="checkbox"
-              id="weekday"
-              name="seasonality"
-              checked={model.seasonality.weekday}
-              onChange={handleSeasonality}
-            />
-            <label htmlFor="weekday">Weekday</label>
+            <div className="col-xs-12 col-sm-6">
+              <input
+                type="checkbox"
+                id="daytime"
+                name="seasonality"
+                checked={model.seasonality.daytime}
+                onChange={handleSeasonality}
+              />
+              <label htmlFor="daytime">Daytime</label>
+            </div>
+            <div className="col-xs-12 col-sm-6">
+              <input
+                type="checkbox"
+                id="weekday"
+                name="seasonality"
+                checked={model.seasonality.weekday}
+                onChange={handleSeasonality}
+              />
+              <label htmlFor="weekday">Weekday</label>
+            </div>
           </div>
         </div>
       </div>
