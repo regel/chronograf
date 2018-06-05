@@ -197,7 +197,7 @@ class ModelPage extends Component {
                 <div className="col-md-12">
                   <div className="col-md-12">
                     <ModelHeader
-                      name={model.name}
+                      name={isCreating ? 'Model creator' : model.name}
                       onSave={this.handleSave}
                       validationError={this.validationError}
                     />

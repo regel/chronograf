@@ -18,6 +18,7 @@ const ModelsRow = ({
     onStop,
     onTrain,
     onDelete,
+    onStopTrain,
 }) => {
     function handleOnTrain(lower, upper) {
         onTrain(model.settings.name, lower, upper)
@@ -50,7 +51,7 @@ const ModelsRow = ({
                         startLabel='Train'
                         stopLabel='Stop training'
                         onStart={handleOnTrain}
-                        // onStop={onStop(model.settings.name)}
+                        onStop={onStopTrain(model.settings.name)}
                         running={
                             (model.training&&model.training.state==='running')
                             || jobs.filter(job => job.name === model.settings.name).length !== 0
@@ -76,6 +77,7 @@ ModelsRow.propTypes = {
     onTrain: PropTypes.func.isRequired,
     onStart: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
+    onStopTrain: PropTypes.func.isRequired,
 }
 
 export default ModelsRow
