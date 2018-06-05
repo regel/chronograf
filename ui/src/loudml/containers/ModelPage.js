@@ -21,6 +21,7 @@ import {
 } from "src/loudml/actions/view"
 import ModelHeader from 'src/loudml/components/ModelHeader'
 import ModelTabs from 'src/loudml/components/ModelTabs'
+import FeaturesUtils from 'src/loudml/components/FeaturesUtils'
 import {DEFAULT_MODEL} from 'src/loudml/constants'
 
 import {
@@ -39,7 +40,10 @@ class ModelPage extends Component {
 
     this.state = {
       isLoading: true,
-      model: props.model,
+      model: {
+        ...props.model,
+        features: FeaturesUtils.deserializedFeatures(props.model.features),
+      },
       isCreating: props.params.name === undefined,
     }
   }
@@ -56,7 +60,11 @@ class ModelPage extends Component {
       .then(res => {
         const {settings, state, training} = res.data
         this.setState({
-          model: {...DEFAULT_MODEL, ...settings},
+          model: {
+            ...DEFAULT_MODEL,
+            ...settings,
+            features: FeaturesUtils.deserializedFeatures(settings.features),
+          },
           status: {...state},
           training,
           isLoading: false,
@@ -114,7 +122,12 @@ class ModelPage extends Component {
     const {model} = this.state
     const {notify, modelActions: {modelCreated}} = this.props
 
-    createModelApi(model)
+    const serial = {
+      ...model,
+      features: FeaturesUtils.serializedFeatures(model.features)
+    }
+
+    createModelApi(serial)
       .then(() => {
         modelCreated(model)
         this._redirect()
@@ -131,7 +144,12 @@ class ModelPage extends Component {
     const {model} = this.state
     const {notify, modelActions: {modelUpdated}} = this.props
 
-    updateModelApi(model)
+    const serial = {
+      ...model,
+      features: FeaturesUtils.serializedFeatures(model.features)
+    }
+
+    updateModelApi(serial)
       .then(() => {
         modelUpdated(model)
         // this._redirect(modelFromServer)
@@ -245,11 +263,12 @@ function mapStateToProps(state, ownProps) {
   const { models } = state.loudml.models
   const { params: {name}} = ownProps
 
+  // get model from state if exists...
   const stateModel = (models && models.find(model => model.settings.name === name))
   
   return {
     model: {
-      ...DEFAULT_MODEL,
+      ...DEFAULT_MODEL, // default init 
       ...(stateModel&&stateModel.settings),
     },
   }
