@@ -2,6 +2,7 @@ import React, {PropTypes} from 'react'
 import ModelHeaderSave from 'src/loudml/components/ModelHeaderSave'
 
 const ModelHeader = ({
+  name,
   onSave,
   validationError
 }) => {
@@ -9,9 +10,10 @@ const ModelHeader = ({
     <div className="panel">
       <div className="panel-heading">
         <h2 className="panel-title">
-          Model creator
+          {name}
         </h2>
         <ModelHeaderSave
+          name={name}
           onSave={onSave}
           validationError={validationError}
         />
@@ -21,6 +23,7 @@ const ModelHeader = ({
 }
 
 ModelHeader.propTypes = {
+  name: PropTypes.string.isRequired,
   onSave: PropTypes.func.isRequired,
   validationError: PropTypes.string,
 }

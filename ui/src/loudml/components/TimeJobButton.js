@@ -59,7 +59,7 @@ class TimeJobButton extends Component {
             <div className="time-job--button">
                 <div className={classnames(
                     'dropdown',
-                    'dropdown-80', {
+                    'dropdown-110', {
                         'table--show-on-row-hover': !isCustomTimeRangeOpen,
                         open: isCustomTimeRangeOpen,
                     })}>
