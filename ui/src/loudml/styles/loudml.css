@@ -13,3 +13,7 @@
 .time-job--button .custom-time--container {
     top: 0;
 }
+
+.jobs-container > button {
+    width: 110px;
+}
