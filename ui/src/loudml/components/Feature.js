@@ -1,10 +1,9 @@
 import React, {PropTypes} from 'react'
-import classnames from 'classnames'
 
 import Dropdown from 'shared/components/Dropdown'
 import DeleteConfirmTableCell from 'shared/components/DeleteConfirmTableCell'
 
-import {DEFAULT_METRICS} from 'src/loudml/constants'
+import {DEFAULT_METRICS, DEFAULT_IO} from 'src/loudml/constants'
 
 const Feature = ({
   feature,
@@ -15,27 +14,19 @@ const Feature = ({
     onDelete(feature)
   }
 
-  function handleCheckbox(name) {
-    return (e) => onEdit(feature, {[name]: !feature[name]}) // eslint-disable-line no-unused-vars
-  }
-
   function handleEdit(e) {
-    let val = e.target.value
+    const val = (e.target.type==='number'?Number(e.target.value):e.target.value)
     const name = e.target.name
 
-    switch (e.target.type) {
-      case 'checkbox':
-        val = e.target.checked
-        break
-      case 'number':
-        val = Number(val)
-        break
-    }
     onEdit(feature, {[name]: val})
   }
 
   function handleMetricChoose(item) {
     onEdit(feature, {metric: item.text})
+  }
+
+  function handleIOChoose(item) {
+    onEdit(feature, {io: item.text})
   }
 
   return(
@@ -95,32 +86,14 @@ const Feature = ({
         />
       </td>
       <td>
-        <div
-          className={
-            classnames('query-builder--list-item', {
-              active: feature.input,
-            })}
-          onClick={handleCheckbox('input')}
-          style={{backgroundColor: 'transparent'}}
-        >
-          <span>
-            <div className="query-builder--checkbox" />
-          </span>
-        </div>
-      </td>
-      <td>
-        <div
-          className={
-            classnames('query-builder--list-item', {
-              active: feature.output,
-            })}
-          onClick={handleCheckbox('output')}
-          style={{backgroundColor: 'transparent'}}
-        >
-          <span>
-            <div className="query-builder--checkbox" />
-          </span>
-        </div>
+        <Dropdown
+          name="io"
+          onChoose={handleIOChoose}
+          items={DEFAULT_IO.map(m => ({text: m}))}
+          selected={feature.io}
+          className="dropdown-stretch"
+          buttonSize="btn-xs"
+        />
       </td>
       <DeleteConfirmTableCell
         onDelete={deleteFeature}
