@@ -79,3 +79,10 @@ export const notifyJobFailed = job => notifyError(
   INFINITE,
   `Job ${job.type} failed for model '${job.name}': ${job.error}`,
 )
+
+export const notifyJobStopped = name => notifySuccess(`job on model '${name}' stopped`)
+
+export const notifyJobStoppedFailed = (name, message) => notifyError(
+  INFINITE,
+  `Stopping job failed for model '${name}': ${message}`,
+)
