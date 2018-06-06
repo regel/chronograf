@@ -1,7 +1,7 @@
 export const DEFAULT_MODEL = {
   bucket_interval: '20m',
   default_datasource: null,
-  features: [],
+  features: {},
   interval: '1m',
   max_evals: 100,
   name: null,
@@ -15,21 +15,16 @@ export const DEFAULT_MODEL = {
 }
 
 export const DEFAULT_FEATURE = {
-  /*
-  isValid: () => {
-    return (name)
-  },
-  */
   name: null,
   measurement: null,
   field: null,
   metric: 'avg',
   default: null,
-  // input: true,
-  // output: true,
+  io: 'io',
 }
 
 export const DEFAULT_METRICS = ['avg', 'count', 'med', 'sum', 'min', 'max']
+export const DEFAULT_IO = ['i/o', 'i', 'o']
 
 export const MODEL_CREATED = 'MODEL_CREATED';
 export const MODEL_UPDATED = 'MODEL_UPDATED';

@@ -1,10 +1,6 @@
 export default class {
     static deserializeFeature(feature, direction) {
-        const newFeature = {...feature}
-
-        newFeature.input = ['i', 'io'].includes(direction)
-        newFeature.output = ['o', 'io'].includes(direction)
-        return newFeature
+        return Object.assign({}, feature, {'io': direction})
     }
 
     static deserializedFeatures(features) {
@@ -15,11 +11,11 @@ export default class {
             ?features.o.map(feature => this.deserializeFeature(feature, 'o'))
             :[])
         const io = (features.io
-            ?features.io.map(feature => this.deserializeFeature(feature, 'io'))
+            ?features.io.map(feature => this.deserializeFeature(feature, 'i/o'))
             :[])
         const localFeatures = (
         Array.isArray(features)
-        ? features.map(feature => this.deserializeFeature(feature, 'io'))
+        ? features.map(feature => this.deserializeFeature(feature, 'i/o'))
         : [ // expand object features
             ...i,
             ...o,
@@ -45,21 +41,20 @@ export default class {
 
     static serializeFeature(feature) {
         const newFeature = {...feature}
-        delete newFeature.input
-        delete newFeature.output
+        delete newFeature.io
         return newFeature
     }
 
     static iMap(feature) {
-        return feature.input&&!feature.output
+        return feature.io==='i'
     }
 
     static oMap(feature) {
-        return feature.output&&!feature.input
+        return feature.io==='o'
     }
 
     static ioMap(feature) {
-        return feature.input&&feature.output
+        return feature.io==='i/o'
     }
 
 }
