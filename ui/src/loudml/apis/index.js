@@ -106,3 +106,12 @@ export const stopModel = name => {
     excludeBasepath: true,
   })
 }
+
+export const stopJob = id => {
+  return AJAX({
+    method: 'POST',
+    url: `/loudml/api/jobs/${id}/_cancel`,
+    // params: {save_prediction: true},
+    excludeBasepath: true,
+  })
+}

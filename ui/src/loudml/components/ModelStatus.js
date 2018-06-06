@@ -8,7 +8,8 @@ const ModelStatus = ({
         waiting: 'training waiting',
         running: 'training',
         done: 'trained',
-        failed: 'training failed'
+        failed: 'training failed',
+        canceling: 'canceling train',
     }
     return (
         <div>
