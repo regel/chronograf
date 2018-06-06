@@ -35,6 +35,8 @@ import {
   notifyModelStoppedFailed,
   notifyJobSuccess,
   notifyJobFailed,
+  notifyJobStopped,
+  notifyJobStoppedFailed,
 } from 'src/loudml/actions/notifications'
 
 class LoudMLPage extends Component {
@@ -224,7 +226,6 @@ class LoudMLPage extends Component {
 
   stopModel = name => () => {
     const {
-      modelActions: {jobStop},
       notify
     } = this.props
 
@@ -240,16 +241,25 @@ class LoudMLPage extends Component {
   stopTrain = name => () => {
     const {
       modelActions: {jobStop},
-      notify
+      notify,
+      // jobs,
+      models,
     } = this.props
 
-    api.stopModel(name)
+    // get job
+    // const job = jobs.find(job => job.name === name)
+    const id = models.find(
+      model => model.settings.name === name)
+      .training
+      .job_id
+
+    api.stopJob(id)
       .then(() => {
-        jobStop(name)
-        notify(notifyModelStopped(name))
+        // jobStop(job)
+        notify(notifyJobStopped(name))
       })
       .catch(error => {
-        notify(notifyModelStoppedFailed(name, this._parseError(error)))
+        notify(notifyJobStoppedFailed(name, this._parseError(error)))
       })
   }
 
