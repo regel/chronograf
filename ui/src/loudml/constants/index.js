@@ -20,7 +20,7 @@ export const DEFAULT_FEATURE = {
   field: null,
   metric: 'avg',
   default: null,
-  io: 'io',
+  io: 'i/o',
 }
 
 export const DEFAULT_METRICS = ['avg', 'count', 'med', 'sum', 'min', 'max']

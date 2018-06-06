@@ -10,7 +10,7 @@ class FeaturesPanel extends Component {
 
   addFeature = () => {
     const {features} = this.props
-    features.push(DEFAULT_FEATURE)
+    features.push({...DEFAULT_FEATURE})
     this.onInputChange(features)
   }
 
