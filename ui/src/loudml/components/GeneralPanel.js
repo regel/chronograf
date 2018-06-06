@@ -28,6 +28,7 @@ const GeneralPage = ({
           <DatasourceSection
             datasource={model.default_datasource}
             onChoose={onDatasourceChoose}
+            buttonSize="btn-md"
           />
         </div>
       </div>
