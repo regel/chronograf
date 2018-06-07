@@ -216,7 +216,7 @@ class LoudMLPage extends Component {
     } = this.props
 
     api.startModel(name)
-    .then((res) => {
+    .then(() => {
       notify(notifyModelStarting(name))
     })
     .catch(error => {
@@ -240,7 +240,7 @@ class LoudMLPage extends Component {
 
   stopTrain = name => () => {
     const {
-      modelActions: {jobStop},
+      // modelActions: {jobStop},
       notify,
       // jobs,
       models,
