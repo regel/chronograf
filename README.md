@@ -36,19 +36,20 @@ and automation rules.
     git checkout -b loudml regel/loudml
     ```
 1. Then, you can build Chronograf with LoudML extension:
+
    ```bash
    make
    ```
 
 To build the Docker image, execute:
-   ```
-   make docker
-   ```
+```bash
+make docker
+```
 
 To start Chronograf in development mode:
-    ```bash
-    cd chronograf/ui
-    npm install
-    npm build
-    yarn start:hmr
-    ```
+```bash
+cd chronograf/ui
+npm install
+npm build
+yarn start:hmr
+```
