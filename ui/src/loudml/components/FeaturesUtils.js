@@ -32,9 +32,9 @@ export default class {
         const io = features.filter(feature => this.ioMap(feature)).map(feature => this.serializeFeature(feature))
         
         const localFeatures = Object.assign({},
-        (i.length ? {'i': i} : null),
-        (o.length ? {'o': o} : null),
-        (io.length ? {'io': io} : null))
+        (i.length ? {'i': [...i]} : null),
+        (o.length ? {'o': [...o]} : null),
+        (io.length ? {'io': [...io]} : null))
 
         return localFeatures
     }

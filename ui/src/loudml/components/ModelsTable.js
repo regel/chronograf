@@ -17,7 +17,6 @@ class ModelsTable extends Component {
       jobs,
       onPredict,
       onTrain,
-      onForecast,
       onStop,
       onStopTrain,
     } = this.props
