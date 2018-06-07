@@ -57,7 +57,7 @@ class LoudMLPage extends Component {
         modelsLoaded(res.data)
       })
       .catch(error => {
-        notify(notifyErrorGettingModels(error))
+        notify(notifyErrorGettingModels(this._parseError(error)))
       })
   }
 
