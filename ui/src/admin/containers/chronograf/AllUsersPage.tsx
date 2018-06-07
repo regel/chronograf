@@ -48,7 +48,10 @@ export class AllUsersPage extends PureComponent<Props, State> {
   }
 
   public componentDidMount() {
-    const {links, actionsConfig: {getAuthConfigAsync}} = this.props
+    const {
+      links,
+      actionsConfig: {getAuthConfigAsync},
+    } = this.props
     getAuthConfigAsync(links.config.auth)
   }
 
@@ -69,7 +72,10 @@ export class AllUsersPage extends PureComponent<Props, State> {
   }
 
   public handleCreateUser = (user: User) => {
-    const {links, actionsAdmin: {createUserAsync}} = this.props
+    const {
+      links,
+      actionsAdmin: {createUserAsync},
+    } = this.props
     createUserAsync(links.allUsers, user)
   }
 
@@ -78,13 +84,17 @@ export class AllUsersPage extends PureComponent<Props, State> {
     roles: Role[],
     successMessage: string
   ) => {
-    const {actionsAdmin: {updateUserAsync}} = this.props
+    const {
+      actionsAdmin: {updateUserAsync},
+    } = this.props
     const updatedUser = {...user, roles}
     updateUserAsync(user, updatedUser, successMessage)
   }
 
   public handleUpdateUserSuperAdmin = (user: User, superAdmin: boolean) => {
-    const {actionsAdmin: {updateUserAsync}} = this.props
+    const {
+      actionsAdmin: {updateUserAsync},
+    } = this.props
     const updatedUser = {...user, superAdmin}
     updateUserAsync(
       user,
@@ -94,7 +104,9 @@ export class AllUsersPage extends PureComponent<Props, State> {
   }
 
   public handleDeleteUser = (user: User) => {
-    const {actionsAdmin: {deleteUserAsync}} = this.props
+    const {
+      actionsAdmin: {deleteUserAsync},
+    } = this.props
     deleteUserAsync(user, {isAbsoluteDelete: true})
   }
 
