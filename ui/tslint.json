@@ -17,7 +17,6 @@
     "no-console": [true, "log", "warn"],
     "no-empty": false,
     "prettier": [
-      true,
       {
         "singleQuote": true,
         "semi": false,
