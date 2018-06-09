@@ -1,26 +1,26 @@
 export const DEFAULT_MODEL = {
-  bucket_interval: '20m',
-  default_datasource: null,
-  features: {},
-  interval: '1m',
-  max_evals: 100,
-  name: null,
-  offset: '10s',
-  seasonality: {
-    daytime: false,
-    weekday: false,
-  },
-  span: 5,
-  type: 'timeseries',
+    bucket_interval: '20m',
+    default_datasource: null,
+    features: {},
+    interval: '1m',
+    max_evals: 100,
+    name: null,
+    offset: '10s',
+    seasonality: {
+        daytime: false,
+        weekday: false,
+    },
+    span: 5,
+    type: 'timeseries',
 }
 
 export const DEFAULT_FEATURE = {
-  name: null,
-  measurement: null,
-  field: null,
-  metric: 'avg',
-  default: null,
-  io: 'i/o',
+    name: null,
+    measurement: null,
+    field: null,
+    metric: 'avg',
+    default: null,
+    io: 'i/o',
 }
 
 export const DEFAULT_METRICS = ['avg', 'count', 'med', 'sum', 'min', 'max']

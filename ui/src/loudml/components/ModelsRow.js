@@ -49,7 +49,7 @@ const ModelsRow = ({
                     />
                     <TimeJobButton
                         startLabel='Train'
-                        stopLabel='Stop training'
+                        stopLabel='Stop train'
                         onStart={handleOnTrain}
                         onStop={onStopTrain(model.settings.name)}
                         running={
