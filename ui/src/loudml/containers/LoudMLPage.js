@@ -144,7 +144,7 @@ class LoudMLPage extends Component {
         api.deleteModel(name)
             .then(() => {
                 modelDeleted(name)
-                notify(notifyModelDeleted(`${name} deleted successfully`))
+                notify(notifyModelDeleted(name))
             })
               .catch(error => {
                 notify(notifyModelDeleteFailed(name, error))

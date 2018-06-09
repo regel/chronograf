@@ -13,26 +13,30 @@ class JobButton extends Component {
     }
 
     handleClickOutside = () => {
-        const {expanded} = this.state
+        const {expanded, informParent} = this.state
     
         if (expanded === false) {
           return
         }
         this.setState({expanded: false})
+        informParent()
       }
     
     handleToggleSubMenu = () => {
-        const {running, onStart} = this.props
+        const {running, onStart, informParent} = this.props
 
         if (running) {
             this.setState({expanded: !this.state.expanded})
+            informParent()
         } else {
             onStart()
         }
     }
     
     handleConfirm = () => {
+        const {informParent} = this.props
         this.setState({expanded: false})
+        informParent()
         this.props.onStop()
     }
 
@@ -69,14 +73,21 @@ class JobButton extends Component {
         )
     }
 }
-//  className={classnames('dash-graph-context--button', {active: expanded})}
+
+JobButton.defaultProps = {
+    informParent: () => {},
+    onStart: () => {},
+    startLabel: '',
+}
+
 JobButton.propTypes = {
-    startLabel: PropTypes.string.isRequired,
+    startLabel: PropTypes.string,
     stopLabel: PropTypes.string.isRequired,
-    onStart: PropTypes.func.isRequired,
+    onStart: PropTypes.func,
     onStop: PropTypes.func.isRequired,
     running: PropTypes.bool.isRequired,
     disabled: PropTypes.bool.isRequired,
+    informParent: PropTypes.func,
 }
 
 export default OnClickOutside(JobButton)
