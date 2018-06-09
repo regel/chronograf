@@ -24,7 +24,7 @@ export const notifyErrorGettingModels = message => notifyError(
     `cannot get models: ${message}`,
 )
 
-export const notifyModelDeleted = () => notifySuccess("model deleted")
+export const notifyModelDeleted = name => notifySuccess(`model ${name} deleted successfully`)
 
 export const notifyModelDeleteFailed = (name, message) => notifyError(
     TEN_SECONDS,

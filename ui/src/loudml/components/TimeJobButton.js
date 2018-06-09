@@ -6,6 +6,7 @@ import moment from 'moment'
 import OnClickOutside from 'shared/components/OnClickOutside'
 import CustomTimeRangeOverlay from 'shared/components/CustomTimeRangeOverlay'
 
+import JobButton from 'src/loudml/components/JobButton'
 const emptyTime = {lower: '', upper: ''}
 
 import 'src/loudml/styles/loudml.css'
@@ -21,6 +22,7 @@ class TimeJobButton extends Component {
         this.state = {
             isCustomTimeRangeOpen: false,
             customTimeRange,
+            isConfirmOpen: false,
         }
     }
 
@@ -41,10 +43,15 @@ class TimeJobButton extends Component {
         this.setState({customTimeRange, isCustomTimeRangeOpen: false})
     }
 
+    handleToggleConfirm = () => {
+        this.setState({isConfirmOpen: !this.state.isConfirmOpen})
+    }
+
     render() {
         const {
             isCustomTimeRangeOpen,
             customTimeRange,
+            isConfirmOpen,
         } = this.state
 
         const {
@@ -60,15 +67,17 @@ class TimeJobButton extends Component {
                 <div className={classnames(
                     'dropdown',
                     'dropdown-110', {
-                        'table--show-on-row-hover': !isCustomTimeRangeOpen,
+                        'table--show-on-row-hover': !(isCustomTimeRangeOpen||isConfirmOpen),
                         open: isCustomTimeRangeOpen,
                     })}>
                     {running ?
-                        (<button className="btn btn-xs btn-default"
-                            onClick={onStop}
-                            >
-                            {stopLabel}
-                        </button>)
+                        (<JobButton
+                            stopLabel={stopLabel}
+                            onStop={onStop}
+                            running={running}
+                            disabled={false}
+                            informParent={this.handleToggleConfirm}
+                        />)
                         : (<button className="btn btn-xs btn-default dropdown-toggle"
                             onClick={this.toggleMenu}
                             >
