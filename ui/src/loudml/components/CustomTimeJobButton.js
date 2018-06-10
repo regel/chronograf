@@ -4,14 +4,14 @@ import classnames from 'classnames'
 import moment from 'moment'
 
 import OnClickOutside from 'shared/components/OnClickOutside'
-import CustomTimeRangeOverlay from 'shared/components/CustomTimeRangeOverlay'
 
+import CustomTimeRange from 'src/loudml/components/CustomTimeRange'
 import JobButton from 'src/loudml/components/JobButton'
 const emptyTime = {lower: '', upper: ''}
 
 import 'src/loudml/styles/loudml.css'
 
-class TimeJobButton extends Component {
+class CustomTimeJobButton extends Component {
     constructor(props) {
         super(props)
         const {lower, upper} = props.selected
@@ -34,8 +34,8 @@ class TimeJobButton extends Component {
         this.setState({isCustomTimeRangeOpen: !this.state.isCustomTimeRangeOpen})
     }
     
-    handleClose = () => {}  // CustomTimeRangeOverlay
-    handleToggle = () => {} // CustomTimeRangeOverlay
+    // handleClose = () => {}  // CustomTimeRangeOverlay
+    // handleToggle = () => {} // CustomTimeRangeOverlay
 
     handleApplyCustomTimeRange = customTimeRange => {
         const {onStart} = this.props
@@ -59,7 +59,9 @@ class TimeJobButton extends Component {
             stopLabel,
             onStop,
             running,
-            page,
+            // page,
+            shortcuts,
+            handleTimeRangeShortcut,
         } = this.props
 
         return (
@@ -89,29 +91,32 @@ class TimeJobButton extends Component {
                         </button>)}
                 </div>
                 {isCustomTimeRangeOpen ?
-                    (<CustomTimeRangeOverlay
-                        onApplyTimeRange={this.handleApplyCustomTimeRange}
-                        timeRange={customTimeRange}
-                        isVisible={isCustomTimeRangeOpen}
-                        onToggle={this.handleToggle}
-                        onClose={this.handleClose}
-                        page={page}
-                    />)
+                    (<div className="custom-time--overlay">
+                        <CustomTimeRange
+                            onApplyTimeRange={this.handleApplyCustomTimeRange}
+                            timeRange={customTimeRange}
+                            // isVisible={isCustomTimeRangeOpen}
+                            // onToggle={this.handleToggle}
+                            onClose={this.handleClose}
+                            // page={page}
+                            shortcuts={shortcuts}
+                            handleTimeRangeShortcut={handleTimeRangeShortcut}
+                        />
+                    </div>)
                 : null}
             </div>
         )
     }
 }
 
-TimeJobButton.defaultProps = {
-    page: 'default',
+CustomTimeJobButton.defaultProps = {
     selected: {
         lower: null,
         upper: null,
     },
 }
   
-TimeJobButton.propTypes = {
+CustomTimeJobButton.propTypes = {
     startLabel: PropTypes.string.isRequired,
     stopLabel: PropTypes.string.isRequired,
     onStart: PropTypes.func.isRequired,
@@ -121,7 +126,9 @@ TimeJobButton.propTypes = {
         lower: PropTypes.string,
         upper: PropTypes.string,
     }),
-    page: PropTypes.string,
+    // page: PropTypes.string,
+    shortcuts: PropTypes.arrayOf(PropTypes.shape({})),
+    handleTimeRangeShortcut: PropTypes.func,
 }
 
-export default OnClickOutside(TimeJobButton)
+export default OnClickOutside(CustomTimeJobButton)

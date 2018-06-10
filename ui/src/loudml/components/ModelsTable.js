@@ -8,17 +8,18 @@ class ModelsTable extends Component {
         super(props)
     }
 
-    onDelete = name => this.props.onDelete(name)
-
     renderTable() {
         const {
             source,
             models,
             jobs,
+            onDelete,
             onPredict,
-            onTrain,
             onStop,
+            onTrain,
             onStopTrain,
+            onForecast,
+            onStopForecast,
         } = this.props
     
         return (
@@ -38,11 +39,13 @@ class ModelsTable extends Component {
                                 model={model}
                                 jobs={jobs}
                                 source={source}
-                                onStop={onStop}
+                                onDelete={onDelete}
                                 onStart={onPredict}
+                                onStop={onStop}
                                 onTrain={onTrain}
                                 onStopTrain={onStopTrain}
-                                onDelete={this.onDelete}
+                                onForecast={onForecast}
+                                onStopForecast={onStopForecast}
                             />
                         )
                     }, this)}
@@ -115,10 +118,11 @@ ModelsTable.propTypes = {
     }).isRequired,
     onDelete: func.isRequired,
     onPredict: func.isRequired,
-    onTrain: func.isRequired,
-    onForecast: func.isRequired,
     onStop: func.isRequired,
+    onTrain: func.isRequired,
     onStopTrain: func.isRequired,
+    onForecast: func.isRequired,
+    onStopForecast: func.isRequired,
 }
 
 export default ModelsTable

@@ -5,8 +5,7 @@ import {Link} from 'react-router'
 import DeleteConfirmTableCell from 'src/shared/components/DeleteConfirmTableCell'
 
 import ModelStatus from 'src/loudml/components/ModelStatus'
-import JobButton from 'src/loudml/components/JobButton'
-import TimeJobButton from 'src/loudml/components/TimeJobButton'
+import ModelActions from 'src/loudml/components/ModelActions'
 
 import 'src/loudml/styles/loudml.css'
 
@@ -19,11 +18,9 @@ const ModelsRow = ({
     onTrain,
     onDelete,
     onStopTrain,
+    onForecast,
+    onStopForecast,
 }) => {
-    function handleOnTrain(lower, upper) {
-        onTrain(model.settings.name, lower, upper)
-    }
-
     return (
         <tr>
             <td>
@@ -37,27 +34,16 @@ const ModelsRow = ({
                 />
             </td>
             <td className="text-right">
-                <div className="jobs-container">
-                    <JobButton
-                        startLabel='Predict'
-                        stopLabel='Stop prediction'
-                        onStart={onStart(model.settings.name)}
-                        onStop={onStop(model.settings.name)}
-                        running={model.settings.run!==undefined}
-                        disabled={model.state.trained===false
-                            &&model.settings.run===undefined}
-                    />
-                    <TimeJobButton
-                        startLabel='Train'
-                        stopLabel='Stop train'
-                        onStart={handleOnTrain}
-                        onStop={onStopTrain(model.settings.name)}
-                        running={
-                            (model.training&&model.training.state==='running')
-                            || jobs.filter(job => job.name === model.settings.name).length !== 0
-                        }
-                    />
-                </div>
+                <ModelActions
+                    model={model}
+                    jobs={jobs}
+                    onStart={onStart}
+                    onStop={onStop}
+                    onTrain={onTrain}
+                    onStopTrain={onStopTrain}
+                    onForecast={onForecast}
+                    onStopForecast={onStopForecast}
+                />
             </td>
             <DeleteConfirmTableCell
                 onDelete={onDelete(model.settings.name)}
@@ -67,17 +53,18 @@ const ModelsRow = ({
         </tr>
     )
 }
-/*
-*/
+
 ModelsRow.propTypes = {
     source: PropTypes.shape().isRequired,
     model: PropTypes.shape({}),
     jobs: PropTypes.arrayOf(PropTypes.shape({})),
+    onDelete: PropTypes.func.isRequired,
+    onStart: PropTypes.func.isRequired,
     onStop: PropTypes.func.isRequired,
     onTrain: PropTypes.func.isRequired,
-    onStart: PropTypes.func.isRequired,
-    onDelete: PropTypes.func.isRequired,
     onStopTrain: PropTypes.func.isRequired,
+    onForecast: PropTypes.func.isRequired,
+    onStopForecast: PropTypes.func.isRequired,
 }
 
 export default ModelsRow
