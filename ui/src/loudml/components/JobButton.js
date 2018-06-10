@@ -13,7 +13,8 @@ class JobButton extends Component {
     }
 
     handleClickOutside = () => {
-        const {expanded, informParent} = this.state
+        const {expanded} = this.state
+        const {informParent} = this.props
     
         if (expanded === false) {
           return

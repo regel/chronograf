@@ -79,15 +79,15 @@ class LoudMLPage extends Component {
     }
 
     componentWillUnmount() {
-        clearInterval(this.fetchModelsID)
-        this.fetchModelsID = false
-        clearInterval(this.jobFetchID)
-        this.jobFetchID = false
-        clearInterval(this.jobStatusID)
-        this.jobStatusID = false
         if (this._asyncRequest) {
             this._asyncRequest.cancel();
         }
+        clearInterval(this.fetchModelsID)
+        this.fetchModelsID = false
+        clearInterval(this.jobStatusID)
+        this.jobStatusID = false
+        clearInterval(this.jobFetchID)
+        this.jobFetchID = false
     }
 
     notifyJobsState() {
@@ -176,7 +176,7 @@ class LoudMLPage extends Component {
                 notify(notifySucessCallback(job))
             })
             .catch(error => {
-                notify(notifyErrorCallback({name}, this._parseError(error)))
+                notify(notifyErrorCallback(name, this._parseError(error)))
             })
     }
 
@@ -199,10 +199,11 @@ class LoudMLPage extends Component {
         )
     }
 
-    forecastModel = (name, from, to) => () => {
+    forecastModel = (name, from, to) => {
+        const {fromT, toT} = this._convertTime(from, to)
         this.startJob(
             name,
-            api.forecastModel(name, from, to),
+            api.forecastModel(name, fromT, toT),
             'forecast',
             notifyModelForecasting,
             notifyModelForecastingFailed,
@@ -233,20 +234,18 @@ class LoudMLPage extends Component {
             })
     }
 
-    stopTrain = name => () => {
+    stopJob = (name, id) => {
         const {
             notify,
-            models,
+            modelActions: {jobStop},
+            jobs,
         } = this.props
 
-        // get job
-        const id = models
-            .find(model => model.settings.name === name)
-            .training
-            .job_id
+        const job = jobs.find(i => i.id === id)
 
         api.stopJob(id)
             .then(() => {
+                jobStop(job)
                 notify(notifyJobStopped(name))
             })
             .catch(error => {
@@ -254,6 +253,20 @@ class LoudMLPage extends Component {
             })
     }
 
+    stopTrain = name => () => {
+        const {models} = this.props
+
+        // get job
+        const id = models
+            .find(model => model.settings.name === name)
+            .training
+            .job_id
+        this.stopJob(name, id)
+    }
+
+    stopForecast = name => () => {
+        console.log('stop forecast', name)
+    }
 
     render() {
         const {isFetching, models, jobs, source} = this.props
@@ -284,10 +297,11 @@ class LoudMLPage extends Component {
                                     jobs={jobs}
                                     onDelete={this.deleteModel}
                                     onPredict={this.predictModel}
-                                    onTrain={this.trainModel}
-                                    onForecast={this.forecastModel}
                                     onStop={this.stopModel}
+                                    onTrain={this.trainModel}
                                     onStopTrain={this.stopTrain}
+                                    onForecast={this.forecastModel}
+                                    onStopForecast={this.stopForecast}
                                 />
                             </div>
                         </div>
