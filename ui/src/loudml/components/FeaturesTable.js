@@ -11,7 +11,7 @@ const FeaturesTable = ({features, onDelete, onEdit}) => (
                 <th>Field</th>
                 <th>Metric</th>
                 <th>Default value</th>
-                <th className="admin-table--left-offset">I/O</th>
+                <th className="admin-table--left-offset">Input/Output</th>
                 <th/>
             </tr>
         </thead>

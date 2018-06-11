@@ -265,7 +265,13 @@ class LoudMLPage extends Component {
     }
 
     stopForecast = name => () => {
-        console.log('stop forecast', name)
+        const {jobs} = this.props
+
+        // get job
+        const id = jobs
+            .find(job => job.name === name && job.type === 'forecast')
+            .id
+        this.stopJob(name, id)
     }
 
     render() {

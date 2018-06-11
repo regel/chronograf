@@ -64,13 +64,13 @@ const Feature = ({
                     style={{width: '100px'}}
                 />
             </td>
-            <td style={{width: '100px'}}>
+            <td>
                 <Dropdown
                     name="metric"
                     onChoose={handleMetricChoose}
                     items={DEFAULT_METRICS.map(m => ({text: m}))}
                     selected={feature.metric}
-                    className="dropdown-stretch"
+                    className="dropdown-80"
                     buttonSize="btn-xs"
                 />
             </td>
@@ -91,7 +91,7 @@ const Feature = ({
                     onChoose={handleIOChoose}
                     items={DEFAULT_IO.map(m => ({text: m}))}
                     selected={feature.io}
-                    className="dropdown-stretch"
+                    className="dropdown-80"
                     buttonSize="btn-xs"
                 />
             </td>

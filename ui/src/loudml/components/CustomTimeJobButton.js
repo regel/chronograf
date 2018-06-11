@@ -34,9 +34,6 @@ class CustomTimeJobButton extends Component {
         this.setState({isCustomTimeRangeOpen: !this.state.isCustomTimeRangeOpen})
     }
     
-    // handleClose = () => {}  // CustomTimeRangeOverlay
-    // handleToggle = () => {} // CustomTimeRangeOverlay
-
     handleApplyCustomTimeRange = customTimeRange => {
         const {onStart} = this.props
         onStart(customTimeRange.lower, customTimeRange.upper)
@@ -59,9 +56,9 @@ class CustomTimeJobButton extends Component {
             stopLabel,
             onStop,
             running,
-            // page,
             shortcuts,
             handleTimeRangeShortcut,
+            disabled,
         } = this.props
 
         return (
@@ -77,11 +74,12 @@ class CustomTimeJobButton extends Component {
                             stopLabel={stopLabel}
                             onStop={onStop}
                             running={running}
-                            disabled={false}
+                            disabled={disabled}
                             informParent={this.handleToggleConfirm}
                         />)
                         : (<button className="btn btn-xs btn-default dropdown-toggle"
                             onClick={this.toggleMenu}
+                            disabled={disabled}
                             >
                             <span className="icon clock" />
                             <span className="dropdown-selected">
@@ -95,10 +93,7 @@ class CustomTimeJobButton extends Component {
                         <CustomTimeRange
                             onApplyTimeRange={this.handleApplyCustomTimeRange}
                             timeRange={customTimeRange}
-                            // isVisible={isCustomTimeRangeOpen}
-                            // onToggle={this.handleToggle}
                             onClose={this.handleClose}
-                            // page={page}
                             shortcuts={shortcuts}
                             handleTimeRangeShortcut={handleTimeRangeShortcut}
                         />
@@ -114,6 +109,7 @@ CustomTimeJobButton.defaultProps = {
         lower: null,
         upper: null,
     },
+    disabled: false,
 }
   
 CustomTimeJobButton.propTypes = {
@@ -126,9 +122,9 @@ CustomTimeJobButton.propTypes = {
         lower: PropTypes.string,
         upper: PropTypes.string,
     }),
-    // page: PropTypes.string,
     shortcuts: PropTypes.arrayOf(PropTypes.shape({})),
     handleTimeRangeShortcut: PropTypes.func,
+    disabled: PropTypes.bool,
 }
 
 export default OnClickOutside(CustomTimeJobButton)
