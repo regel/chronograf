@@ -31,6 +31,7 @@ const ModelsRow = ({
             <td>
                 <ModelStatus
                     model={model}
+                    jobs={jobs}
                 />
             </td>
             <td className="text-right">

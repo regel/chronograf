@@ -78,7 +78,7 @@ class CustomTimeRange extends Component {
     this.lowerCal.show()
     this.upperCal.show()
   }
-
+/*
   componentWillReceiveProps(nextProps) {
     const {lower, upper} = nextProps.timeRange
     if (lower) {
@@ -93,7 +93,7 @@ class CustomTimeRange extends Component {
       this.upper.value = formattedUpper
     }
   }
-
+*/
   getInitialDate = time => {
     const {upper, lower} = this.props.timeRange
 
