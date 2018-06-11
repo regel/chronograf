@@ -37,7 +37,7 @@ class ModelsTable extends Component {
                         return (
                             <ModelsRow key={model.settings.name}
                                 model={model}
-                                jobs={jobs}
+                                jobs={jobs.filter(job => job.name === model.settings.name)}
                                 source={source}
                                 onDelete={onDelete}
                                 onStart={onPredict}

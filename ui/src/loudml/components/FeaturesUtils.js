@@ -1,21 +1,24 @@
+// import {DEFAULT_IO} from 'src/loudml/constants'
+
 export default class {
     static deserializeFeature(feature, direction) {
+        // const io = DEFAULT_IO.find(item => item.value === direction)
         return Object.assign({}, feature, {'io': direction})
     }
 
     static deserializedFeatures(features) {
         const i = (features.i
-            ?features.i.map(feature => this.deserializeFeature(feature, 'i'))
+            ?features.i.map(feature => this.deserializeFeature(feature, 'in'))
             :[])
         const o = (features.o
-            ?features.o.map(feature => this.deserializeFeature(feature, 'o'))
+            ?features.o.map(feature => this.deserializeFeature(feature, 'out'))
             :[])
         const io = (features.io
-            ?features.io.map(feature => this.deserializeFeature(feature, 'i/o'))
+            ?features.io.map(feature => this.deserializeFeature(feature, 'in/out'))
             :[])
         const localFeatures = (
         Array.isArray(features)
-        ? features.map(feature => this.deserializeFeature(feature, 'i/o'))
+        ? features.map(feature => this.deserializeFeature(feature, 'in/out'))
         : [ // expand object features
             ...i,
             ...o,
@@ -46,15 +49,15 @@ export default class {
     }
 
     static iMap(feature) {
-        return feature.io==='i'
+        return feature.io==='in'
     }
 
     static oMap(feature) {
-        return feature.io==='o'
+        return feature.io==='out'
     }
 
     static ioMap(feature) {
-        return feature.io==='i/o'
+        return feature.io==='in/out'
     }
 
 }

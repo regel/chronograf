@@ -11,6 +11,7 @@ export const DEFAULT_MODEL = {
         weekday: false,
     },
     span: 5,
+    forecast: 2,
     type: 'timeseries',
 }
 
@@ -20,11 +21,11 @@ export const DEFAULT_FEATURE = {
     field: null,
     metric: 'avg',
     default: null,
-    io: 'i/o',
+    io: 'in/out',
 }
 
 export const DEFAULT_METRICS = ['avg', 'count', 'med', 'sum', 'min', 'max']
-export const DEFAULT_IO = ['i/o', 'i', 'o']
+export const DEFAULT_IO = [ 'in/out', 'in', 'out' ]
 
 export const MODEL_CREATED = 'MODEL_CREATED';
 export const MODEL_UPDATED = 'MODEL_UPDATED';

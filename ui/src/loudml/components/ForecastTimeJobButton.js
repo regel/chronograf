@@ -38,6 +38,7 @@ const ForecastTimeJobButton = ({
     onStart,
     onStop,
     running,
+    disabled,
 }) => {
     function handleTimeRangeShortcut(shortcut) {
         const lower = moment()
@@ -85,6 +86,7 @@ const ForecastTimeJobButton = ({
             running={running}
             shortcuts={forecastTimeRangeDefaults}
             handleTimeRangeShortcut={handleTimeRangeShortcut}
+            disabled={disabled}
         />
     );
   }
@@ -95,6 +97,7 @@ ForecastTimeJobButton.propTypes = {
     onStart: PropTypes.func,
     onStop: PropTypes.func,
     running: PropTypes.bool,
+    disabled: PropTypes.bool,
 }
 
 export default ForecastTimeJobButton

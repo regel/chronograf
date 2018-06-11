@@ -39,10 +39,14 @@ const ModelActions = ({
                 stopLabel='Stop forecast'
                 onStart={handleOnForecast}
                 onStop={onStopForecast(model.settings.name)}
-                /* running={
-                    (model.training&&model.training.state==='running')
-                    || jobs.filter(job => job.name === model.settings.name).length !== 0
-                } */
+                disabled={model.state.trained===false}
+                running={
+                    jobs.filter(
+                        job =>
+                            job.name === model.settings.name
+                            && job.type === 'forecast'
+                    ).length !== 0
+                }
             />
             <TrainTimeJobButton
                 startLabel='Train'
@@ -51,7 +55,11 @@ const ModelActions = ({
                 onStop={onStopTrain(model.settings.name)}
                 running={
                     (model.training&&model.training.state==='running')
-                    || jobs.filter(job => job.name === model.settings.name).length !== 0
+                    || jobs.filter(
+                        job =>
+                            job.name === model.settings.name
+                            && job.type === 'training'
+                        ).length !== 0
                 }
             />
         </div>
