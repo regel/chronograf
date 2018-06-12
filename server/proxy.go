@@ -129,6 +129,7 @@ func (s *Service) LoudMLProxy(w http.ResponseWriter, r *http.Request) {
 		// Set the Host header of the original Kapacitor URL
 		req.Host = u.Host
 		req.URL = u
+		req.URL.RawQuery = r.URL.RawQuery
 	}
 
 	// Without a FlushInterval the HTTP Chunked response for loudml logs is
