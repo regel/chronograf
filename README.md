@@ -50,6 +50,6 @@ To start Chronograf in development mode:
 ```bash
 cd chronograf/ui
 npm install
-npm build
+yarn build:vendor
 yarn start:hmr
 ```
