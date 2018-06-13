@@ -84,7 +84,10 @@ export const forecastModel = (name, from, to) => {
     return AJAX({
         method: 'POST',
         url: `/loudml/api/models/${name}/_forecast`,
-        params: {from, to},
+        params: {
+            from,
+            to,
+            save_prediction: true},
         excludeBasepath: true,
     })
 }
