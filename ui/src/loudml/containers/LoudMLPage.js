@@ -1,7 +1,7 @@
 import React, {PropTypes, Component} from 'react'
 import {connect} from 'react-redux'
-import moment from 'moment'
 
+import moment from 'moment'
 import _ from 'lodash'
 
 import {errorThrown as errorThrownAction} from 'shared/actions/errors'
@@ -45,22 +45,6 @@ class LoudMLPage extends Component {
 
     }
 
-    _loadModels() {
-        const {
-            modelActions: {modelsLoaded},
-            notify
-        } = this.props
-
-        this._asyncRequest = api.getModels()
-        .then(res => {
-            this._asyncRequest = null;
-            modelsLoaded(res.data)
-        })
-        .catch(error => {
-            notify(notifyErrorGettingModels(this._parseError(error)))
-        })
-    }
-
     componentDidMount() {
         this._loadModels()
 
@@ -88,6 +72,22 @@ class LoudMLPage extends Component {
         this.jobStatusID = false
         clearInterval(this.jobFetchID)
         this.jobFetchID = false
+    }
+
+    _loadModels() {
+        const {
+            modelActions: {modelsLoaded},
+            notify
+        } = this.props
+
+        this._asyncRequest = api.getModels()
+        .then(res => {
+            this._asyncRequest = null;
+            modelsLoaded(res.data)
+        })
+        .catch(error => {
+            notify(notifyErrorGettingModels(this._parseError(error)))
+        })
     }
 
     notifyJobsState() {
@@ -318,25 +318,29 @@ class LoudMLPage extends Component {
     }
 }
 
+const {arrayOf, func, shape, bool} = PropTypes
+
 LoudMLPage.propTypes = {
-    source: PropTypes.shape({}),
-    models: PropTypes.arrayOf(PropTypes.shape()).isRequired,
-    isFetching: PropTypes.bool.isRequired,
-    jobs: PropTypes.arrayOf(PropTypes.shape()).isRequired,
-    modelActions: PropTypes.shape({
-        modelsLoaded: PropTypes.func.isRequired,
-        modelDeleted: PropTypes.func.isRequired,
-        jobStart: PropTypes.func.isRequired,
-        jobStop: PropTypes.func.isRequired,
-        jobsUpdate: PropTypes.func.isRequired,
+    source: shape({}),
+    models: arrayOf(shape()).isRequired,
+    isFetching: bool.isRequired,
+    jobs: arrayOf(shape()).isRequired,
+    modelActions: shape({
+        modelsLoaded: func.isRequired,
+        modelDeleted: func.isRequired,
+        jobStart: func.isRequired,
+        jobStop: func.isRequired,
+        jobsUpdate: func.isRequired,
     }).isRequired,
-    notify: PropTypes.func.isRequired,
-    errorThrown: PropTypes.func.isRequired,
+    notify: func.isRequired,
+    errorThrown: func.isRequired,
 }
 
 function mapStateToProps(state) {
     const { isFetching, models } = state.loudml.models
     const { jobs } = state.loudml.jobs
+
+    models.sort((a, b) => a.settings.name > b.settings.name)
 
     return {
         models,
