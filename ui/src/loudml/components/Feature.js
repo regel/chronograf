@@ -70,7 +70,7 @@ const Feature = ({
                     onChoose={handleMetricChoose}
                     items={DEFAULT_METRICS.map(m => ({text: m}))}
                     selected={feature.metric}
-                    className="dropdown-80"
+                    className="dropdown-100"
                     buttonSize="btn-xs"
                 />
             </td>
