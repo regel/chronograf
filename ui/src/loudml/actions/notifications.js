@@ -31,7 +31,7 @@ export const notifyModelDeleteFailed = (name, message) => notifyError(
     `cannot delete '${name}' model: ${message}`,
 )
 
-export const notifyModelCreated = () => notifySuccess("model created")
+export const notifyModelCreated = name => notifySuccess(`model ${name} created`)
 
 export const notifyModelCreationFailed = (name, message) => notifyError(
     INFINITE,
@@ -45,7 +45,7 @@ export const notifyModelUpdateFailed = (name, message) => notifyError(
     `cannot update '${name}' model: ${message}`,
 )
 
-export const notifyModelTraining = job => notifySuccess(`Training job ${job.name} queued`)
+export const notifyModelTraining = job => notifySuccess(`Training job for model '${job.name}' queued`)
 
 export const notifyModelTrainingFailed = (name, message) => notifyError(
     INFINITE,
