@@ -210,7 +210,7 @@ class LoudMLPage extends Component {
         )
     }
 
-    predictModel = name => () => {
+    startModel = name => () => {
         const {notify} = this.props
 
         api.startModel(name)
@@ -302,7 +302,7 @@ class LoudMLPage extends Component {
                                     models={models}
                                     jobs={jobs}
                                     onDelete={this.deleteModel}
-                                    onPredict={this.predictModel}
+                                    onStart={this.startModel}
                                     onStop={this.stopModel}
                                     onTrain={this.trainModel}
                                     onStopTrain={this.stopTrain}
