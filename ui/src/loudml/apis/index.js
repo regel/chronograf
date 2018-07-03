@@ -96,7 +96,10 @@ export const startModel = name => {
     return AJAX({
         method: 'POST',
         url: `/loudml/api/models/${name}/_start`,
-        params: {save_prediction: true},
+        params: {
+            save_prediction: true,
+            detect_anomalies: true,
+        },
         excludeBasepath: true,
     })
 }
@@ -105,7 +108,7 @@ export const stopModel = name => {
     return AJAX({
         method: 'POST',
         url: `/loudml/api/models/${name}/_stop`,
-        params: {save_prediction: true},
+        // params: {save_prediction: true},
         excludeBasepath: true,
     })
 }
