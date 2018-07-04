@@ -521,6 +521,45 @@ const GRAPH_SVGS: GraphSVGs = {
       </svg>
     </div>
   ),
+  'confident-line': (
+    <div className="viz-type-selector--graphic">
+      <svg
+        width="100%"
+        height="100%"
+        version="1.1"
+        id="ConfidentLine"
+        x="0px"
+        y="0px"
+        viewBox="0 0 150 150"
+        preserveAspectRatio="none meet"
+      >
+        <polygon
+          className="viz-type-selector--graphic-fill graphic-fill-a"
+          points="148,25 111.5,25 75,46 38.5,39.1 2,85.5 2,125 148,125 	"
+        />
+        <polyline
+          className="viz-type-selector--graphic-line graphic-line-a"
+          points="2,85.5 38.5,39.1 75,46 111.5,25 148,25 	"
+        />
+        <polygon
+          className="viz-type-selector--graphic-fill graphic-fill-b"
+          points="148,53 111.5,49.9 75,88.5 38.5,71 2,116 2,125 148,125 	"
+        />
+        <polyline
+          className="viz-type-selector--graphic-line graphic-line-b"
+          points="2,116 38.5,71 75,88.5 111.5,49.9 148,53 	"
+        />
+        <polygon
+          className="viz-type-selector--graphic-fill graphic-fill-c"
+          points="148,86.2 111.5,88.6 75,108.6 38.5,98 2,121.1 2,125 148,125 	"
+        />
+        <polyline
+          className="viz-type-selector--graphic-line graphic-line-c"
+          points="2,121.1 38.5,98 75,108.6 111.5,88.6 148,86.2 	"
+        />
+      </svg>
+    </div>
+  ),
 }
 
 interface GraphType {
@@ -568,5 +607,10 @@ export const GRAPH_TYPES: GraphType[] = [
     type: CellType.Table,
     menuOption: 'Table',
     graphic: GRAPH_SVGS[CellType.Table],
+  },
+  {
+    type: CellType.Error,
+    menuOption: 'Error',
+    graphic: GRAPH_SVGS[CellType.Error],
   },
 ]
