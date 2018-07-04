@@ -6,13 +6,10 @@ import GeneralPanel from 'src/loudml/components/GeneralPanel'
 import ParametersPanel from 'src/loudml/components/ParametersPanel'
 import FeaturesPanel from 'src/loudml/components/FeaturesPanel'
 import PredictionPanel from 'src/loudml/components/PredictionPanel'
+// import InfoPanel from 'src/loudml/components/InfoPanel'
 
 const ModelTabs = ({
     model,
-    // source,
-    // onSave,
-    // onTrain,
-    // onStart,
     onDatasourceChoose,
     onInputChange,
     isCreating,
@@ -55,7 +52,15 @@ const ModelTabs = ({
                     onInputChange={onInputChange}
                 />
             )
-        }
+        },
+/*        {
+            type: 'Infos',
+            component: (
+                <InfoPanel
+                    model={model}
+                />
+            )
+        },*/
     ]
 
     return (

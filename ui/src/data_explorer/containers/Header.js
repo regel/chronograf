@@ -7,6 +7,8 @@ import TimeRangeDropdown from 'shared/components/TimeRangeDropdown'
 import SourceIndicator from 'shared/components/SourceIndicator'
 import GraphTips from 'shared/components/GraphTips'
 
+import OneClickML from 'src/loudml/components/OneClickML'
+
 const {func, number, shape, string} = PropTypes
 
 const Header = ({
@@ -25,6 +27,7 @@ const Header = ({
       <div className="page-header__right">
         <GraphTips />
         <SourceIndicator />
+        <OneClickML />
         <div
           className="btn btn-sm btn-default"
           onClick={showWriteForm}
