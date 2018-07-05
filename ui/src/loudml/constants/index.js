@@ -1,3 +1,5 @@
+import {INFLUXQL_FUNCTIONS} from 'src/data_explorer/constants'
+
 export const DEFAULT_MODEL = {
     bucket_interval: '20m',
     default_datasource: null,
@@ -24,7 +26,14 @@ export const DEFAULT_FEATURE = {
     io: 'in/out',
 }
 
-export const DEFAULT_METRICS = ['avg', 'count', 'med', 'sum', 'min', 'max']
+export const DEFAULT_METRICS = [
+    ...INFLUXQL_FUNCTIONS,
+    'mode',
+    '5percentile',
+    '10percentile',
+    '90percentile',
+    '95percentile',
+    ]
 export const DEFAULT_IO = [ 'in/out', 'in', 'out' ]
 
 export const MODEL_CREATED = 'MODEL_CREATED';

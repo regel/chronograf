@@ -14,7 +14,7 @@ class ModelsTable extends Component {
             models,
             jobs,
             onDelete,
-            onPredict,
+            onStart,
             onStop,
             onTrain,
             onStopTrain,
@@ -40,7 +40,7 @@ class ModelsTable extends Component {
                                 jobs={jobs.filter(job => job.name === model.settings.name)}
                                 source={source}
                                 onDelete={onDelete}
-                                onStart={onPredict}
+                                onStart={onStart}
                                 onStop={onStop}
                                 onTrain={onTrain}
                                 onStopTrain={onStopTrain}
@@ -117,7 +117,7 @@ ModelsTable.propTypes = {
         name: string.isRequired,
     }).isRequired,
     onDelete: func.isRequired,
-    onPredict: func.isRequired,
+    onStart: func.isRequired,
     onStop: func.isRequired,
     onTrain: func.isRequired,
     onStopTrain: func.isRequired,

@@ -26,8 +26,8 @@ const ModelActions = ({
     return (
         <div className="jobs-container">
             <JobButton
-                startLabel='Predict'
-                stopLabel='Stop prediction'
+                startLabel='Play'
+                stopLabel='Stop'
                 onStart={onStart(model.settings.name)}
                 onStop={onStop(model.settings.name)}
                 running={model.settings.run!==undefined}
@@ -66,15 +66,17 @@ const ModelActions = ({
     )
 }
 
+const {arrayOf, func, shape} = PropTypes
+
 ModelActions.propTypes = {
-    model: PropTypes.shape({}).isRequired,
-    jobs: PropTypes.arrayOf(PropTypes.shape({})),
-    onStart: PropTypes.func.isRequired,
-    onStop: PropTypes.func.isRequired,
-    onTrain: PropTypes.func.isRequired,
-    onStopTrain: PropTypes.func.isRequired,
-    onForecast: PropTypes.func.isRequired,
-    onStopForecast: PropTypes.func.isRequired,
+    model: shape({}).isRequired,
+    jobs: arrayOf(PropTypes.shape({})),
+    onStart: func.isRequired,
+    onStop: func.isRequired,
+    onTrain: func.isRequired,
+    onStopTrain: func.isRequired,
+    onForecast: func.isRequired,
+    onStopForecast: func.isRequired,
 }
 
 export default ModelActions

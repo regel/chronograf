@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
-// import {withRouter} from 'react-router'
 import _ from 'lodash'
 
 import {notify as notifyAction} from 'shared/actions/notifications'
@@ -152,7 +151,7 @@ class ModelPage extends Component {
         updateModelApi(serial)
             .then(() => {
                 modelUpdated(model)
-                // this._redirect(modelFromServer)
+                this._redirect()
                 notify(notifyModelUpdated(model.name))
             })
             .catch(error => {

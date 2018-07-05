@@ -1,8 +1,5 @@
-// import {DEFAULT_IO} from 'src/loudml/constants'
-
 export default class {
     static deserializeFeature(feature, direction) {
-        // const io = DEFAULT_IO.find(item => item.value === direction)
         return Object.assign({}, feature, {'io': direction})
     }
 
