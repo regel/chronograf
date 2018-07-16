@@ -6,107 +6,107 @@ export const DEFAULT_CONFIDENT_CELL =
         "w": 12,
         "h": 4,
         // "name": "sin prediction",
-        "queries": [
-            {
-                "query": "SELECT mean(\"lower_sin1\") AS \"mean_lower_sin1\" FROM \"ecommerce\".\"autogen\".\"prediction_sin\" WHERE time > :dashboardTime: GROUP BY time(30m) FILL(null)",
-                "queryConfig": {
-                    "database": "ecommerce",
-                    "measurement": "prediction_sin",
-                    "retentionPolicy": "autogen",
-                    "fields": [
-                        {
-                            "value": "mean",
-                            "type": "func",
-                            "alias": "mean_lower_sin1",
-                            "args": [
-                                {
-                                    "value": "lower_sin1",
-                                    "type": "field",
-                                    "alias": ""
-                                }
-                            ]
-                        }
-                    ],
-                    "tags": {},
-                    "groupBy": {
-                        "time": "30m",
-                        "tags": []
-                    },
-                    "areTagsAccepted": false,
-                    "fill": "null",
-                    "rawText": null,
-                    "range": null,
-                    "shifts": null
-                },
-                // "source": "/chronograf/v1/sources/4"
-            },
-            {
-                "query": "SELECT mean(\"sin1\") AS \"mean_sin1\" FROM \"ecommerce\".\"autogen\".\"prediction_sin\" WHERE time > :dashboardTime: GROUP BY time(30m) FILL(null)",
-                "queryConfig": {
-                    "database": "ecommerce",
-                    "measurement": "prediction_sin",
-                    "retentionPolicy": "autogen",
-                    "fields": [
-                        {
-                            "value": "mean",
-                            "type": "func",
-                            "alias": "mean_sin1",
-                            "args": [
-                                {
-                                    "value": "sin1",
-                                    "type": "field",
-                                    "alias": ""
-                                }
-                            ]
-                        }
-                    ],
-                    "tags": {},
-                    "groupBy": {
-                        "time": "30m",
-                        "tags": []
-                    },
-                    "areTagsAccepted": false,
-                    "fill": "null",
-                    "rawText": null,
-                    "range": null,
-                    "shifts": null
-                },
-                // "source": "/chronograf/v1/sources/4"
-            },
-            {
-                "query": "SELECT mean(\"upper_sin1\") AS \"mean_upper_sin1\" FROM \"ecommerce\".\"autogen\".\"prediction_sin\" WHERE time > :dashboardTime: GROUP BY time(30m) FILL(null)",
-                "queryConfig": {
-                    "database": "ecommerce",
-                    "measurement": "prediction_sin",
-                    "retentionPolicy": "autogen",
-                    "fields": [
-                        {
-                            "value": "mean",
-                            "type": "func",
-                            "alias": "mean_upper_sin1",
-                            "args": [
-                                {
-                                    "value": "upper_sin1",
-                                    "type": "field",
-                                    "alias": ""
-                                }
-                            ]
-                        }
-                    ],
-                    "tags": {},
-                    "groupBy": {
-                        "time": "30m",
-                        "tags": []
-                    },
-                    "areTagsAccepted": false,
-                    "fill": "null",
-                    "rawText": null,
-                    "range": null,
-                    "shifts": null
-                },
-                "source": "/chronograf/v1/sources/4"
-            }
-        ],
+        // "queries": [
+        //     {
+        //         "query": "SELECT mean(\"lower_sin1\") AS \"mean_lower_sin1\" FROM \"ecommerce\".\"autogen\".\"prediction_sin\" WHERE time > :dashboardTime: GROUP BY time(30m) FILL(null)",
+        //         "queryConfig": {
+        //             "database": "ecommerce",
+        //             "measurement": "prediction_sin",
+        //             "retentionPolicy": "autogen",
+        //             "fields": [
+        //                 {
+        //                     "value": "mean",
+        //                     "type": "func",
+        //                     "alias": "mean_lower_sin1",
+        //                     "args": [
+        //                         {
+        //                             "value": "lower_sin1",
+        //                             "type": "field",
+        //                             "alias": ""
+        //                         }
+        //                     ]
+        //                 }
+        //             ],
+        //             "tags": {},
+        //             "groupBy": {
+        //                 "time": "30m",
+        //                 "tags": []
+        //             },
+        //             "areTagsAccepted": false,
+        //             "fill": "null",
+        //             "rawText": null,
+        //             "range": null,
+        //             "shifts": null
+        //         },
+        //         // "source": "/chronograf/v1/sources/4"
+        //     },
+        //     {
+        //         "query": "SELECT mean(\"sin1\") AS \"mean_sin1\" FROM \"ecommerce\".\"autogen\".\"prediction_sin\" WHERE time > :dashboardTime: GROUP BY time(30m) FILL(null)",
+        //         "queryConfig": {
+        //             "database": "ecommerce",
+        //             "measurement": "prediction_sin",
+        //             "retentionPolicy": "autogen",
+        //             "fields": [
+        //                 {
+        //                     "value": "mean",
+        //                     "type": "func",
+        //                     "alias": "mean_sin1",
+        //                     "args": [
+        //                         {
+        //                             "value": "sin1",
+        //                             "type": "field",
+        //                             "alias": ""
+        //                         }
+        //                     ]
+        //                 }
+        //             ],
+        //             "tags": {},
+        //             "groupBy": {
+        //                 "time": "30m",
+        //                 "tags": []
+        //             },
+        //             "areTagsAccepted": false,
+        //             "fill": "null",
+        //             "rawText": null,
+        //             "range": null,
+        //             "shifts": null
+        //         },
+        //         // "source": "/chronograf/v1/sources/4"
+        //     },
+        //     {
+        //         "query": "SELECT mean(\"upper_sin1\") AS \"mean_upper_sin1\" FROM \"ecommerce\".\"autogen\".\"prediction_sin\" WHERE time > :dashboardTime: GROUP BY time(30m) FILL(null)",
+        //         "queryConfig": {
+        //             "database": "ecommerce",
+        //             "measurement": "prediction_sin",
+        //             "retentionPolicy": "autogen",
+        //             "fields": [
+        //                 {
+        //                     "value": "mean",
+        //                     "type": "func",
+        //                     "alias": "mean_upper_sin1",
+        //                     "args": [
+        //                         {
+        //                             "value": "upper_sin1",
+        //                             "type": "field",
+        //                             "alias": ""
+        //                         }
+        //                     ]
+        //                 }
+        //             ],
+        //             "tags": {},
+        //             "groupBy": {
+        //                 "time": "30m",
+        //                 "tags": []
+        //             },
+        //             "areTagsAccepted": false,
+        //             "fill": "null",
+        //             "rawText": null,
+        //             "range": null,
+        //             "shifts": null
+        //         },
+        //         "source": "/chronograf/v1/sources/4"
+        //     }
+        // ],
         "axes": {
             "x": {
                 "bounds": [
@@ -175,8 +175,8 @@ export const DEFAULT_CONFIDENT_DASHBOARD =
     "templates": [],
     // "name": "sin",
     "organization": "default",
-    "links": {
-        "self": "/chronograf/v1/dashboards/4",
-        "cells": "/chronograf/v1/dashboards/4/cells",
-    }
+    // "links": {
+    //     "self": "/chronograf/v1/dashboards/4",
+    //     "cells": "/chronograf/v1/dashboards/4/cells",
+    // }
 }

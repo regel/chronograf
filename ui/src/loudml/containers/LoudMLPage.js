@@ -48,6 +48,7 @@ import {
     DEFAULT_CONFIDENT_DASHBOARD,
     DEFAULT_CONFIDENT_CELL
 } from 'src/loudml/constants/dashboard';
+import { getSources } from '../../shared/apis';
 
 class LoudMLPage extends Component {
     constructor(props) {
@@ -285,12 +286,12 @@ class LoudMLPage extends Component {
         this.stopJob(name, id)
     }
 
-    createOrUpdateConfident = (dashboard, model) => {
-        const {source: {links: {self}}} = this.props
+    createOrUpdateConfident = (dashboard, model, source, database) => {
+        // const {source} = this.props
         const {settings: {name}} = model
         const cellName = `${name} prediction`
         // const sourceName = `/chronograf/v1/sources/${id}`
-        const queries = createQueryFromModel(model)
+        const queries = createQueryFromModel(model, source, database)
 
         let cell
         if (dashboard===undefined) {
@@ -303,7 +304,6 @@ class LoudMLPage extends Component {
                         ...DEFAULT_CONFIDENT_CELL,
                         name: cellName,
                         queries,
-                        source: self,
                     }
                 ]
             }
@@ -315,27 +315,27 @@ class LoudMLPage extends Component {
                 ...DEFAULT_CONFIDENT_CELL,
                 name: cellName,
                 queries,
-                source: self,
             }
             return addDashboardCell(dashboard, cell)
         }
         return updateDashboardCell({
             ...cell,
             queries,
-            source: self,
         })
     }
 
-    selectModelGraph = async (model, graph) => {
+    selectModelGraph = async (model) => {
         const {errorThrown} = this.props
         const {settings: {name}} = model
 
-        console.log(name, 'select graph', graph)
         try {
             const {data: {dashboards}} = await getDashboards()
             const dashboard = dashboards.find(item => item.name === name)
-            console.log('dashboard found', dashboard)
-            await this.createOrUpdateConfident(dashboard, model)
+            const {data} = await api.getDatasources()
+            const datasource = data.find(d => d.name === model.settings.default_datasource)
+            const {data: {sources}} = await getSources()
+            const source = sources.find(s => s.url.match(new RegExp(`${datasource.addr}`)))
+            this.createOrUpdateConfident(dashboard, model, source, datasource.database)
         } catch (error) {
             console.error(error)
             errorThrown(error)
