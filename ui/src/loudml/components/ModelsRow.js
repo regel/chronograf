@@ -6,6 +6,7 @@ import DeleteConfirmTableCell from 'src/shared/components/DeleteConfirmTableCell
 
 import ModelStatus from 'src/loudml/components/ModelStatus'
 import ModelActions from 'src/loudml/components/ModelActions'
+import DashboardDropdown from 'src/loudml/components/DashboardDropdown'
 
 import 'src/loudml/styles/loudml.css'
 
@@ -20,7 +21,9 @@ const ModelsRow = ({
     onStopTrain,
     onForecast,
     onStopForecast,
+    onSelectModelGraph,
 }) => {
+    
     return (
         <tr>
             <td>
@@ -32,6 +35,12 @@ const ModelsRow = ({
                 <ModelStatus
                     model={model}
                     jobs={jobs}
+                />
+            </td>
+            <td className="text-right">
+                <DashboardDropdown
+                    model={model}
+                    onChoose={onSelectModelGraph}
                 />
             </td>
             <td className="text-right">
@@ -55,17 +64,20 @@ const ModelsRow = ({
     )
 }
 
+const {shape, arrayOf, func} = PropTypes
+
 ModelsRow.propTypes = {
-    source: PropTypes.shape().isRequired,
-    model: PropTypes.shape({}),
-    jobs: PropTypes.arrayOf(PropTypes.shape({})),
-    onDelete: PropTypes.func.isRequired,
-    onStart: PropTypes.func.isRequired,
-    onStop: PropTypes.func.isRequired,
-    onTrain: PropTypes.func.isRequired,
-    onStopTrain: PropTypes.func.isRequired,
-    onForecast: PropTypes.func.isRequired,
-    onStopForecast: PropTypes.func.isRequired,
+    source: shape().isRequired,
+    model: shape({}),
+    jobs: arrayOf(shape({})),
+    onDelete: func.isRequired,
+    onStart: func.isRequired,
+    onStop: func.isRequired,
+    onTrain: func.isRequired,
+    onStopTrain: func.isRequired,
+    onForecast: func.isRequired,
+    onStopForecast: func.isRequired,
+    onSelectModelGraph: func.isRequired,
 }
 
 export default ModelsRow
