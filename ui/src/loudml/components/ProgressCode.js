@@ -18,7 +18,7 @@ const ProgressCode = ({
 
     return (
         <code style={{
-            borderBottom: '1px solid',
+            borderBottom: '2px solid',
             borderImage: borderStyle(),
         }}>
             {label}

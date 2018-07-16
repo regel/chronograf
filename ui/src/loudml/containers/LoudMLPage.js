@@ -6,12 +6,18 @@ import _ from 'lodash'
 
 import {errorThrown as errorThrownAction} from 'shared/actions/errors'
 import {notify as notifyAction} from 'shared/actions/notifications'
-import {errorThrown} from 'shared/actions/errors'
 import SourceIndicator from 'shared/components/SourceIndicator'
 import FancyScrollbar from 'shared/components/FancyScrollbar'
 
 import ModelsTable from 'src/loudml/components/ModelsTable'
 
+import {
+    getDashboards,
+    createDashboard,
+    addDashboardCell,
+    updateDashboardCell,
+} from 'src/dashboards/apis'
+import {createQueryFromModel} from 'src/loudml/utils/query'
 import * as api from 'src/loudml/apis'
 import {
     modelsLoaded as modelsLoadedAction,
@@ -38,6 +44,10 @@ import {
     notifyJobStopped,
     notifyJobStoppedFailed,
 } from 'src/loudml/actions/notifications'
+import {
+    DEFAULT_CONFIDENT_DASHBOARD,
+    DEFAULT_CONFIDENT_CELL
+} from 'src/loudml/constants/dashboard';
 
 class LoudMLPage extends Component {
     constructor(props) {
@@ -111,6 +121,7 @@ class LoudMLPage extends Component {
         const {
             jobs,
             modelActions: {jobsUpdate},
+            errorThrown,
         } = this.props
 
         if (!jobs || !jobs.length) {
@@ -274,6 +285,63 @@ class LoudMLPage extends Component {
         this.stopJob(name, id)
     }
 
+    createOrUpdateConfident = (dashboard, model) => {
+        const {source: {links: {self}}} = this.props
+        const {settings: {name}} = model
+        const cellName = `${name} prediction`
+        // const sourceName = `/chronograf/v1/sources/${id}`
+        const queries = createQueryFromModel(model)
+
+        let cell
+        if (dashboard===undefined) {
+            // create
+            dashboard = {
+                ...DEFAULT_CONFIDENT_DASHBOARD,
+                name,
+                cells: [
+                    {
+                        ...DEFAULT_CONFIDENT_CELL,
+                        name: cellName,
+                        queries,
+                        source: self,
+                    }
+                ]
+            }
+            return createDashboard(dashboard)
+        }
+        cell = dashboard.cells.find(item => item.name === cellName)
+        if (cell===undefined) {
+            cell = {
+                ...DEFAULT_CONFIDENT_CELL,
+                name: cellName,
+                queries,
+                source: self,
+            }
+            return addDashboardCell(dashboard, cell)
+        }
+        return updateDashboardCell({
+            ...cell,
+            queries,
+            source: self,
+        })
+    }
+
+    selectModelGraph = async (model, graph) => {
+        const {errorThrown} = this.props
+        const {settings: {name}} = model
+
+        console.log(name, 'select graph', graph)
+        try {
+            const {data: {dashboards}} = await getDashboards()
+            const dashboard = dashboards.find(item => item.name === name)
+            console.log('dashboard found', dashboard)
+            await this.createOrUpdateConfident(dashboard, model)
+        } catch (error) {
+            console.error(error)
+            errorThrown(error)
+        }
+    }
+
     render() {
         const {isFetching, models, jobs, source} = this.props
 
@@ -308,6 +376,7 @@ class LoudMLPage extends Component {
                                     onStopTrain={this.stopTrain}
                                     onForecast={this.forecastModel}
                                     onStopForecast={this.stopForecast}
+                                    onSelectModelGraph={this.selectModelGraph}
                                 />
                             </div>
                         </div>

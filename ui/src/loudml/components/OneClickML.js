@@ -83,7 +83,7 @@ const OneClickML = ({
           await createModelApi(model)
           modelCreated(model)
           notify(notifyModelCreated(model.name))
-          trainModel(model.name)
+          await trainModel(model.name)
         } catch (error) {
           console.error(error)
           notify(notifyModelCreationFailed(model.name, error))
