@@ -287,13 +287,10 @@ class LoudMLPage extends Component {
     }
 
     createOrUpdateConfident = (dashboard, model, source, database) => {
-        // const {source} = this.props
         const {settings: {name}} = model
         const cellName = `${name} prediction`
-        // const sourceName = `/chronograf/v1/sources/${id}`
         const queries = createQueryFromModel(model, source, database)
 
-        let cell
         if (dashboard===undefined) {
             // create
             dashboard = {
@@ -309,14 +306,13 @@ class LoudMLPage extends Component {
             }
             return createDashboard(dashboard)
         }
-        cell = dashboard.cells.find(item => item.name === cellName)
+        const cell = dashboard.cells.find(item => item.name === cellName)
         if (cell===undefined) {
-            cell = {
+            return addDashboardCell(dashboard, {
                 ...DEFAULT_CONFIDENT_CELL,
                 name: cellName,
                 queries,
-            }
-            return addDashboardCell(dashboard, cell)
+            })
         }
         return updateDashboardCell({
             ...cell,
