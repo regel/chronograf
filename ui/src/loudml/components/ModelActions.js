@@ -15,12 +15,12 @@ const ModelActions = ({
     onForecast,
     onStopForecast,
 }) => {
-    function handleOnTrain(lower, upper) {
-        onTrain(model.settings.name, lower, upper)
+    function handleOnTrain(timeRange) {
+        onTrain(model.settings.name, timeRange)
     }
 
-    function handleOnForecast(lower, upper) {
-        onForecast(model.settings.name, lower, upper)
+    function handleOnForecast(timeRange) {
+        onForecast(model.settings.name, timeRange)
     }
 
     return (

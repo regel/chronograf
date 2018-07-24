@@ -1,13 +1,20 @@
-import React from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
+import uuid from 'uuid'
+import classnames from 'classnames'
+
+import ReactTooltip from 'react-tooltip'
 
 import {notify as notifyAction} from 'shared/actions/notifications'
 // import {errorThrown as errorThrownAction} from 'shared/actions/errors'
 
+import {convertTimeRange} from 'src/loudml/utils/timerange'
+import {parseError} from 'src/loudml/utils/error'
 import {
     createModel as createModelApi,
     trainModel as trainModelApi,
+    getDatasources,
 } from 'src/loudml/apis'
 
 import {
@@ -30,20 +37,41 @@ const modelUID = () => {
     return number.toString(36).substr(2, 9); // 'xtis06h6'
 }
 
-const OneClickML = ({
-    timeRange,
-    settings,
-    modelActions: {
-        modelCreated,
-        jobStart,
-    },
-    notify,
-}) => {
-    const trainModel = async (name) => {
+const UNDEFINED_DATASOURCE = '<h1>LoudML Datasource:</h1><p>Unable to find LoudML datasource for selected database. Check configuration</p>'
+const SELECT_FEATURE = '<h1>Feature:</h1><p>Select one field</p>'
+const SELECT_BUCKET_INTERVAL = '<h1>Max Iterations:</h1><p>Select a \'Group by\' value</p>'
+
+class OneClickML extends Component {
+    constructor(props) {
+        super(props)
+    
+        this.state = {
+            datasource: null,
+            uuidTooltip: uuid.v4(),
+        }
+    }
+
+    componentDidMount() {
+        this._getDatasource()
+    }
+
+    componentDidUpdate(prevProps) {
+        // Typical usage (don't forget to compare props):
+        if (this.props.settings.database !== prevProps.settings.database) {
+            this._getDatasource();
+        }
+    }
+
+    _trainModel = async (name) => {
+        const {
+            timeRange,
+            modelActions: {jobStart},
+            notify,
+        } = this.props
         const {
             lower,
             upper
-        } = timeRange
+        } = convertTimeRange(timeRange)
         
         try {
             const res = await trainModelApi(name, lower, upper)
@@ -58,15 +86,31 @@ const OneClickML = ({
             notify(notifyModelTraining(job))
         } catch (error) {
             console.error(error)
-            notify(notifyModelTrainingFailed(name, error))
+            notify(notifyModelTrainingFailed(name, parseError(error)))
         }
     }
 
-    const createAndTrainModel = async () => {
+
+    _getDatasource = async () => {
+        const {settings: {database}} = this.props
+        const {data} = await getDatasources()
+        const datasource = data.find(d => d.database === database)
+        this.setState({datasource: datasource&&datasource.name})
+    }
+
+    _createAndTrainModel = async () => {
+        const {
+            settings,
+            modelActions: {modelCreated},
+            notify,
+        } = this.props
+        const {datasource} = this.state
         const model = {
             ...DEFAULT_MODEL,
+            max_evals: 10,
             name: modelUID(),
-            default_datasource: settings.database,
+            default_datasource: datasource,
+            bucket_interval: settings.groupBy.time,
             features: { io: settings.fields.map(
                 (field) => ({
                         name: field.alias,
@@ -83,24 +127,64 @@ const OneClickML = ({
           await createModelApi(model)
           modelCreated(model)
           notify(notifyModelCreated(model.name))
-          await trainModel(model.name)
+          await this._trainModel(model.name)
         } catch (error) {
           console.error(error)
-          notify(notifyModelCreationFailed(model.name, error))
+          notify(notifyModelCreationFailed(model.name, parseError(error)))
         }
     }
     
-    function oneClickModel() {
-        createAndTrainModel()
+    oneClickModel = () => {
+        if (this.isValid) {
+            this._createAndTrainModel()
+        }
     }
 
-    return (
-        <div className="btn btn-sm btn-default"
-          onClick={oneClickModel}>
-          <span className="icon loudml-bold">
-          </span>
-        </div>
-    )
+    get sourceNameTooltip() {
+        const {settings: {
+            fields,
+            groupBy,
+        }} = this.props
+        const {datasource} = this.state
+        const connection = (datasource ? `<h1>Connected to LoudML Datasource:</h1><p><code>${datasource}</code></p>` : UNDEFINED_DATASOURCE)
+        const features = (fields&&fields.length===1 ? `<h1>Feature:</h1><p><code>${fields[0].args[0].value}</code></p>` : SELECT_FEATURE)
+        const bucket = (groupBy&&groupBy.time&&groupBy.time!=='auto' ? `<h1>Max Iterations:</h1><p><code>${groupBy.time}</code></p>` : SELECT_BUCKET_INTERVAL)
+        return connection+features+bucket
+    }
+
+    get isValid() {
+        const {settings: {
+            fields,
+            groupBy,
+        }} = this.props
+        const {datasource} = this.state
+        return (datasource!==undefined)
+            && (fields&&fields.length===1)
+            && (groupBy&&groupBy.time&&groupBy.time!=='auto')
+    }
+
+    render() {
+        const {uuidTooltip} = this.state
+        return (
+            <div className={classnames('btn', 'btn-sm', 'btn-default', {
+                'disabled': !this.isValid,
+                })}
+                onClick={this.oneClickModel}
+                data-for={uuidTooltip}
+                data-tip={this.sourceNameTooltip}
+            >
+                <span className="icon loudml-bold" />
+                1-Click ML
+                <ReactTooltip
+                    id={uuidTooltip}
+                    effect="solid"
+                    html={true}
+                    place="left"
+                    class="influx-tooltip"
+                />
+            </div>
+        )
+    }
 }
 
 const {shape, func} = PropTypes
@@ -131,6 +215,7 @@ function mapStateToProps(state) {
             measurement: config.measurement,
             database: config.database,
             fields: config.fields,
+            groupBy: config.groupBy,
         },
     }
 }
