@@ -36,7 +36,7 @@ class CustomTimeJobButton extends Component {
     
     handleApplyCustomTimeRange = customTimeRange => {
         const {onStart} = this.props
-        onStart(customTimeRange.lower, customTimeRange.upper)
+        onStart(customTimeRange)
         this.setState({customTimeRange, isCustomTimeRangeOpen: false})
     }
 

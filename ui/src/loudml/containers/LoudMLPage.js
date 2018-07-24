@@ -1,9 +1,6 @@
 import React, {PropTypes, Component} from 'react'
 import {connect} from 'react-redux'
 
-import moment from 'moment'
-import _ from 'lodash'
-
 import {errorThrown as errorThrownAction} from 'shared/actions/errors'
 import {notify as notifyAction} from 'shared/actions/notifications'
 import SourceIndicator from 'shared/components/SourceIndicator'
@@ -18,7 +15,10 @@ import {
     updateDashboardCell,
 } from 'src/dashboards/apis'
 import {createQueryFromModel} from 'src/loudml/utils/query'
+import {convertTimeRange} from 'src/loudml/utils/timerange'
+import {parseError} from 'src/loudml/utils/error'
 import * as api from 'src/loudml/apis'
+import { getSources } from 'src/shared/apis';
 import {
     modelsLoaded as modelsLoadedAction,
     modelDeleted as modelDeletedAction,
@@ -48,7 +48,6 @@ import {
     DEFAULT_CONFIDENT_DASHBOARD,
     DEFAULT_CONFIDENT_CELL
 } from 'src/loudml/constants/dashboard';
-import { getSources } from '../../shared/apis';
 
 class LoudMLPage extends Component {
     constructor(props) {
@@ -97,7 +96,7 @@ class LoudMLPage extends Component {
             modelsLoaded(res.data)
         })
         .catch(error => {
-            notify(notifyErrorGettingModels(this._parseError(error)))
+            notify(notifyErrorGettingModels(parseError(error)))
         })
     }
 
@@ -143,10 +142,6 @@ class LoudMLPage extends Component {
             })
     }
 
-    _parseError = error => {
-        return _.get(error, ['data', 'message'], _.get(error, ['data'], error))
-    }
-
     deleteModel = name => () => {
         const {
             modelActions: {modelDeleted},
@@ -188,34 +183,26 @@ class LoudMLPage extends Component {
                 notify(notifySucessCallback(job))
             })
             .catch(error => {
-                notify(notifyErrorCallback(name, this._parseError(error)))
+                notify(notifyErrorCallback(name, parseError(error)))
             })
     }
 
-    _convertTime = (from, to) => {
-        const regex = /[ \(\)]/
-        return {
-            fromT: moment(from.replace(regex, '')).format('X'),
-            toT: moment(to.replace(regex, '')).format('X')
-        }
-    }
-
-    trainModel = (name, from, to) => {
-        const {fromT, toT} = this._convertTime(from, to)
+    trainModel = (name, timeRange) => {
+        const {lower, upper} = convertTimeRange(timeRange)
         this.startJob(
             name,
-            api.trainModel(name, fromT, toT),
+            api.trainModel(name, lower, upper),
             'training',
             notifyModelTraining,
             notifyModelTrainingFailed,
         )
     }
 
-    forecastModel = (name, from, to) => {
-        const {fromT, toT} = this._convertTime(from, to)
+    forecastModel = (name, timeRange) => {
+        const {lower, upper} = convertTimeRange(timeRange)
         this.startJob(
             name,
-            api.forecastModel(name, fromT, toT),
+            api.forecastModel(name, lower, upper),
             'forecast',
             notifyModelForecasting,
             notifyModelForecastingFailed,
@@ -230,7 +217,7 @@ class LoudMLPage extends Component {
                 notify(notifyModelStarting(name))
             })
             .catch(error => {
-                notify(notifyModelStartingFailed({name}, this._parseError(error)))
+                notify(notifyModelStartingFailed({name}, parseError(error)))
             })
     }
 
@@ -242,7 +229,7 @@ class LoudMLPage extends Component {
                 notify(notifyModelStopped(name))
             })
             .catch(error => {
-                notify(notifyModelStoppedFailed(name, this._parseError(error)))
+                notify(notifyModelStoppedFailed(name, parseError(error)))
             })
     }
 
@@ -261,7 +248,7 @@ class LoudMLPage extends Component {
                 notify(notifyJobStopped(name))
             })
             .catch(error => {
-                notify(notifyJobStoppedFailed(name, this._parseError(error)))
+                notify(notifyJobStoppedFailed(name, parseError(error)))
             })
     }
 
