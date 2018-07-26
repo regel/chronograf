@@ -94,8 +94,8 @@ const ParametersPanel = ({
 const {func, shape} = PropTypes
 
 ParametersPanel.propTypes = {
-  model: shape({}),
-  onInputChange: func.isRequired,
+    model: shape({}),
+    onInputChange: func.isRequired,
 }
 
 export default ParametersPanel

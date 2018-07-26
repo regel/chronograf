@@ -11,14 +11,15 @@ const FeaturesTable = ({features, onDelete, onEdit}) => (
                 <th>Field</th>
                 <th>Metric</th>
                 <th>Default value</th>
-                <th className="admin-table--left-offset">Input/Output</th>
+                <th>Input/Output</th>
+                <th className="admin-table--left-offset">Anomaly type</th>
                 <th/>
             </tr>
         </thead>
         <tbody>
-            {features.map((feature, index) =>
+            {features.map(feature =>
                 <Feature
-                    key={index}
+                    key={feature.name}
                     feature={feature}
                     onDelete={onDelete}
                     onEdit={onEdit}

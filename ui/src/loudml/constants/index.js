@@ -15,15 +15,18 @@ export const DEFAULT_MODEL = {
     span: 5,
     forecast: 2,
     type: 'timeseries',
+    min_threshold: 75,
+    max_threshold: 75,
 }
 
 export const DEFAULT_FEATURE = {
     name: null,
     measurement: null,
     field: null,
-    metric: 'avg',
+    metric: 'mean',
     default: null,
     io: 'in/out',
+    anomaly_type: 'low_high',
 }
 
 export const DEFAULT_METRICS = [

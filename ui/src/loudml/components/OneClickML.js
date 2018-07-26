@@ -39,7 +39,7 @@ const modelUID = () => {
 
 const UNDEFINED_DATASOURCE = '<h1>LoudML Datasource:</h1><p>Unable to find LoudML datasource for selected database. Check configuration</p>'
 const SELECT_FEATURE = '<h1>Feature:</h1><p>Select one field</p>'
-const SELECT_BUCKET_INTERVAL = '<h1>Max Iterations:</h1><p>Select a \'Group by\' value</p>'
+const SELECT_BUCKET_INTERVAL = '<h1>Aggregation interval:</h1><p>Select a \'Group by\' value</p>'
 
 class OneClickML extends Component {
     constructor(props) {
@@ -147,8 +147,8 @@ class OneClickML extends Component {
         }} = this.props
         const {datasource} = this.state
         const connection = (datasource ? `<h1>Connected to LoudML Datasource:</h1><p><code>${datasource}</code></p>` : UNDEFINED_DATASOURCE)
-        const features = (fields&&fields.length===1 ? `<h1>Feature:</h1><p><code>${fields[0].args[0].value}</code></p>` : SELECT_FEATURE)
-        const bucket = (groupBy&&groupBy.time&&groupBy.time!=='auto' ? `<h1>Max Iterations:</h1><p><code>${groupBy.time}</code></p>` : SELECT_BUCKET_INTERVAL)
+        const features = (fields&&fields.length===1 ? `<h1>Feature:</h1><p><code>${fields[0].value}(${fields[0].args[0].value})</code></p>` : SELECT_FEATURE)
+        const bucket = (groupBy&&groupBy.time&&groupBy.time!=='auto' ? `<h1>Aggregation interval:</h1><p><code>${groupBy.time}</code></p>` : SELECT_BUCKET_INTERVAL)
         return connection+features+bucket
     }
 

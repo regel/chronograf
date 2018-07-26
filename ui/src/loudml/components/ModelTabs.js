@@ -6,6 +6,7 @@ import GeneralPanel from 'src/loudml/components/GeneralPanel'
 import ParametersPanel from 'src/loudml/components/ParametersPanel'
 import FeaturesPanel from 'src/loudml/components/FeaturesPanel'
 import PredictionPanel from 'src/loudml/components/PredictionPanel'
+import AnomalyPanel from 'src/loudml/components/AnomalyPanel'
 // import InfoPanel from 'src/loudml/components/InfoPanel'
 
 const ModelTabs = ({
@@ -13,6 +14,8 @@ const ModelTabs = ({
     onDatasourceChoose,
     onInputChange,
     isCreating,
+    annotation,
+    onAnnotationChange,
 }) => {
     const tabs = [
         {
@@ -53,6 +56,17 @@ const ModelTabs = ({
                 />
             )
         },
+        {
+            type: 'Anomaly',
+            component: (
+                <AnomalyPanel
+                    model={model}
+                    annotation={annotation}
+                    onInputChange={onInputChange}
+                    onAnnotationChange={onAnnotationChange}
+                />
+            )
+        },
 /*        {
             type: 'Infos',
             component: (
@@ -77,11 +91,15 @@ const ModelTabs = ({
     )
 }
 
+const {func, shape, bool} = PropTypes
+
 ModelTabs.propTypes = {
-    model: PropTypes.shape({}).isRequired,
-    onDatasourceChoose: PropTypes.func.isRequired,
-    onInputChange: PropTypes.func.isRequired,
-    isCreating: PropTypes.bool.isRequired,
+    model: shape({}).isRequired,
+    onDatasourceChoose: func.isRequired,
+    onInputChange: func.isRequired,
+    isCreating: bool.isRequired,
+    annotation: bool.isRequired,
+    onAnnotationChange: func.isRequired,
 }
 
 export default ModelTabs

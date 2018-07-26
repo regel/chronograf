@@ -87,7 +87,8 @@ export const forecastModel = (name, from, to) => {
         params: {
             from,
             to,
-            save_prediction: true},
+            save_prediction: true
+        },
         excludeBasepath: true,
     })
 }
@@ -108,7 +109,6 @@ export const stopModel = name => {
     return AJAX({
         method: 'POST',
         url: `/loudml/api/models/${name}/_stop`,
-        // params: {save_prediction: true},
         excludeBasepath: true,
     })
 }

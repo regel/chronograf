@@ -4,6 +4,7 @@ import Dropdown from 'shared/components/Dropdown'
 import DeleteConfirmTableCell from 'shared/components/DeleteConfirmTableCell'
 
 import {DEFAULT_METRICS, DEFAULT_IO} from 'src/loudml/constants'
+import {DEFAULT_ANOMALY_TYPE} from 'src/loudml/constants/anomaly'
 
 const Feature = ({
     feature,
@@ -27,6 +28,10 @@ const Feature = ({
 
     function handleIOChoose(item) {
         onEdit(feature, {io: item.text})
+    }
+
+    function handleAnomalyChoose(item) {
+        onEdit(feature, {anomaly_type: item.value})
     }
 
     return(
@@ -91,6 +96,16 @@ const Feature = ({
                     onChoose={handleIOChoose}
                     items={DEFAULT_IO.map(m => ({text: m}))}
                     selected={feature.io}
+                    className="dropdown-80"
+                    buttonSize="btn-xs"
+                />
+            </td>
+            <td>
+                <Dropdown
+                    name="anomaly_type"
+                    onChoose={handleAnomalyChoose}
+                    items={DEFAULT_ANOMALY_TYPE}
+                    selected={DEFAULT_ANOMALY_TYPE.find(a => a.value === feature.anomaly_type).text}
                     className="dropdown-80"
                     buttonSize="btn-xs"
                 />

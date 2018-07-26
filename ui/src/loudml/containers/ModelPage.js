@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
-import _ from 'lodash'
 
 import {notify as notifyAction} from 'shared/actions/notifications'
 import FancyScrollbar from 'shared/components/FancyScrollbar'
@@ -32,6 +31,7 @@ import {
     notifyModelTraining,
     notifyModelTrainingFailed,
 } from 'src/loudml/actions/notifications'
+import parseError from 'src/loudml/utils/error'
 
 class ModelPage extends Component {
     constructor(props) {
@@ -44,6 +44,7 @@ class ModelPage extends Component {
                 features: FeaturesUtils.deserializedFeatures(props.model.features),
             },
             isCreating: props.params.name === undefined,
+            annotation: false,
         }
     }
 
@@ -70,7 +71,7 @@ class ModelPage extends Component {
                 })
             })
             .catch(error => {
-                notify(notifyErrorGettingModel(this._parseError(error)))
+                notify(notifyErrorGettingModel(parseError(error)))
                 this.setState({
                     isLoading: false
                 })
@@ -135,7 +136,7 @@ class ModelPage extends Component {
             .catch(error => {
                 console.error('ERROR')
                 console.error(error)
-                notify(notifyModelCreationFailed(model.name, this._parseError(error)))
+                notify(notifyModelCreationFailed(model.name, parseError(error)))
             })
     }
 
@@ -155,7 +156,7 @@ class ModelPage extends Component {
                 notify(notifyModelUpdated(model.name))
             })
             .catch(error => {
-                notify(notifyModelUpdateFailed(model.name, this._parseError(error)))
+                notify(notifyModelUpdateFailed(model.name, parseError(error)))
             })
     }
 
@@ -165,8 +166,8 @@ class ModelPage extends Component {
         router.push(`/sources/${id}/loudml`)
     }
 
-    _parseError = error => {
-        return _.get(error, ['data', 'message'], _.get(error, ['data'], error))
+    onAnnotationChange = () => {
+
     }
 
     train = (from, to) => {
@@ -184,12 +185,12 @@ class ModelPage extends Component {
                 notify(notifyModelTraining())
             })
             .catch(error => {
-                notify(notifyModelTrainingFailed(model.name, this._parseError(error)))
+                notify(notifyModelTrainingFailed(model.name, parseError(error)))
             })
     }
 
     render() {
-      const {isLoading, isCreating, model} = this.state
+      const {isLoading, isCreating, model, annotation} = this.state
 
       return (
           <div className="page">
@@ -229,6 +230,8 @@ class ModelPage extends Component {
                                       onDatasourceChoose={this.onDatasourceChoose}
                                       onTrain={this.train}
                                       isCreating={isCreating}
+                                      annotation={annotation}
+                                      onAnnotationChange={this.onAnnotationChange}
                                   />
                               </div>
                           </div>
