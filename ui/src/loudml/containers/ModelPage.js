@@ -12,6 +12,8 @@ import {
     createModel as createModelApi,
     updateModel as updateModelApi,
     trainModel as trainModelApi,
+    getModelHooks as getModelHookApi,
+    createModelHook as createModelHookApi,
 } from 'src/loudml/apis'
 import {
     modelCreated as modelCreatedAction,
@@ -20,7 +22,6 @@ import {
 import ModelHeader from 'src/loudml/components/ModelHeader'
 import ModelTabs from 'src/loudml/components/ModelTabs'
 import FeaturesUtils from 'src/loudml/components/FeaturesUtils'
-import {DEFAULT_MODEL} from 'src/loudml/constants'
 
 import {
     notifyErrorGettingModel,
@@ -31,7 +32,11 @@ import {
     notifyModelTraining,
     notifyModelTrainingFailed,
 } from 'src/loudml/actions/notifications'
-import parseError from 'src/loudml/utils/error'
+import {parseError} from 'src/loudml/utils/error'
+import {createHook} from 'src/loudml/utils/hook'
+
+import {DEFAULT_MODEL} from 'src/loudml/constants'
+import {ANOMALY_HOOK_NAME, ANOMALY_HOOK} from 'src/loudml/constants/anomaly'
 
 class ModelPage extends Component {
     constructor(props) {
@@ -48,34 +53,45 @@ class ModelPage extends Component {
         }
     }
 
-    componentDidMount() {
+    componentDidMount = async () => {
         const {isCreating} = this.state
         const {params: {name}, notify, model} = this.props
 
         if (isCreating || model.name) {
-            return this.setState({isLoading: false})
+            try {
+                const {data: hooks} = await getModelHookApi(name)
+                const hook = hooks.find(h => h === ANOMALY_HOOK_NAME)
+                return this.setState(
+                    {
+                        isLoading: false,
+                        annotation: (hook!==undefined),
+                    }
+                )
+            } catch (error) {
+                notify(notifyErrorGettingModel(parseError(error)))
+                return this.setState({isLoading: false})
+            }
         }
 
-        getModelApi(name)
-            .then(res => {
-                const {settings, state, training} = res.data
-                this.setState({
-                    model: {
-                        ...DEFAULT_MODEL,
-                        ...settings,
-                        features: FeaturesUtils.deserializedFeatures(settings.features),
-                    },
-                    status: {...state},
-                    training,
-                    isLoading: false,
-                })
+        try {
+            const {data: {settings, state, training}} = await getModelApi(name)
+            const {data: hooks} = await getModelHookApi(name)
+            const hook = hooks.find(h => h === ANOMALY_HOOK_NAME)
+            this.setState({
+                model: {
+                    ...DEFAULT_MODEL,
+                    ...settings,
+                    features: FeaturesUtils.deserializedFeatures(settings.features),
+                },
+                status: {...state},
+                training,
+                isLoading: false,
+                annotation: (hook!==undefined),
             })
-            .catch(error => {
-                notify(notifyErrorGettingModel(parseError(error)))
-                this.setState({
-                    isLoading: false
-                })
-            })
+        } catch (error) {
+            notify(notifyErrorGettingModel(parseError(error)))
+            this.setState({isLoading: false})
+        }
     }
 
     get validationError() {
@@ -118,8 +134,8 @@ class ModelPage extends Component {
         model: state.model
     })
 
-    _createModel = () => {
-        const {model} = this.state
+    _createModel = async () => {
+        const {model, annotation} = this.state
         const {notify, modelActions: {modelCreated}} = this.props
 
         const serial = {
@@ -127,21 +143,23 @@ class ModelPage extends Component {
             features: FeaturesUtils.serializedFeatures(model.features)
         }
 
-        createModelApi(serial)
-            .then(() => {
-                modelCreated(model)
-                this._redirect()
-                notify(notifyModelCreated(model.name))
-            })
-            .catch(error => {
-                console.error('ERROR')
-                console.error(error)
-                notify(notifyModelCreationFailed(model.name, parseError(error)))
-            })
+        try {
+            await createModelApi(serial)
+            if (annotation) {
+                await createModelHookApi(model.name, createHook(ANOMALY_HOOK, model.default_datasource))
+            }
+            modelCreated(model)
+            this._redirect()
+            notify(notifyModelCreated(model.name))
+        } catch (error) {
+            console.error('ERROR')
+            console.error(error)
+            notify(notifyModelCreationFailed(model.name, parseError(error)))
+        }
     }
 
-    _updateModel = () => {
-        const {model} = this.state
+    _updateModel = async () => {
+        const {model, annotation} = this.state
         const {notify, modelActions: {modelUpdated}} = this.props
 
         const serial = {
@@ -149,15 +167,17 @@ class ModelPage extends Component {
             features: FeaturesUtils.serializedFeatures(model.features)
         }
 
-        updateModelApi(serial)
-            .then(() => {
-                modelUpdated(model)
-                this._redirect()
-                notify(notifyModelUpdated(model.name))
-            })
-            .catch(error => {
-                notify(notifyModelUpdateFailed(model.name, parseError(error)))
-            })
+        try {
+            await updateModelApi(serial)
+            if (annotation) {
+                await createModelHookApi(model.name, createHook(ANOMALY_HOOK, model.default_datasource))
+            }
+            modelUpdated(model)
+            this._redirect()
+            notify(notifyModelUpdated(model.name))
+        } catch (error) {
+            notify(notifyModelUpdateFailed(model.name, parseError(error)))
+        }
     }
 
     _redirect = () => {
@@ -166,8 +186,9 @@ class ModelPage extends Component {
         router.push(`/sources/${id}/loudml`)
     }
 
-    onAnnotationChange = () => {
-
+    onAnnotationChange = (e) => {
+        const {checked} = e.target
+        this.setState({annotation: checked})
     }
 
     train = (from, to) => {
@@ -190,55 +211,55 @@ class ModelPage extends Component {
     }
 
     render() {
-      const {isLoading, isCreating, model, annotation} = this.state
+        const {isLoading, isCreating, model, annotation} = this.state
 
-      return (
-          <div className="page">
-              <div className="page-header">
-                  <div className="page-header__container">
-                      <div className="page-header__left">
-                          <h1 className="page-header__title">
-                              {isCreating ? 'Add a new model' : 'Configure model'}
-                          </h1>
-                      </div>
-                      <div className="page-header__right">
-                          <SourceIndicator />
-                      </div>
-                  </div>
-              </div>
-              <FancyScrollbar className="page-contents">
-                  {isLoading ? (
-                      <div className="page-spinner" />
-                  ) : (
-                      <div className="container-fluid">
-                          <div className="row">
-                              <div className="col-md-12">
-                                  <div className="col-md-12">
-                                      <ModelHeader
-                                          name={isCreating ? 'Model creator' : model.name}
-                                          onSave={this.handleSave}
-                                          validationError={this.validationError}
-                                      />
-                                  </div>
-                              </div>
-                          </div>
-                          <div className="row">
-                              <div className="col-md-12">
-                                  <ModelTabs
-                                      model={model}
-                                      onInputChange={this.onInputChange}
-                                      onDatasourceChoose={this.onDatasourceChoose}
-                                      onTrain={this.train}
-                                      isCreating={isCreating}
-                                      annotation={annotation}
-                                      onAnnotationChange={this.onAnnotationChange}
-                                  />
-                              </div>
-                          </div>
-                      </div>
-                  )}
-              </FancyScrollbar>
-          </div>
+        return (
+            <div className="page">
+                <div className="page-header">
+                    <div className="page-header__container">
+                        <div className="page-header__left">
+                            <h1 className="page-header__title">
+                                {isCreating ? 'Add a new model' : 'Configure model'}
+                            </h1>
+                        </div>
+                        <div className="page-header__right">
+                            <SourceIndicator />
+                        </div>
+                    </div>
+                </div>
+                <FancyScrollbar className="page-contents">
+                    {isLoading ? (
+                        <div className="page-spinner" />
+                    ) : (
+                        <div className="container-fluid">
+                            <div className="row">
+                                <div className="col-md-12">
+                                    <div className="col-md-12">
+                                        <ModelHeader
+                                            name={isCreating ? 'Model creator' : model.name}
+                                            onSave={this.handleSave}
+                                            validationError={this.validationError}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-md-12">
+                                    <ModelTabs
+                                        model={model}
+                                        onInputChange={this.onInputChange}
+                                        onDatasourceChoose={this.onDatasourceChoose}
+                                        onTrain={this.train}
+                                        isCreating={isCreating}
+                                        annotation={annotation}
+                                        onAnnotationChange={this.onAnnotationChange}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </FancyScrollbar>
+            </div>
         )
     }
 }

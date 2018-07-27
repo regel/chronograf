@@ -17,9 +17,9 @@ const FeaturesTable = ({features, onDelete, onEdit}) => (
             </tr>
         </thead>
         <tbody>
-            {features.map(feature =>
+            {features.map((feature, index) =>
                 <Feature
-                    key={feature.name}
+                    key={`${index}_${features.length}`}
                     feature={feature}
                     onDelete={onDelete}
                     onEdit={onEdit}

@@ -31,7 +31,7 @@ const AnomalyPanel = ({
             </div>
             <div className="panel-body">
                 <div className="form-group col-xs-12 col-sm-6">
-                    <label htmlFor="max_evals">Min threshold</label>
+                    <label htmlFor="min_threshold">Min threshold</label>
                     <input
                         type="number"
                         name="min_threshold"
@@ -39,10 +39,11 @@ const AnomalyPanel = ({
                         value={model.min_threshold}
                         onChange={onInputChange}
                         placeholder="ex: 100"
+                        step='0.1'
                     />
                 </div>
                 <div className="form-group col-xs-12 col-sm-6">
-                    <label htmlFor="max_evals">Max threshold</label>
+                    <label htmlFor="max_threshold">Max threshold</label>
                     <input
                         type="number"
                         name="max_threshold"
@@ -50,6 +51,7 @@ const AnomalyPanel = ({
                         value={model.max_threshold}
                         onChange={onInputChange}
                         placeholder="ex: 100"
+                        step='0.1'
                     />
                 </div>
                 <div className="form-group col-xs-12 col-sm-6">

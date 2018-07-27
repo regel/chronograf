@@ -19,17 +19,17 @@ const uniqueArray = arrArg => {
 }
 
 const createPrefixedQueryFields = (prefix, model, database) => {
-    const {name, features, bucketInterval} = model
+    const {name, features} = model
     const fields = features.map(f => `LAST("${prefix}${f.name}")`).join(' + ')
-    return `SELECT ${fields} AS "${prefix}${name}" FROM "${database}"."autogen"."prediction_${name}" WHERE time > :dashboardTime: AND time < :upperDashboardTime: GROUP BY time(${bucketInterval}) FILL(null)`
+    return `SELECT ${fields} AS "${prefix}${name}" FROM "${database}"."autogen"."prediction_${name}" WHERE time > :dashboardTime: AND time < :upperDashboardTime: GROUP BY time(${model.bucket_interval}) FILL(null)`
 }
 
 const createQueryFields = (model, database) => {
-    const {name, features, bucketInterval} = model
+    const {name, features} = model
 
     const fields = features.map(f => `${f.metric}("${f.field}")`).join(' + ')
     const from = uniqueArray(features.map(f => `"${database}"."autogen"."${f.measurement}"`)).join(', ')
-    return `SELECT ${fields} AS "${name}" FROM ${from} WHERE time > :dashboardTime: AND time < :upperDashboardTime: GROUP BY time(${bucket_interval}) FILL(null)`
+    return `SELECT ${fields} AS "${name}" FROM ${from} WHERE time > :dashboardTime: AND time < :upperDashboardTime: GROUP BY time(${model.bucket_interval}) FILL(null)`
 }
 
 export const createQueryFromModel = (model, source, database) => {

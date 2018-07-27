@@ -11,10 +11,13 @@ import {notify as notifyAction} from 'shared/actions/notifications'
 
 import {convertTimeRange} from 'src/loudml/utils/timerange'
 import {parseError} from 'src/loudml/utils/error'
+import {createHook} from 'src/loudml/utils/hook'
 import {
     createModel as createModelApi,
     trainModel as trainModelApi,
     getDatasources,
+    createModelHook as createModelHookApi,
+    startModel,
 } from 'src/loudml/apis'
 
 import {
@@ -30,6 +33,7 @@ import {
 } from 'src/loudml/actions/notifications'
 
 import {DEFAULT_MODEL} from 'src/loudml/constants'
+import {ANOMALY_HOOK} from 'src/loudml/constants/anomaly'
 
 const modelUID = () => {
     const number = Math.random() // 0.9394456857981651
@@ -125,8 +129,10 @@ class OneClickML extends Component {
 
         try {
           await createModelApi(model)
+          await createModelHookApi(model.name, createHook(ANOMALY_HOOK, model.default_datasource))
           modelCreated(model)
           notify(notifyModelCreated(model.name))
+          await startModel(model.name)
           await this._trainModel(model.name)
         } catch (error) {
           console.error(error)

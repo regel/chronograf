@@ -34,7 +34,9 @@ class ModelsTable extends Component {
                     </tr>
                 </thead>
                 <tbody>
-                    {models.map(model => {
+                    {models
+                        .sort((a, b) => a.settings.name > b.settings.name)
+                        .map(model => {
                         return (
                             <ModelsRow key={model.settings.name}
                                 model={model}
