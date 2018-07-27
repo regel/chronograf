@@ -18,7 +18,7 @@ import {createQueryFromModel} from 'src/loudml/utils/query'
 import {convertTimeRange} from 'src/loudml/utils/timerange'
 import {parseError} from 'src/loudml/utils/error'
 import * as api from 'src/loudml/apis'
-import { getSources } from 'src/shared/apis';
+import {getSources} from 'src/shared/apis';
 import {
     modelsLoaded as modelsLoadedAction,
     modelDeleted as modelDeletedAction,
@@ -391,8 +391,6 @@ LoudMLPage.propTypes = {
 function mapStateToProps(state) {
     const { isFetching, models } = state.loudml.models
     const { jobs } = state.loudml.jobs
-
-    models.sort((a, b) => a.settings.name > b.settings.name)
 
     return {
         models,

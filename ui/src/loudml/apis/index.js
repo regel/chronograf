@@ -120,3 +120,27 @@ export const stopJob = id => {
         excludeBasepath: true,
     })
 }
+
+export const getModelHooks = name => {
+    return AJAX({
+        url: `/loudml/api/models/${name}/hooks`,
+        excludeBasepath: true,
+    })
+}
+
+export const createModelHook = (name, hook) => {
+    return AJAX({
+        method: 'PUT',
+        url: `/loudml/api/models/${name}/hooks`,
+        data: hook,
+        excludeBasepath: true,
+    })
+}
+
+export const deleteModelHook = (name, hookName) => {
+    return AJAX({
+        method: 'DELETE',
+        url: `/loudml/api/models/${name}/hooks/${hookName}`,
+        excludeBasepath: true,
+    })
+}
