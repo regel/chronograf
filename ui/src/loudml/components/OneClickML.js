@@ -17,7 +17,6 @@ import {
     trainModel as trainModelApi,
     getDatasources,
     createModelHook as createModelHookApi,
-    startModel,
 } from 'src/loudml/apis'
 
 import {
@@ -132,7 +131,6 @@ class OneClickML extends Component {
           await createModelHookApi(model.name, createHook(ANOMALY_HOOK, model.default_datasource))
           modelCreated(model)
           notify(notifyModelCreated(model.name))
-          await startModel(model.name)
           await this._trainModel(model.name)
         } catch (error) {
           console.error(error)
