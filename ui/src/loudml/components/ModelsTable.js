@@ -28,7 +28,9 @@ class ModelsTable extends Component {
                 <thead>
                     <tr>
                         <th>Name</th>
+                        <th>Loss</th>
                         <th>Status</th>
+                        <th/>
                         <th className="admin-table--left-offset" />
                         <th/>
                     </tr>

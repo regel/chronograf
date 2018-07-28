@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import uuid from 'uuid'
+import moment from 'moment'
 import classnames from 'classnames'
 
 import ReactTooltip from 'react-tooltip'
@@ -38,6 +39,23 @@ const modelUID = () => {
     const number = Math.random() // 0.9394456857981651
     // number.toString(36); // '0.xtis06h6'
     return number.toString(36).substr(2, 9); // 'xtis06h6'
+}
+
+const normalizeInterval = bucketInterval => {
+    const regex = /(\d+)(.*)/
+    const interval = regex.exec(bucketInterval)
+    const duration = moment.duration(Number.parseInt(interval[1], 10), interval[2]).asSeconds()
+    const normalized = Math.max(
+        5,
+        moment.duration(
+            Math.min(
+                duration,
+                60
+            ),
+            's'
+        ).asSeconds()
+    )
+    return `${normalized}s`
 }
 
 const UNDEFINED_DATASOURCE = '<h1>LoudML Datasource:</h1><p>Unable to find LoudML datasource for selected database. Check configuration</p>'
@@ -112,6 +130,7 @@ class OneClickML extends Component {
             ...DEFAULT_MODEL,
             max_evals: 10,
             name: modelUID(),
+            interval: normalizeInterval(settings.groupBy.time),
             default_datasource: datasource,
             bucket_interval: settings.groupBy.time,
             features: { io: settings.fields.map(
