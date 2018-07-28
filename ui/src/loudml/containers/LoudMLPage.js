@@ -217,7 +217,7 @@ class LoudMLPage extends Component {
                 notify(notifyModelStarting(name))
             })
             .catch(error => {
-                notify(notifyModelStartingFailed({name}, parseError(error)))
+                notify(notifyModelStartingFailed(name, parseError(error)))
             })
     }
 

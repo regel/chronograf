@@ -13,6 +13,7 @@ import 'src/loudml/styles/loudml.css'
 const ModelsRow = ({
     source: {id},
     model,
+    model: {state: {loss}},
     jobs,
     onStart,
     onStop,
@@ -30,6 +31,9 @@ const ModelsRow = ({
                 <Link to={`/sources/${id}/loudml/models/${model.settings.name}/edit`}>
                     {model.settings.name}
                 </Link>
+            </td>
+            <td>
+                {loss&&loss.toFixed(5)}
             </td>
             <td>
                 <ModelStatus
