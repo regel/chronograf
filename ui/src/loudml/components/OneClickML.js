@@ -2,22 +2,21 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import uuid from 'uuid'
-import moment from 'moment'
 import classnames from 'classnames'
 
 import ReactTooltip from 'react-tooltip'
 
 import {notify as notifyAction} from 'shared/actions/notifications'
-// import {errorThrown as errorThrownAction} from 'shared/actions/errors'
 
 import {convertTimeRange} from 'src/loudml/utils/timerange'
 import {parseError} from 'src/loudml/utils/error'
 import {createHook} from 'src/loudml/utils/hook'
+import {normalizeInterval} from 'src/loudml/utils/model'
 import {
-    createModel as createModelApi,
-    trainModel as trainModelApi,
+    createModel,
+    trainAndStartModel,
     getDatasources,
-    createModelHook as createModelHookApi,
+    createModelHook,
 } from 'src/loudml/apis'
 
 import {
@@ -32,6 +31,15 @@ import {
     notifyModelTrainingFailed,
 } from 'src/loudml/actions/notifications'
 
+import {
+    UNDEFINED_DATASOURCE,
+    notifyDatasource,
+    SELECT_FEATURE,
+    notifyFeature,
+    SELECT_BUCKET_INTERVAL,
+    notifyInterval,
+} from 'src/loudml/actions/oneclick'
+
 import {DEFAULT_MODEL} from 'src/loudml/constants'
 import {ANOMALY_HOOK} from 'src/loudml/constants/anomaly'
 
@@ -40,27 +48,6 @@ const modelUID = () => {
     // number.toString(36); // '0.xtis06h6'
     return number.toString(36).substr(2, 9); // 'xtis06h6'
 }
-
-const normalizeInterval = bucketInterval => {
-    const regex = /(\d+)(.*)/
-    const interval = regex.exec(bucketInterval)
-    const duration = moment.duration(Number.parseInt(interval[1], 10), interval[2]).asSeconds()
-    const normalized = Math.max(
-        5,
-        moment.duration(
-            Math.min(
-                duration,
-                60
-            ),
-            's'
-        ).asSeconds()
-    )
-    return `${normalized}s`
-}
-
-const UNDEFINED_DATASOURCE = '<h1>LoudML Datasource:</h1><p>Unable to find LoudML datasource for selected database. Check configuration</p>'
-const SELECT_FEATURE = '<h1>Feature:</h1><p>Select one field</p>'
-const SELECT_BUCKET_INTERVAL = '<h1>Aggregation interval:</h1><p>Select a \'Group by\' value</p>'
 
 class OneClickML extends Component {
     constructor(props) {
@@ -77,7 +64,6 @@ class OneClickML extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        // Typical usage (don't forget to compare props):
         if (this.props.settings.database !== prevProps.settings.database) {
             this._getDatasource();
         }
@@ -95,7 +81,7 @@ class OneClickML extends Component {
         } = convertTimeRange(timeRange)
         
         try {
-            const res = await trainModelApi(name, lower, upper)
+            const res = await trainAndStartModel(name, lower, upper)
             const job = {
                 name,
                 id: res.data,
@@ -146,8 +132,8 @@ class OneClickML extends Component {
         }
 
         try {
-          await createModelApi(model)
-          await createModelHookApi(model.name, createHook(ANOMALY_HOOK, model.default_datasource))
+          await createModel(model)
+          await createModelHook(model.name, createHook(ANOMALY_HOOK, model.default_datasource))
           modelCreated(model)
           notify(notifyModelCreated(model.name))
           await this._trainModel(model.name)
@@ -166,24 +152,24 @@ class OneClickML extends Component {
     get sourceNameTooltip() {
         const {settings: {
             fields,
-            groupBy,
+            groupBy: {time},
         }} = this.props
         const {datasource} = this.state
-        const connection = (datasource ? `<h1>Connected to LoudML Datasource:</h1><p><code>${datasource}</code></p>` : UNDEFINED_DATASOURCE)
-        const features = (fields&&fields.length===1 ? `<h1>Feature:</h1><p><code>${fields[0].value}(${fields[0].args[0].value})</code></p>` : SELECT_FEATURE)
-        const bucket = (groupBy&&groupBy.time&&groupBy.time!=='auto' ? `<h1>Aggregation interval:</h1><p><code>${groupBy.time}</code></p>` : SELECT_BUCKET_INTERVAL)
-        return connection+features+bucket
+        const connection = notifyDatasource((datasource ? `<code>${datasource}</code>` : UNDEFINED_DATASOURCE))
+        const feature = notifyFeature((fields&&fields.length===1 ? `<code>${fields[0].value}(${fields[0].args[0].value})</code>` : SELECT_FEATURE))
+        const bucket = notifyInterval((time===null||time==='auto' ? SELECT_BUCKET_INTERVAL : `<code>${time}</code>`))
+        return connection+feature+bucket
     }
 
     get isValid() {
         const {settings: {
             fields,
-            groupBy,
+            groupBy: {time},
         }} = this.props
         const {datasource} = this.state
         return (datasource!==undefined)
             && (fields&&fields.length===1)
-            && (groupBy&&groupBy.time&&groupBy.time!=='auto')
+            && (time!==null&&time!=='auto')
     }
 
     render() {
@@ -249,7 +235,6 @@ const mapDispatchToProps = dispatch => ({
         jobStart: job => dispatch(jobStartAction(job)),
     },
     notify: message => dispatch(notifyAction(message)),
-//    errorThrown: error => dispatch(errorThrownAction(error))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(OneClickML)
