@@ -80,6 +80,20 @@ export const trainModel = (name, from, to) => {
     })
 }
 
+export const trainAndStartModel = (name, from, to) => {
+    return AJAX({
+        method: 'POST',
+        url: `/loudml/api/models/${name}/_train`,
+        params: {
+            from,
+            to,
+            autostart: true,
+            save_prediction: true,
+        },
+        excludeBasepath: true,
+    })
+}
+
 export const forecastModel = (name, from, to) => {
     return AJAX({
         method: 'POST',
