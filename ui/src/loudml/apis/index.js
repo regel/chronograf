@@ -89,6 +89,7 @@ export const trainAndStartModel = (name, from, to) => {
             to,
             autostart: true,
             save_prediction: true,
+            detect_anomalies: true,
         },
         excludeBasepath: true,
     })
