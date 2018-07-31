@@ -248,12 +248,12 @@ func NewMux(opts MuxOpts, service Service) http.Handler {
 	router.DELETE("/chronograf/v1/sources/:id/kapacitors/:kid/proxy", EnsureEditor(service.ProxyDelete))
 
 	// LoudML Proxy
-	router.GET("/loudml/api", EnsureViewer(service.LoudMLProxyGet))
-	router.GET("/loudml/api/*path", EnsureViewer(service.LoudMLProxyGet))
-	router.POST("/loudml/api/*path", EnsureEditor(service.LoudMLProxyPost))
-	router.PATCH("/loudml/api/*path", EnsureEditor(service.LoudMLProxyPatch))
-	router.PUT("/loudml/api/*path", EnsureEditor(service.LoudMLProxyPut))
-	router.DELETE("/loudml/api/*path", EnsureEditor(service.LoudMLProxyDelete))
+	router.GET("/loudml/api", service.LoudMLProxyGet)
+	router.GET("/loudml/api/*path", service.LoudMLProxyGet)
+	router.POST("/loudml/api/*path", service.LoudMLProxyPost)
+	router.PATCH("/loudml/api/*path", service.LoudMLProxyPatch)
+	router.PUT("/loudml/api/*path", service.LoudMLProxyPut)
+	router.DELETE("/loudml/api/*path", service.LoudMLProxyDelete)
 
 	// Layouts
 	router.GET("/chronograf/v1/layouts", EnsureViewer(service.Layouts))
