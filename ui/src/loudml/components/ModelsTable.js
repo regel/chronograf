@@ -62,7 +62,7 @@ class ModelsTable extends Component {
         const {source: {id}} = this.props
         return (
             <div className="generic-empty-state">
-                <h4 className="no-user-select">No model</h4>
+                <h4 className="no-user-select">Looks like you don't have any models</h4>
                 <br />
                 <h6 className="no-user-select">
                     <Link

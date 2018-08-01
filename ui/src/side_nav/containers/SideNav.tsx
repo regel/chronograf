@@ -122,7 +122,7 @@ class SideNav extends PureComponent<Props> {
           link={`${sourcePrefix}/loudml`}
           location={location}
         >
-          <NavHeader link={`${sourcePrefix}/loudml`} title={'LoudML'} />
+          <NavHeader link={`${sourcePrefix}/loudml`} title={'Loud ML'} />
         </NavBlock>
 
         <NavBlock

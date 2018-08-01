@@ -3,7 +3,7 @@ export const SELECT_FEATURE = 'Select one field'
 export const SELECT_BUCKET_INTERVAL = 'Select a \'Group by\' value'
 
 export const notifyDatasource = datasource => {
-    return `<h1>LoudML Datasource:</h1><p>${datasource}</p>`
+    return `<h1>Loud ML Datasource:</h1><p>${datasource}</p>`
 }
 
 export const notifyFeature = feature => {

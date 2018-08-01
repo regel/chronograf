@@ -12,7 +12,7 @@ const ModelStatus = ({
     return (
         <div className="status">
             {model.settings.run ?
-                <code>Running</code>
+                <code>Running.</code>
                 : null
             }
             {model.training
@@ -21,11 +21,11 @@ const ModelStatus = ({
                 <ProgressCode
                     max={model.training.progress.max_evals}
                     value={model.training.progress.eval}
-                    label={`Train ${model.training.state}`} />
+                    label={`Training ${model.training.state}.`} />
                 ) : null}
             {model.training && model.training.state !== 'running' ? (
                 <code>
-                    Train&nbsp;{model.training.state}
+                    Training&nbsp;{model.training.state}.
                 </code>
             ) : null}
             {jobs
