@@ -39,7 +39,7 @@ export const DEFAULT_CONFIDENT_CELL =
                 "scale": "linear"
             }
         },
-        "type": "line",
+        "type": "confidence",
         "colors": [],
         "legend": {},
         "tableOptions": {

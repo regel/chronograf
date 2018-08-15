@@ -11,7 +11,10 @@ import {notify as notifyAction} from 'shared/actions/notifications'
 import {convertTimeRange} from 'src/loudml/utils/timerange'
 import {parseError} from 'src/loudml/utils/error'
 import {createHook} from 'src/loudml/utils/hook'
-import {normalizeInterval} from 'src/loudml/utils/model'
+import {
+    normalizeInterval,
+    normalizeFeatureDefault,
+} from 'src/loudml/utils/model'
 import {
     createModel,
     trainAndStartModel,
@@ -31,22 +34,69 @@ import {
     notifyModelTrainingFailed,
 } from 'src/loudml/actions/notifications'
 
-import {
-    UNDEFINED_DATASOURCE,
-    notifyDatasource,
-    SELECT_FEATURE,
-    notifyFeature,
-    SELECT_BUCKET_INTERVAL,
-    notifyInterval,
-} from 'src/loudml/actions/oneclick'
-
 import {DEFAULT_MODEL} from 'src/loudml/constants'
 import {ANOMALY_HOOK} from 'src/loudml/constants/anomaly'
 
-const modelUID = () => {
-    const number = Math.random() // 0.9394456857981651
-    // number.toString(36); // '0.xtis06h6'
-    return number.toString(36).substr(2, 9); // 'xtis06h6'
+const UNDEFINED_DATASOURCE = 'Unable to find LoudML datasource for selected database. Check configuration'
+const SELECT_FEATURE = 'Select one field'
+const SELECT_BUCKET_INTERVAL = 'Select a \'Group by\' value'
+const LINEAR_NOTSUPPORTED = 'Linear mode not supported'
+
+const formatNotification = s => {
+    return `<code>${s}</code>`
+}
+const notifyDatasource = datasource => {
+    datasource = (datasource&&formatNotification(datasource))||UNDEFINED_DATASOURCE
+    return `<h1>Loud ML Datasource:</h1><p>${datasource}</p>`
+}
+
+const notifyFeature = fields => {
+    const feature = (
+        (
+            fields
+            &&fields.length===1
+            &&formatNotification(`${fields[0].value}(${fields[0].args[0].value})`)
+        )
+    )||SELECT_FEATURE
+    return `<h1>Feature:</h1><p>${feature}</p>`
+}
+
+const notifyInterval = time => {
+    const interval = (
+            time!==null
+            &&time!=='auto'
+            &&formatNotification(time)
+    )||SELECT_BUCKET_INTERVAL
+    return `<h1>groupBy bucket interval:</h1><p>${interval}</p>`
+}
+
+const notifyMatch = tags => {
+    const keys = Object.keys(tags)
+    if (keys.length>0) {
+        const matches = keys
+            .map(k => {
+                return tags[k].map(t => {
+                    return formatNotification(`${k}:${t}`)
+                }).join('')
+            })
+            .join('')
+        return `<h1>Match all:</h1><p>${matches}</p>`
+    }
+    return ''
+}
+
+const notifyFillValue = fill => {
+    fill = (
+        fill==='linear'
+        ?LINEAR_NOTSUPPORTED
+        :formatNotification(fill==='none'?null:fill)
+    )
+    return `<h1>Fill value:</h1><p>${fill}</p>`
+}
+
+const checkTags = (tags) => {
+    // really length > 1. Can we have zero length?
+    return Object.values(tags).find(v => v.length!==1) === undefined
 }
 
 class OneClickML extends Component {
@@ -97,7 +147,6 @@ class OneClickML extends Component {
         }
     }
 
-
     _getDatasource = async () => {
         const {settings: {database}} = this.props
         const {data} = await getDatasources()
@@ -105,9 +154,33 @@ class OneClickML extends Component {
         this.setState({datasource: datasource&&datasource.name})
     }
 
+    get name() {
+        const {
+            settings: {
+                database,
+                measurement,
+                fields,
+                groupBy: {time},
+            }
+        } = this.props
+        return [
+            database,
+            measurement,
+            fields[0].value,
+            fields[0].args[0].value,
+            time
+        ].join('_')
+    }
+
     _createAndTrainModel = async () => {
         const {
-            settings,
+            settings: {
+                groupBy: {time},
+                fields,
+                measurement,
+                tags,
+                fill,
+            },
             modelActions: {modelCreated},
             notify,
         } = this.props
@@ -115,31 +188,47 @@ class OneClickML extends Component {
         const model = {
             ...DEFAULT_MODEL,
             max_evals: 10,
-            name: modelUID(),
-            interval: normalizeInterval(settings.groupBy.time),
+            name: this.name,
+            interval: normalizeInterval(time),
             default_datasource: datasource,
-            bucket_interval: settings.groupBy.time,
-            features: { io: settings.fields.map(
+            bucket_interval: time,
+            min_threshold: 0,
+            max_threshold: 0,
+            features: { io: fields.map(
                 (field) => ({
                         name: field.alias,
-                        measurement: settings.measurement,
+                        measurement,
                         field: field.args[0].value,
                         metric: field.value,
-                        default: null,
+                        default: normalizeFeatureDefault(fill),
+                        match_all: Object
+                            .keys(tags)
+                            .map(k => {
+                                return tags[k]
+                                    .map(v => {
+                                        return {
+                                            tag: k,
+                                            value: v,
+                                        }
+                                    })
+                            })
+                            .reduce((a, v) => {
+                                return [...a, ...v]
+                            }, []),
                     })
                 )
             },
         }
 
         try {
-          await createModel(model)
-          await createModelHook(model.name, createHook(ANOMALY_HOOK, model.default_datasource))
-          modelCreated(model)
-          notify(notifyModelCreated(model.name))
-          await this._trainModel(model.name)
+            await createModel(model)
+            await createModelHook(model.name, createHook(ANOMALY_HOOK, model.default_datasource))
+            modelCreated(model)
+            notify(notifyModelCreated(model.name))
+            await this._trainModel(model.name)
         } catch (error) {
-          console.error(error)
-          notify(notifyModelCreationFailed(model.name, parseError(error)))
+            console.error(error)
+            notify(notifyModelCreationFailed(model.name, parseError(error)))
         }
     }
     
@@ -150,26 +239,36 @@ class OneClickML extends Component {
     }
 
     get sourceNameTooltip() {
-        const {settings: {
-            fields,
-            groupBy: {time},
-        }} = this.props
+        const {
+            settings: {
+                fields,
+                groupBy: {time},
+                tags,
+                fill,
+            }
+        } = this.props
         const {datasource} = this.state
-        const connection = notifyDatasource((datasource ? `<code>${datasource}</code>` : UNDEFINED_DATASOURCE))
-        const feature = notifyFeature((fields&&fields.length===1 ? `<code>${fields[0].value}(${fields[0].args[0].value})</code>` : SELECT_FEATURE))
-        const bucket = notifyInterval((time===null||time==='auto' ? SELECT_BUCKET_INTERVAL : `<code>${time}</code>`))
-        return connection+feature+bucket
+        const connection = notifyDatasource(datasource)
+        const feature = notifyFeature(fields)
+        const bucket = notifyInterval(time)
+        const match = notifyMatch(tags)
+        const fillValue = notifyFillValue(fill)
+        return connection+feature+bucket+match+fillValue
     }
 
     get isValid() {
         const {settings: {
             fields,
             groupBy: {time},
+            tags,
+            fill,
         }} = this.props
         const {datasource} = this.state
         return (datasource!==undefined)
             && (fields&&fields.length===1)
             && (time!==null&&time!=='auto')
+            && (checkTags(tags)===true)
+            && (fill!=='linear')
     }
 
     render() {
@@ -214,18 +313,13 @@ function mapStateToProps(state) {
         dataExplorer,
     } = state
 
-    const config = (dataExplorer.queryIDs.length>0
+    const settings = (dataExplorer.queryIDs.length>0
         ? dataExplorerQueryConfigs[dataExplorer.queryIDs[0]]
         : null)
 
     return {
         timeRange: {upper, lower},
-        settings: {
-            measurement: config.measurement,
-            database: config.database,
-            fields: config.fields,
-            groupBy: config.groupBy,
-        },
+        settings,
     }
 }
 
