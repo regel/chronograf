@@ -86,3 +86,10 @@ export const notifyJobStoppedFailed = (name, message) => notifyError(
     INFINITE,
     `Stopping job failed for model '${name}': ${message}`,
 )
+
+export const notifyDashboardCreated = name => notifySuccess(`prediction dashboard for model '${name}' created`)
+
+export const notifyDashboardCreationFailed = (name, message) => notifyError(
+    INFINITE,
+    `cannot create prediction dashboard for model '${name}': ${message}`,
+)

@@ -10,6 +10,7 @@ import LineGraph from 'shared/components/LineGraph'
 import SingleStat from 'shared/components/SingleStat'
 import GaugeChart from 'shared/components/GaugeChart'
 import TableGraph from 'shared/components/TableGraph'
+import ConfidenceGraph from 'src/loudml/components/ConfidenceGraph'
 
 import {colorsStringSchema} from 'shared/schemas'
 import {setHoverTime} from 'src/dashboards/actions'
@@ -22,6 +23,7 @@ const RefreshingLineGraph = AutoRefresh(LineGraph)
 const RefreshingSingleStat = AutoRefresh(SingleStat)
 const RefreshingGaugeChart = AutoRefresh(GaugeChart)
 const RefreshingTableGraph = AutoRefresh(TableGraph)
+const RefreshingConfidenceGraph = AutoRefresh(ConfidenceGraph)
 
 const RefreshingGraph = ({
   axes,
@@ -126,6 +128,27 @@ const RefreshingGraph = ({
         grabDataForDownload={grabDataForDownload}
         handleSetHoverTime={handleSetHoverTime}
         onSetResolution={onSetResolution}
+      />
+    )
+  }
+
+  if (type === 'confidence') {
+    return (
+      <RefreshingConfidenceGraph
+        colors={colors}
+        key={manualRefresh}
+        queries={queries}
+        templates={templates}
+        autoRefresh={autoRefresh}
+        cellHeight={cellHeight}
+        resizerTopHeight={resizerTopHeight}
+        resizeCoords={resizeCoords}
+        cellID={cellID}
+        tableOptions={tableOptions}
+        hoverTime={hoverTime}
+        onSetHoverTime={onSetHoverTime}
+        inView={inView}
+        setDataLabels={setDataLabels}
       />
     )
   }

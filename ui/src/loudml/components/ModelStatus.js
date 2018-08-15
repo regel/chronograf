@@ -1,63 +1,35 @@
 import React from 'react'
 import {PropTypes} from 'prop-types'
 
-import ProgressCode from 'src/loudml/components/ProgressCode'
+import RunningStatus from 'src/loudml/components/RunningStatus'
+import TrainingStatus from 'src/loudml/components/TrainingStatus'
+import JobStatus from 'src/loudml/components/JobStatus'
 
 import 'src/loudml/styles/status.css'
 
 const ModelStatus = ({
-    model,
+    model: {
+        settings: {
+            run,
+        },
+        training,
+    },
     jobs,
 }) => {
     return (
         <div className="status">
-            {model.settings.run ?
-                <code>Running.</code>
-                : null
-            }
-            {model.training
-                && model.training.state==='running'
-                && model.training.progress !== undefined ? (
-                <ProgressCode
-                    max={model.training.progress.max_evals}
-                    value={model.training.progress.eval}
-                    label={`Training ${model.training.state}.`} />
-                ) : null}
-            {model.training && model.training.state !== 'running' ? (
-                <code>
-                    Training&nbsp;{model.training.state}.
-                </code>
-            ) : null}
-            {jobs
-                .filter(job => job.type==='forecast')
-                .map(job => (
-                <code key={job.id}>
-                    {job.type}&nbsp;{job.state}
-                </code>)
-            )}
+            <RunningStatus run={run} />
+            <TrainingStatus training={training} />
+            <JobStatus jobs={jobs} />
         </div>
     )
 }
-/*
-            {model.training
-                && model.training.state==='running'
-                && model.training.progress !== undefined ? (
-                <Progress 
-                    maxEvals={model.training.progress.max_evals}
-                    iteration={model.training.progress.eval} />
-                ) : null}
-                        <Progress 
-                            maxEvals={model.training.progress.max_evals}
-                            eval={model.training.progress.max_evals} />
-                    <progress
-                        value={model.training.progress.max_evals}
-                        max={model.training.progress.max_evals}>
-                    </progress>
-*/
+
+const {shape, arrayOf} = PropTypes
 
 ModelStatus.propTypes = {
-    model: PropTypes.shape({}).isRequired,
-    jobs: PropTypes.arrayOf(PropTypes.shape({})),
+    model: shape({}).isRequired,
+    jobs: arrayOf(shape({})),
 }
 
 export default ModelStatus

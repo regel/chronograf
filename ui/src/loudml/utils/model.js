@@ -16,3 +16,15 @@ export const normalizeInterval = bucketInterval => {
     )
     return `${normalized}s`
 }
+
+export const normalizeFeatureDefault = fill => {
+    if (fill==='none'||fill==='null') {
+        fill = null
+    }
+    // try to parse number
+    const parsed = Number.parseFloat(fill)
+    if (Number.isNaN(parsed)) {
+        return fill
+    }
+    return parsed
+}

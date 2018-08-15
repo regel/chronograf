@@ -38,7 +38,7 @@ const ParametersPanel = ({
                     />
                 </div>
                 <div className="form-group col-xs-12 col-sm-6">
-                    <label htmlFor="bucket_interval">Bucket interval</label>
+                    <label htmlFor="bucket_interval">groupBy bucket interval</label>
                     <input
                         type="text"
                         name="bucket_interval"

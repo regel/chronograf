@@ -43,6 +43,8 @@ import {
     notifyJobFailed,
     notifyJobStopped,
     notifyJobStoppedFailed,
+    notifyDashboardCreated,
+    notifyDashboardCreationFailed,
 } from 'src/loudml/actions/notifications'
 import {
     DEFAULT_CONFIDENT_DASHBOARD,
@@ -306,22 +308,23 @@ class LoudMLPage extends Component {
             queries,
         })
     }
-
+    
     selectModelGraph = async (model) => {
-        const {errorThrown} = this.props
-        const {settings: {name}} = model
-
+        const {notify} = this.props
+        const {settings} = model
+        
         try {
             const {data: {dashboards}} = await getDashboards()
-            const dashboard = dashboards.find(item => item.name === name)
+            const dashboard = dashboards.find(item => item.name === settings.name)
             const {data} = await api.getDatasources()
-            const datasource = data.find(d => d.name === model.settings.default_datasource)
+            const datasource = data.find(d => d.name === settings.default_datasource)
             const {data: {sources}} = await getSources()
             const source = sources.find(s => s.url.match(new RegExp(`${datasource.addr}`)))
-            this.createOrUpdateConfident(dashboard, model, source, datasource.database)
+            await this.createOrUpdateConfident(dashboard, model, source, datasource.database)
+            notify(notifyDashboardCreated(settings.name))
         } catch (error) {
             console.error(error)
-            errorThrown(error)
+            notify(notifyDashboardCreationFailed(settings.name, parseError(error)))
         }
     }
 
@@ -337,7 +340,7 @@ class LoudMLPage extends Component {
                 <div className="page-header">
                     <div className="page-header__container">
                         <div className="page-header__left">
-                            <h1 className="page-header__title">LoudML</h1>
+                            <h1 className="page-header__title">Manage Machine Learning Tasks</h1>
                         </div>
                         <div className="page-header__right">
                             <SourceIndicator />
