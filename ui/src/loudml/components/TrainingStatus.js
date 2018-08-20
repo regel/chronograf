@@ -13,7 +13,7 @@ const TrainingStatus = ({
                 <ProgressCode
                     max={(progress && progress.max_evals)||1}
                     value={(progress && progress.eval)||0}
-                    label={`Training&nbsp;${state}.`} />
+                    label='Training' />
             )
         }
         return (
