@@ -21,7 +21,7 @@ const ProgressCode = ({
             borderBottom: '2px solid',
             borderImage: borderStyle(),
         }}>
-            {label}
+            {label}&nbsp;running.
         </code>
     )
 }
