@@ -34,17 +34,6 @@ const PredictionPanel = ({
                         placeholder="ex: 5s, 1m, 1h, 1d, ..."
                     />
                 </div>
-                <div className="form-group col-xs-12 col-sm-6">
-                    <label htmlFor="forecast">Forecast</label>
-                    <input
-                        type="number"
-                        name="forecast"
-                        className="form-control input-md form-malachite"
-                        value={model.forecast}
-                        onChange={onInputChange}
-                        // placeholder="ex: 5s, 1m, 1h, 1d, ..."
-                    />
-                </div>
             </div>
         </div>
     )
