@@ -5,24 +5,20 @@ const NameSection = ({
     onEdit,
     isCreating,
 }) => {
+    if (!isCreating) {
+        return (
+            <div>{modelName}</div>
+        )
+    }    
+
     return (
-        <div className="form-group">
-            <label htmlFor="name">
-                {isCreating ? 'Name this model' : 'Name'}
-            </label>
-            {isCreating
-                ? <input
-                    type="text"
-                    name="name"
-                    className="form-control input-md form-malachite"
-                    onChange={onEdit}
-                    placeholder="ex: my-model"
-                />
-                : <p>
-                    {modelName}
-                </p>
-            }
-        </div>
+        <input
+            type="text"
+            name="name"
+            className="form-control input-md form-malachite"
+            onChange={onEdit}
+            placeholder="ex: my-model"
+        />
     )
 }
 

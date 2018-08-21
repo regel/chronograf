@@ -36,7 +36,7 @@ class DatasourceSection extends Component {
         this.props.onChoose(e.text)
     }
 
-    renderDatasourceList() {
+    render() {
         const {datasource} = this.props
         const {datasources, error} = this.state
 
@@ -46,6 +46,7 @@ class DatasourceSection extends Component {
         if (datasources === null) {
             return <p>Retrieving data source list...</p>
         }
+
         return (
             <Dropdown
                 name="default_datasource"
@@ -54,15 +55,6 @@ class DatasourceSection extends Component {
                 selected={datasource || ''}
                 className="dropdown-stretch"
             />
-        )
-    }
-
-    render() {
-        return (
-            <div className="form-group">
-                <label htmlFor="default_datasource">Data source</label>
-                {this.renderDatasourceList()}
-            </div>
         )
     }
 }
