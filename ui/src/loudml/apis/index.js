@@ -1,5 +1,10 @@
 import AJAX from 'utils/ajax'
 
+const DEFAULT_START_OPTIONS = {
+    save_prediction: true,
+    detect_anomalies: true,
+}
+
 export const getModels = () => {
     return AJAX({
         url: '/loudml/api/models',
@@ -88,8 +93,7 @@ export const trainAndStartModel = (name, from, to) => {
             from,
             to,
             autostart: true,
-            save_prediction: true,
-            detect_anomalies: true,
+            ...DEFAULT_START_OPTIONS,
         },
         excludeBasepath: true,
     })
@@ -113,8 +117,7 @@ export const startModel = name => {
         method: 'POST',
         url: `/loudml/api/models/${name}/_start`,
         params: {
-            save_prediction: true,
-            detect_anomalies: true,
+            ...DEFAULT_START_OPTIONS,
         },
         excludeBasepath: true,
     })
