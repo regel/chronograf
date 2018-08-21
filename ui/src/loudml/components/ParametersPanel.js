@@ -27,17 +27,6 @@ const ParametersPanel = ({
             </div>
             <div className="panel-body">
                 <div className="form-group col-xs-12 col-sm-6">
-                    <label htmlFor="max_evals">Max iterations</label>
-                    <input
-                        type="number"
-                        name="max_evals"
-                        className="form-control input-md form-malachite"
-                        value={model.max_evals}
-                        onChange={onInputChange}
-                        placeholder="ex: 100"
-                    />
-                </div>
-                <div className="form-group col-xs-12 col-sm-6">
                     <label htmlFor="bucket_interval">groupBy bucket interval</label>
                     <input
                         type="text"
