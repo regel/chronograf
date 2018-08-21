@@ -94,6 +94,14 @@ const notifyFillValue = fill => {
     return `<h1>Fill value:</h1><p>${fill}</p>`
 }
 
+const notifyTagsAccepted = areTagsAccepted => {
+    if (areTagsAccepted===false) {
+        return '<h1>Tags:</h1><p>Tags must be set to \'equal to\'</p>'
+    }
+
+    return ''
+}
+
 const checkTags = (tags) => {
     // really length > 1. Can we have zero length?
     return Object.values(tags).find(v => v.length!==1) === undefined
@@ -245,15 +253,18 @@ class OneClickML extends Component {
                 groupBy: {time},
                 tags,
                 fill,
+                areTagsAccepted,
             }
         } = this.props
         const {datasource} = this.state
-        const connection = notifyDatasource(datasource)
-        const feature = notifyFeature(fields)
-        const bucket = notifyInterval(time)
-        const match = notifyMatch(tags)
-        const fillValue = notifyFillValue(fill)
-        return connection+feature+bucket+match+fillValue
+        return [
+            notifyDatasource(datasource),
+            notifyFeature(fields),
+            notifyInterval(time),
+            notifyMatch(tags),
+            notifyFillValue(fill),
+            notifyTagsAccepted(areTagsAccepted),
+        ].join('')
     }
 
     get isValid() {
@@ -262,6 +273,7 @@ class OneClickML extends Component {
             groupBy: {time},
             tags,
             fill,
+            areTagsAccepted,
         }} = this.props
         const {datasource} = this.state
         return (datasource!==undefined)
@@ -269,6 +281,7 @@ class OneClickML extends Component {
             && (time!==null&&time!=='auto')
             && (checkTags(tags)===true)
             && (fill!=='linear')
+            && (areTagsAccepted===true)
     }
 
     render() {
