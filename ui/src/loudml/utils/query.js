@@ -14,41 +14,80 @@ const QUERY_CONFIG = {
     shifts: null,
 }
 
-const createPrefixedQueryFields = (prefix, model) => {
+const createErrorQueryFields = (prefix, model) => {
     const {features} = model
+
     return features
         .map(
             f => ({
                 type: 'func',
-                value: (prefix===null?f.metric:'LAST'),
-                alias: (prefix===null?f.name:`${prefix}`),
+                value: 'LAST',
+                alias: prefix,
                 args: [
                     {
                         type: 'field',
                         alias: '',
-                        value: (prefix===null?f.field:`${prefix}_${f.metric}_${f.field}`),
+                        value: `${prefix}_${f.metric}_${f.field}`,
                     }
                 ],
             })
         )
 }
 
-const createQueryConfig = (prefix, model, database) => {
-    const {features, name} = model
+const createModelQueryFields = (model) => {
+    const {features} = model
+
+    return features
+        .map(
+            f => ({
+                type: 'func',
+                value: f.metric,
+                alias: f.name,
+                args: [
+                    {
+                        type: 'field',
+                        alias: '',
+                        value: f.field,
+                    }
+                ],
+            })
+        )
+}
+
+const createErrorQueryConfig = (prefix, model, database) => {
+    const {name} = model
+
+    return {
+        ...QUERY_CONFIG,
+        fields: createErrorQueryFields(prefix, model),
+        database,
+        measurement: `prediction_${name}`,
+        tags: {},
+        fill: null,
+        groupBy: {
+            time: model.bucket_interval,
+            tags: [],
+        }
+    }
+}
+
+const createModelQueryConfig = (model, database) => {
+    const {features} = model
     const feature = features[0]
-    const measurement = (prefix===null?feature.measurement:`prediction_${name}`)
+    const measurement = feature.measurement
     const tags = feature.match_all
         .reduce((a, m) => {
                 a[m.tag] = [m.value]
                 return a
         }, {})
+
     return {
         ...QUERY_CONFIG,
-        fields: createPrefixedQueryFields(prefix, model),
+        fields: createModelQueryFields(model),
         database,
         measurement,
         tags,
-        fill: (prefix===null?feature.default:null),
+        fill: feature.default,
         groupBy: {
             time: model.bucket_interval,
             tags: [],
@@ -69,17 +108,16 @@ export const createQueryFromModel = (model, source, database) => {
     }
 
     const configs = [
-        { queryConfig: createQueryConfig(
+        { queryConfig: createErrorQueryConfig(
             'lower',
             m,
             database),
         },
-        { queryConfig: createQueryConfig(
-            null,
+        { queryConfig: createModelQueryConfig(
             m,
             database),
         },
-        { queryConfig: createQueryConfig(
+        { queryConfig: createErrorQueryConfig(
             'upper',
             m,
             database),

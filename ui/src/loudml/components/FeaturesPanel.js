@@ -1,11 +1,17 @@
 import React, {PropTypes, Component} from 'react'
 
-import FeaturesTable from 'src/loudml/components/FeaturesTable'
+import Feature from 'src/loudml/components/Feature'
 import {DEFAULT_FEATURE} from 'src/loudml/constants'
+
+import 'src/loudml/styles/feature.css'
 
 class FeaturesPanel extends Component {
     constructor(props) {
         super(props)
+    }
+
+    getMeasurements = () => {
+
     }
 
     addFeature = () => {
@@ -42,6 +48,18 @@ class FeaturesPanel extends Component {
         })
     }
 
+    get title() {
+        const {features} = this.props
+
+        if (features.length === 0) {
+            return ''
+        }
+
+        return (features.length === 1
+            ? '1 Feature'
+            : `${features.length} Features`)
+    }
+
     render() {
         const {features} = this.props
 
@@ -49,6 +67,7 @@ class FeaturesPanel extends Component {
             <div className="panel panel-solid">
                 <div className="panel-heading">
                     <h2 className="panel-title">
+                        {this.title}
                     </h2>
                     <button
                         className="btn btn-sm btn-primary"
@@ -59,11 +78,13 @@ class FeaturesPanel extends Component {
                 </div>
                 <div className="panel-body">
                     {features.length
-                        ? <FeaturesTable
-                            features={features}
-                            onDelete={this.deleteFeature}
-                            onEdit={this.editFeature}
-                        />
+                        ? features.map((feature, index) => (
+                            <Feature
+                                key={`${index}_${features.length}`}
+                                feature={feature}
+                                onDelete={this.deleteFeature}
+                                onEdit={this.editFeature}
+                            />))
                         : <i>No feature</i>}
                 </div>
             </div>
@@ -71,9 +92,11 @@ class FeaturesPanel extends Component {
     }
 }
 
+const {arrayOf, func, shape} = PropTypes
+
 FeaturesPanel.propTypes = {
-    features: PropTypes.arrayOf(PropTypes.shape({})),
-    onInputChange: PropTypes.func.isRequired,
+    features: arrayOf(shape({})),
+    onInputChange: func.isRequired,
 }
 
 export default FeaturesPanel
