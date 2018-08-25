@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import Dygraph from 'src/shared/components/Dygraph'
 import shallowCompare from 'react-addons-shallow-compare'
 
-import {timeSeriesToDygraph, customBars} from 'src/loudml/utils/timeSeriesToDygraph'
+import {timeSeriesToDygraph, errorBars} from 'src/loudml/utils/timeSeriesToDygraph'
 
 class ConfidenceGraph extends Component {
   constructor(props) {
@@ -16,7 +16,7 @@ class ConfidenceGraph extends Component {
 
   componentWillMount() {
     const {data, isInDataExplorer} = this.props
-    this._timeSeries = customBars(timeSeriesToDygraph(data, isInDataExplorer))
+    this._timeSeries = errorBars(timeSeriesToDygraph(data, isInDataExplorer))
   }
 
   componentWillUpdate(nextProps) {
@@ -25,7 +25,7 @@ class ConfidenceGraph extends Component {
       data !== nextProps.data ||
       activeQueryIndex !== nextProps.activeQueryIndex
     ) {
-      this._timeSeries = customBars(timeSeriesToDygraph(
+      this._timeSeries = errorBars(timeSeriesToDygraph(
         nextProps.data,
         nextProps.isInDataExplorer
       ))

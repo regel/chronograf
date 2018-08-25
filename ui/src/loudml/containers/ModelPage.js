@@ -57,7 +57,11 @@ class ModelPage extends Component {
         const {isCreating} = this.state
         const {params: {name}, notify, model} = this.props
 
-        if (isCreating || model.name) {
+        if (isCreating) {
+            return this.setState({ isLoading: false, })
+        }
+
+        if (model.name) {
             try {
                 const {data: hooks} = await getModelHookApi(name)
                 const hook = hooks.find(h => h === ANOMALY_HOOK_NAME)

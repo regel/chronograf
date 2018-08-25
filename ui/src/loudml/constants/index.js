@@ -25,7 +25,7 @@ export const DEFAULT_FEATURE = {
     field: null,
     metric: 'mean',
     default: null,
-    io: 'in/out',
+    io: 'io',
     anomaly_type: 'low_high',
 }
 
@@ -36,8 +36,14 @@ export const DEFAULT_METRICS = [
     '10percentile',
     '90percentile',
     '95percentile',
-    ]
-export const DEFAULT_IO = [ 'in/out', 'in', 'out' ]
+]
+
+export const DEFAULT_IO  = [
+    { text: 'in', value: 'i', },
+    { text: 'out', value: 'o', },
+    { text: 'in/out', value: 'io', }
+]
+                                    
 
 export const MODEL_CREATED = 'MODEL_CREATED';
 export const MODEL_UPDATED = 'MODEL_UPDATED';
