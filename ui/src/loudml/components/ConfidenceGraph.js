@@ -4,6 +4,7 @@ import Dygraph from 'src/shared/components/Dygraph'
 import shallowCompare from 'react-addons-shallow-compare'
 
 import {timeSeriesToDygraph, errorBars} from 'src/loudml/utils/timeSeriesToDygraph'
+import { numberValueFormatter } from 'src/utils/formatting';
 
 class ConfidenceGraph extends Component {
   constructor(props) {
@@ -34,25 +35,26 @@ class ConfidenceGraph extends Component {
 
   render() {
     const {
-//      data,
+      // data,
       axes,
       cell,
       title,
-//      colors,
+      // colors,
       onZoom,
       queries,
       timeRange,
-//      cellHeight,
+      // cellHeight,
       ruleValues,
       isBarGraph,
       resizeCoords,
       isRefreshing,
       setResolution,
       isGraphFilled,
-//      showSingleStat,
+      // showSingleStat,
       displayOptions,
       staticLegend,
       underlayCallback,
+      // overrideLineColors,
       isFetchingInitially,
       hoverTime,
       onSetHoverTime,
@@ -63,6 +65,11 @@ class ConfidenceGraph extends Component {
     // If data for this graph is being fetched for the first time, show a graph-wide spinner.
     if (isFetchingInitially) {
       return <GraphSpinner />
+    }
+
+    const valueFormatter = (value, opts, seriesName, dygraph, row, col) => {
+        const [lower, mid, upper] = dygraph.getValue(row, col).map(v => (v?numberValueFormatter(v, opts, '', ''):''))
+        return `${mid} (${lower}/${upper})`
     }
 
     const options = {
@@ -80,6 +87,15 @@ class ConfidenceGraph extends Component {
       gridLineColor: '#383846',
       connectSeparatedPoints: true,
       customBars: true,
+      axes: {
+          y: {
+              valueFormatter, // : valueFormatter,
+          },
+          y2: {
+            valueFormatter, // : valueFormatter,
+          },
+      },
+      fillAlpha: 0.35,  // 0.15
     }
 
     /*
