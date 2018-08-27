@@ -110,10 +110,9 @@ class FillQuery extends Component {
           className="fill-query--dropdown dropdown-100"
           buttonSize={`btn-${size}`}
           buttonColor="btn-info"
-          menuClass={`dropdown-${this.getColor(theme)}`}
+          // menuClass={`dropdown-${this.getColor(theme)}`}
           onChoose={this.handleDropdown}
         />
-        <label className="fill-query--label">Fill:</label>
       </div>
     )
   }

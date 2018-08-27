@@ -28,3 +28,11 @@ export const normalizeFeatureDefault = fill => {
     }
     return parsed
 }
+
+export const denormalizeFeatureDefault = fill => {
+    if (fill==='previous') {
+        return fill
+    }
+
+    return `${fill}`
+}

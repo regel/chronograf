@@ -1,18 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {connect} from 'react-redux'
 
-import {notify as notifyAction} from 'shared/actions/notifications'
 import ConfirmButtons from 'shared/components/ConfirmButtons'
 import DeleteConfirmButtons from '../../shared/components/DeleteConfirmButtons';
 
 const FeatureHeader = ({
   feature,
   onEdit,
-  // notify,
   onKeyDown,
-  // onConfirm,
-  onCancel,
+  onConfirm,
+  // onCancel,
   onDelete,
 }) => {
   if (feature.isEditing) {
@@ -21,8 +18,8 @@ const FeatureHeader = ({
         feature={feature}
         onEdit={onEdit}
         onKeyDown={onKeyDown}
-        // onConfirm={onConfirm}
-        onCancel={onCancel}
+        onConfirm={onConfirm}
+        onCancel={onDelete}
       />
     )
   }
@@ -68,7 +65,7 @@ const EditHeader = ({
       name="name"
       type="text"
       value={feature.name}
-      placeholder="Name this Database"
+      placeholder="Name this Feature"
       onChange={onEdit(feature)}
       onKeyDown={onKeyDown(feature)}
       autoFocus={true}
@@ -83,16 +80,15 @@ const {func, shape} = PropTypes
 
 FeatureHeader.propTypes = {
   onEdit: func,
-  notify: func.isRequired,
   feature: shape(),
   onKeyDown: func,
-  onCancel: func,
+  // onCancel: func,
   onDelete: func,
+  onConfirm: func,
 }
 
 Header.propTypes = {
-  notify: func.isRequired,
-  onConfirm: func,
+  // onConfirm: func,
   onCancel: func,
   onDelete: func,
   feature: shape(),
@@ -106,8 +102,4 @@ EditHeader.propTypes = {
   onConfirm: func,
 }
 
-const mapDispatchToProps = dispatch => ({
-  notify: message => dispatch(notifyAction(message)),
-})
-
-export default connect(null, mapDispatchToProps)(FeatureHeader)
+export default FeatureHeader
