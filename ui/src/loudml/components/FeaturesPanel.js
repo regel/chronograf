@@ -1,10 +1,31 @@
 import React, {PropTypes, Component} from 'react'
+import {connect} from 'react-redux'
+
+import {notify as notifyAction} from 'shared/actions/notifications'
 
 import Feature from 'src/loudml/components/Feature'
+
+import {TEN_SECONDS} from 'shared/constants/index'
 import {DEFAULT_FEATURE} from 'src/loudml/constants'
 
 import 'src/loudml/styles/feature.css'
 
+const defaultErrorNotification = {
+    type: 'error',
+    icon: 'alert-triangle',
+    duration: TEN_SECONDS,
+}
+
+const notifyFeatureNameInvalid = () => ({
+    ...defaultErrorNotification,
+    message: 'Feature name cannot be blank.',
+  })
+  
+const notifyFeatureNameAlreadyExists = () => ({
+    ...defaultErrorNotification,
+    message: 'A Feature by this name already exists.',
+  })
+  
 class FeaturesPanel extends Component {
     constructor(props) {
         super(props)
@@ -16,8 +37,11 @@ class FeaturesPanel extends Component {
 
     addFeature = () => {
         const {features} = this.props
-        features.push({...DEFAULT_FEATURE})
-        this.onInputChange(features)
+        // features.push({...DEFAULT_FEATURE, isEditing: true})
+        this.onInputChange([
+            {...DEFAULT_FEATURE, isEditing: true},
+            ...features
+        ])
     }
 
     deleteFeature = toDelete => {
@@ -46,6 +70,36 @@ class FeaturesPanel extends Component {
                 value: features
             }
         })
+    }
+
+    handleConfirmFeature = feature => {
+        const {notify, features} = this.props
+        
+        if (!feature.name) {
+            return notify(notifyFeatureNameInvalid())
+        }
+    
+        if (features.find(f => f!==feature && f.name === feature.name) !== undefined) {
+            return notify(notifyFeatureNameAlreadyExists())
+        }
+    
+        // delete feature.isEditing
+        this.onInputChange(
+            features.map(f => (
+                f===feature?delete f.isEditing&&f:f))
+            )
+    }
+
+    handleKeyDownFeature = feature => e => {
+        const {key} = e
+    
+        if (key === 'Escape') {
+            this.deleteFeature(feature)
+        }
+    
+        if (key === 'Enter') {
+            this.handleConfirmFeature(feature)
+        }
     }
 
     get title() {
@@ -83,7 +137,10 @@ class FeaturesPanel extends Component {
                                 key={`${index}_${features.length}`}
                                 feature={feature}
                                 onDelete={this.deleteFeature}
+                                onCancel={this.deleteFeature}
                                 onEdit={this.editFeature}
+                                onKeyDown={this.handleKeyDownFeature}
+                                onConfirm={this.handleConfirmFeature}
                             />))
                         : <i>No feature</i>}
                 </div>
@@ -97,6 +154,11 @@ const {arrayOf, func, shape} = PropTypes
 FeaturesPanel.propTypes = {
     features: arrayOf(shape({})),
     onInputChange: func.isRequired,
+    notify: func.isRequired,
 }
 
-export default FeaturesPanel
+const mapDispatchToProps = dispatch => ({
+    notify: message => dispatch(notifyAction(message))
+})
+
+export default connect(null, mapDispatchToProps)(FeaturesPanel)

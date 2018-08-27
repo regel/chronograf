@@ -20,13 +20,14 @@ export const DEFAULT_MODEL = {
 }
 
 export const DEFAULT_FEATURE = {
-    name: null,
+    name: '',      // input value connot be null
     measurement: null,
     field: null,
     metric: 'mean',
     default: null,
     io: 'io',
     anomaly_type: 'low_high',
+    match_all: [],
 }
 
 export const DEFAULT_METRICS = [

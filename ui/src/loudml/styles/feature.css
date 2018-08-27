@@ -3,3 +3,12 @@
     display: flex;
     flex-direction: row;
 }
+
+.feature-row .fill-query--label {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.table-feature {
+    background-color: #31313d;
+}
