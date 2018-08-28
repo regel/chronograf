@@ -54,15 +54,24 @@ const createModelQueryFields = (model) => {
         )
 }
 
+const getTags = feature => {
+    return feature.match_all
+        .reduce((a, m) => {
+            a[m.tag] = [m.value]
+            return a
+    }, {})
+}
+
 const createErrorQueryConfig = (prefix, model, database) => {
-    const {name} = model
+    const {name, features} = model
+    const feature = features[0]
 
     return {
         ...QUERY_CONFIG,
         fields: createErrorQueryFields(prefix, model),
         database,
         measurement: `prediction_${name}`,
-        tags: {},
+        tags: getTags(feature),
         fill: null,
         groupBy: {
             time: model.bucket_interval,
@@ -75,18 +84,13 @@ const createModelQueryConfig = (model, database) => {
     const {features} = model
     const feature = features[0]
     const measurement = feature.measurement
-    const tags = feature.match_all
-        .reduce((a, m) => {
-                a[m.tag] = [m.value]
-                return a
-        }, {})
 
     return {
         ...QUERY_CONFIG,
         fields: createModelQueryFields(model),
         database,
         measurement,
-        tags,
+        tags: getTags(feature),
         fill: feature.default,
         groupBy: {
             time: model.bucket_interval,
