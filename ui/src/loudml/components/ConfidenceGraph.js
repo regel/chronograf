@@ -35,26 +35,21 @@ class ConfidenceGraph extends Component {
 
   render() {
     const {
-      // data,
       axes,
       cell,
       title,
-      // colors,
       onZoom,
       queries,
       timeRange,
-      // cellHeight,
       ruleValues,
-      isBarGraph,
       resizeCoords,
       isRefreshing,
       setResolution,
       isGraphFilled,
-      // showSingleStat,
       displayOptions,
       staticLegend,
       underlayCallback,
-      // overrideLineColors,
+      overrideLineColors,
       isFetchingInitially,
       hoverTime,
       onSetHoverTime,
@@ -68,9 +63,26 @@ class ConfidenceGraph extends Component {
     }
 
     const valueFormatter = (value, opts, seriesName, dygraph, row, col) => {
-        const [lower, mid, upper] = dygraph.getValue(row, col).map(v => (v?numberValueFormatter(v, opts, '', ''):''))
-        return `${mid} (${lower}/${upper})`
+        const rowData = dygraph.getValue(row, col)
+        if (Array.isArray(rowData)) {
+          const [lower, mid, upper] = rowData
+            .map(v => (
+              v
+              ?numberValueFormatter(v, opts, '', '')
+              :''
+            ))
+          return `${mid} (${lower}/${upper})`
+        }
+        return numberValueFormatter(value, opts, '', '')
     }
+
+    /*
+     * need to make line graph if bad data
+     */
+    const customBars = (timeSeries.length !== 0
+      && timeSeries[0].length>1
+      && timeSeries[0][1].length === 3)
+    const fillGraph = !customBars
 
     const options = {
       ...displayOptions,
@@ -79,32 +91,24 @@ class ConfidenceGraph extends Component {
       rightGap: 0,
       yRangePad: 10,
       labelsKMB: true,
-      fillGraph: false,
+      fillGraph,
       underlayCallback,
       axisLabelWidth: 60,
       drawAxesAtZero: true,
       axisLineColor: '#383846',
       gridLineColor: '#383846',
       connectSeparatedPoints: true,
-      customBars: true,
+      customBars,
       axes: {
-          y: {
-              valueFormatter, // : valueFormatter,
-          },
-          y2: {
-            valueFormatter, // : valueFormatter,
-          },
+        y: {
+          valueFormatter,
+        },
+        y2: {
+          valueFormatter,
+        },
       },
       fillAlpha: 0.35,  // 0.15
     }
-
-    /*
-    const lineColors = [
-      "#284785",
-      "#EE1111",
-      "#8AE234",
-    ]
-*/
 
     const containerStyle = {
       width: 'calc(100% - 32px)',
@@ -112,9 +116,6 @@ class ConfidenceGraph extends Component {
       position: 'absolute',
       top: '8px',
     }
-
-    // const prefix = axes ? axes.y.prefix : ''
-    // const suffix = axes ? axes.y.suffix : ''
 
     return (
       <div className="dygraph graph--hasYLabel" style={{height: '100%'}}>
@@ -127,7 +128,7 @@ class ConfidenceGraph extends Component {
           queries={queries}
           options={options}
           timeRange={timeRange}
-          isBarGraph={isBarGraph}
+          isBarGraph={false}
           timeSeries={timeSeries}
           ruleValues={ruleValues}
           hoverTime={hoverTime}
@@ -135,7 +136,7 @@ class ConfidenceGraph extends Component {
           resizeCoords={resizeCoords}
           dygraphSeries={dygraphSeries}
           setResolution={setResolution}
-          // overrideLineColors={lineColors}
+          overrideLineColors={overrideLineColors}
           containerStyle={containerStyle}
           staticLegend={staticLegend}
           isGraphFilled={isGraphFilled}
@@ -164,7 +165,7 @@ const {array, arrayOf, bool, func, number, shape, string} = PropTypes
 
 ConfidenceGraph.defaultProps = {
   underlayCallback: () => {},
-  isGraphFilled: true,
+  isGraphFilled: false,
   overrideLineColors: null,
   staticLegend: false,
 }
@@ -187,6 +188,7 @@ ConfidenceGraph.propTypes = {
   isGraphFilled: bool,
   isBarGraph: bool,
   staticLegend: bool,
+  overrideLineColors: array,
   displayOptions: shape({
     stepPlot: bool,
     stackedGraph: bool,
@@ -206,15 +208,6 @@ ConfidenceGraph.propTypes = {
   resizeCoords: shape(),
   queries: arrayOf(shape({}).isRequired).isRequired,
   data: arrayOf(shape({}).isRequired).isRequired,
-  colors: arrayOf(
-    shape({
-      type: string.isRequired,
-      hex: string.isRequired,
-      id: string.isRequired,
-      name: string.isRequired,
-      value: string.isRequired,
-    }).isRequired
-  ),
 }
 
 export default ConfidenceGraph

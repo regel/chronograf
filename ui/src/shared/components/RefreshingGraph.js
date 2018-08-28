@@ -109,7 +109,6 @@ const RefreshingGraph = ({
   if (type === 'confidence') {
     return (
       <RefreshingConfidenceGraph
-        colors={colors}
         key={manualRefresh}
         queries={queries}
         templates={templates}
@@ -123,6 +122,8 @@ const RefreshingGraph = ({
         onSetHoverTime={onSetHoverTime}
         inView={inView}
         setDataLabels={setDataLabels}
+        onZoom={onZoom}
+        timeRange={timeRange}
       />
     )
   }

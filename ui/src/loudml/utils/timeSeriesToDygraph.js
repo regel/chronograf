@@ -174,7 +174,7 @@ export const errorBars = series => {
     const {labels, timeSeries, dygraphSeries} = series
 
     if (timeSeries.length === 0
-        || (timeSeries.length)%3!==1) {  // no data
+        || (timeSeries[0].length)%3!==1) {  // no correct data
         return series
     }
 
