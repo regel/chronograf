@@ -110,6 +110,7 @@ const RefreshingGraph = ({
     return (
       <RefreshingConfidenceGraph
         key={manualRefresh}
+        colors={colors}
         queries={queries}
         templates={templates}
         autoRefresh={autoRefresh}
@@ -124,6 +125,7 @@ const RefreshingGraph = ({
         setDataLabels={setDataLabels}
         onZoom={onZoom}
         timeRange={timeRange}
+        staticLegend={staticLegend}
       />
     )
   }
