@@ -106,7 +106,8 @@ export const forecastModel = (name, from, to) => {
         params: {
             from,
             to,
-            save_prediction: true
+            save_prediction: true,
+            bg: true,
         },
         excludeBasepath: true,
     })
