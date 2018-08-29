@@ -14,6 +14,7 @@ import {
     trainModel as trainModelApi,
     getModelHooks as getModelHookApi,
     createModelHook as createModelHookApi,
+    deleteModelHook as deleteModelHookApi,
 } from 'src/loudml/apis'
 import {
     modelCreated as modelCreatedAction,
@@ -163,8 +164,14 @@ class ModelPage extends Component {
     }
 
     _updateModel = async () => {
-        const {model, annotation} = this.state
-        const {notify, modelActions: {modelUpdated}} = this.props
+        const {
+            model,
+            annotation
+        } = this.state
+        const {
+            notify,
+            modelActions: {modelUpdated},
+        } = this.props
 
         const serial = {
             ...model,
@@ -173,8 +180,13 @@ class ModelPage extends Component {
 
         try {
             await updateModelApi(serial)
-            if (annotation) {
+            const {data: hooks} = await getModelHookApi(model.name)
+            const hook = hooks.find(h => h === ANOMALY_HOOK_NAME)
+            if (annotation && !hook) {
                 await createModelHookApi(model.name, createHook(ANOMALY_HOOK, model.default_datasource))
+            }
+            if (!annotation && hook) {
+                await deleteModelHookApi(model.name, ANOMALY_HOOK_NAME)
             }
             modelUpdated(model)
             this._redirect()
