@@ -4,11 +4,12 @@ import PropTypes from 'prop-types'
 import NameSection from 'src/loudml/components/NameSection'
 import DatasourceSection from 'src/loudml/components/DatasourceSection'
 
-const GeneralPage = ({
+const GeneralPanel = ({
     model,
     onInputChange,
     onDatasourceChoose,
     isCreating,
+    datasources,
 }) => {
     return (
         <div className="panel panel-solid">
@@ -31,6 +32,7 @@ const GeneralPage = ({
                     <label>Data source</label>
                     <DatasourceSection
                         datasource={model.default_datasource}
+                        datasources={datasources}
                         onChoose={onDatasourceChoose}
                         buttonSize="btn-md"
                     />
@@ -51,11 +53,14 @@ const GeneralPage = ({
     )
 }
 
-GeneralPage.propTypes = {
-    model: PropTypes.shape({}),
-    onDatasourceChoose: PropTypes.func.isRequired,
-    onInputChange: PropTypes.func.isRequired,
-    isCreating: PropTypes.bool.isRequired,
+const {func, shape, bool, arrayOf} = PropTypes
+
+GeneralPanel.propTypes = {
+    model: shape({}),
+    onDatasourceChoose: func.isRequired,
+    onInputChange: func.isRequired,
+    isCreating: bool.isRequired,
+    datasources: arrayOf(shape()),
 }
 
-export default GeneralPage
+export default GeneralPanel

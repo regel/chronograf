@@ -11,6 +11,7 @@ const FeatureHeader = ({
   onConfirm,
   // onCancel,
   onDelete,
+  disabled,
 }) => {
   if (feature.isEditing) {
     return (
@@ -28,6 +29,7 @@ const FeatureHeader = ({
     <Header
       feature={feature}
       onDelete={onDelete}
+      disabled={disabled}
     />
   )
 }
@@ -35,18 +37,22 @@ const FeatureHeader = ({
 const Header = ({
     feature,
     onDelete,
+    disabled,
 }) => {
 
     return (
         <div className="db-manager-header">
             <h4>{feature.name}</h4>
             <div className="db-manager-header--actions text-right">
+                {disabled
+                ?null
+                :(
                 <DeleteConfirmButtons
                     item={feature}
                     onDelete={onDelete}
                     // onCancel={onCancel}
                     buttonSize="btn-xs"
-                />
+                />)}
             </div>
         </div>
     )
@@ -76,7 +82,7 @@ const EditHeader = ({
   </div>
 )
 
-const {func, shape} = PropTypes
+const {func, shape, bool} = PropTypes
 
 FeatureHeader.propTypes = {
   onEdit: func,
@@ -85,6 +91,7 @@ FeatureHeader.propTypes = {
   // onCancel: func,
   onDelete: func,
   onConfirm: func,
+  disabled: bool.isRequired,
 }
 
 Header.propTypes = {
@@ -92,6 +99,7 @@ Header.propTypes = {
   onCancel: func,
   onDelete: func,
   feature: shape(),
+  disabled: bool.isRequired,
 }
 
 EditHeader.propTypes = {
@@ -100,6 +108,7 @@ EditHeader.propTypes = {
   onKeyDown: func,
   onCancel: func,
   onConfirm: func,
+  disabled: bool.isRequired,
 }
 
 export default FeatureHeader

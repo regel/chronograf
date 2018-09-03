@@ -79,8 +79,10 @@ class ConfidenceGraph extends Component {
     /*
      * need to make line graph if bad data
      */
-    const customBars = (timeSeries.length !== 0
+    const customBars = (timeSeries
+      && timeSeries.length !== 0
       && timeSeries[0].length>1
+      && Array.isArray(timeSeries[0][1])
       && timeSeries[0][1].length === 3)
     const fillGraph = !customBars
 

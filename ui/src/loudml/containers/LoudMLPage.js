@@ -17,6 +17,7 @@ import {
 import {createQueryFromModel} from 'src/loudml/utils/query'
 import {convertTimeRange} from 'src/loudml/utils/timerange'
 import {parseError} from 'src/loudml/utils/error'
+import {findSource} from 'src/loudml/utils/datasource';
 import * as api from 'src/loudml/apis'
 import {getSources} from 'src/shared/apis';
 import {
@@ -319,7 +320,7 @@ class LoudMLPage extends Component {
             const {data} = await api.getDatasources()
             const datasource = data.find(d => d.name === settings.default_datasource)
             const {data: {sources}} = await getSources()
-            const source = sources.find(s => s.url.match(new RegExp(`${datasource.addr}`)))
+            const source = findSource(sources, datasource)
             await this.createOrUpdateConfident(dashboard, model, source, datasource.database)
             notify(notifyDashboardCreated(settings.name))
         } catch (error) {
