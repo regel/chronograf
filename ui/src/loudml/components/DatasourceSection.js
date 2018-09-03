@@ -1,67 +1,44 @@
-import React, {PropTypes, Component} from 'react'
+import React, {PropTypes} from 'react'
 
 import Dropdown from 'shared/components/Dropdown'
 
-import {getDatasources} from 'src/loudml/apis'
-
-class DatasourceSection extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            datasources: null,
-            error: false,
-        }
+const DatasourceSection = ({
+    datasource,
+    datasources,
+    onChoose,
+    buttonSize,
+}) => {
+    function handleOnChoose(e) {
+        onChoose(e.text)
     }
 
-    componentDidMount() {
-        getDatasources()
-            .then(res => {
-                const state = {datasources: []}
-
-                res.data.forEach(ds => {
-                    if (ds.type === 'influxdb') {
-                        state.datasources.push({text: ds.name})
-                    }
-                })
-
-                if (state.datasources.length === 1) {
-                    state.datasource = state.datasources[0].text
-                }
-                this.setState(state)
-            })
-            .catch(() => this.setState({error: true}))
+    if (!datasources) {
+        return <p>No datasources</p>
     }
 
-    onChoose = e => {
-        this.props.onChoose(e.text)
-    }
-
-    render() {
-        const {datasource} = this.props
-        const {datasources, error} = this.state
-
-        if (error) {
-            return <p>Error! Could not get data source list</p>
-        }
-        if (datasources === null) {
-            return <p>Retrieving data source list...</p>
-        }
-
-        return (
-            <Dropdown
-                name="default_datasource"
-                items={datasources}
-                onChoose={this.onChoose}
-                selected={datasource || ''}
-                className="dropdown-stretch"
-            />
-        )
-    }
+    return (
+        <Dropdown
+            name="default_datasource"
+            items={datasources.map(ds => ({text: ds.name}))}
+            onChoose={handleOnChoose}
+            selected={datasource || ''}
+            className="dropdown-stretch"
+            buttonSize={buttonSize}
+        />
+    )
 }
 
+DatasourceSection.defaultProps = {
+    datasources: [],
+}
+
+const {func, string, arrayOf, shape} = PropTypes
+
 DatasourceSection.propTypes = {
-    datasource: PropTypes.string,
-    onChoose: PropTypes.func,
+    datasource: string,
+    datasources: arrayOf(shape()).isRequired,
+    onChoose: func,
+    buttonSize: string,
 }
 
 export default DatasourceSection

@@ -15,6 +15,7 @@ import {
     getModelHooks as getModelHookApi,
     createModelHook as createModelHookApi,
     deleteModelHook as deleteModelHookApi,
+    getDatasources as getDatasourcesApi,
 } from 'src/loudml/apis'
 import {
     modelCreated as modelCreatedAction,
@@ -32,6 +33,8 @@ import {
     notifyModelUpdateFailed,
     notifyModelTraining,
     notifyModelTrainingFailed,
+    notifyErrorGettingDatasources,
+    notifyErrorGettingModelHook,
 } from 'src/loudml/actions/notifications'
 import {parseError} from 'src/loudml/utils/error'
 import {createHook} from 'src/loudml/utils/hook'
@@ -51,6 +54,8 @@ class ModelPage extends Component {
             },
             isCreating: props.params.name === undefined,
             annotation: false,
+            datasources: [],
+            training: props.training,
         }
     }
 
@@ -58,30 +63,35 @@ class ModelPage extends Component {
         const {isCreating} = this.state
         const {params: {name}, notify, model} = this.props
 
+        const cb = this.loadDatasources
+
         if (isCreating) {
-            return this.setState({ isLoading: false, })
+            return this.setState({
+                isLoading: false,
+                // datasources,
+            }, cb)
         }
 
         if (model.name) {
             try {
-                const {data: hooks} = await getModelHookApi(name)
-                const hook = hooks.find(h => h === ANOMALY_HOOK_NAME)
+                const annotation = await this.hasHook(model.name)
                 return this.setState(
                     {
                         isLoading: false,
-                        annotation: (hook!==undefined),
-                    }
+                        // datasources,
+                        annotation,
+                    },
+                    cb
                 )
             } catch (error) {
                 notify(notifyErrorGettingModel(parseError(error)))
-                return this.setState({isLoading: false})
+                return this.setState({isLoading: false}, cb)
             }
         }
 
         try {
             const {data: {settings, state, training}} = await getModelApi(name)
-            const {data: hooks} = await getModelHookApi(name)
-            const hook = hooks.find(h => h === ANOMALY_HOOK_NAME)
+            const annotation = await this.hasHook(name)
             this.setState({
                 model: {
                     ...DEFAULT_MODEL,
@@ -89,14 +99,41 @@ class ModelPage extends Component {
                     features: FeaturesUtils.deserializedFeatures(settings.features),
                 },
                 status: {...state},
-                training,
+                training: {...training},
                 isLoading: false,
-                annotation: (hook!==undefined),
-            })
+                // datasources,
+                annotation,
+            }, cb)
         } catch (error) {
             notify(notifyErrorGettingModel(parseError(error)))
-            this.setState({isLoading: false})
+            this.setState({isLoading: false}, cb)
         }
+    }
+
+    loadDatasources = async () => {
+        const {notify} = this.props
+
+        try {
+            const {data: datasources} = await getDatasourcesApi()
+            const filtered = datasources.filter(ds => ds.type === 'influxdb')
+            this.setState({datasources: filtered})
+        } catch (error) {
+            notify(notifyErrorGettingDatasources(parseError(error)))
+        }
+        // return []
+    }
+
+    hasHook = async (name) => {
+        const {notify} = this.props
+
+        try {
+            const {data: hooks} = await getModelHookApi(name)
+            const hook = hooks.find(h => h === ANOMALY_HOOK_NAME)
+            return (hook!==undefined)
+        } catch (error) {
+            notify(notifyErrorGettingModelHook(name, ANOMALY_HOOK_NAME, parseError(error)))
+        }
+        return false
     }
 
     get validationError() {
@@ -227,7 +264,14 @@ class ModelPage extends Component {
     }
 
     render() {
-        const {isLoading, isCreating, model, annotation} = this.state
+        const {
+            isLoading,
+            isCreating,
+            model,
+            annotation,
+            datasources,
+            training,
+        } = this.state
 
         return (
             <div className="page">
@@ -269,6 +313,10 @@ class ModelPage extends Component {
                                         isCreating={isCreating}
                                         annotation={annotation}
                                         onAnnotationChange={this.onAnnotationChange}
+                                        datasources={datasources}
+                                        datasource={datasources.find(ds => ds.name === model.default_datasource)}
+                                        locked={training.state==='training'
+                                            ||training.state==='done'}
                                     />
                                 </div>
                             </div>
@@ -287,14 +335,15 @@ ModelPage.propTypes = {
         name: string,
     }),
     model: shape({}),
-    source: PropTypes.shape({}),
+    training: shape(),
+    source: shape({}),
     router: shape({
         push: func.isRequired,
     }).isRequired,
     notify: func.isRequired,
-    modelActions: PropTypes.shape({
-        modelCreated: PropTypes.func.isRequired,
-        modelUpdated: PropTypes.func.isRequired,
+    modelActions: shape({
+        modelCreated: func.isRequired,
+        modelUpdated: func.isRequired,
     }).isRequired,
 }
 
@@ -310,6 +359,7 @@ function mapStateToProps(state, ownProps) {
             ...DEFAULT_MODEL, // default init 
             ...(stateModel&&stateModel.settings),
         },
+        training: (stateModel&&stateModel.training)||{},
     }
 }
 

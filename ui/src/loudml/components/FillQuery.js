@@ -84,7 +84,7 @@ class FillQuery extends Component {
   }
 
   render() {
-    const {size, theme} = this.props
+    const {size, theme, disabled} = this.props
     const {selected, currentNumberValue} = this.state
 
     return (
@@ -102,6 +102,7 @@ class FillQuery extends Component {
             onKeyDown={this.handleKeyDown}
             onChange={this.handleInputChange}
             onBlur={this.handleInputBlur}
+            disabled={disabled}
           />
         )}
         <Dropdown
@@ -112,18 +113,20 @@ class FillQuery extends Component {
           buttonColor="btn-info"
           // menuClass={`dropdown-${this.getColor(theme)}`}
           onChoose={this.handleDropdown}
+          disabled={disabled}
         />
       </div>
     )
   }
 }
 
-const {func, string} = PropTypes
+const {func, string, bool} = PropTypes
 
 FillQuery.defaultProps = {
   size: 'sm',
   theme: 'blue',
   value: NULL_STRING,
+  disabled: false,
 }
 
 FillQuery.propTypes = {
@@ -131,6 +134,7 @@ FillQuery.propTypes = {
   value: string,
   size: string,
   theme: string,
+  disabled: bool,
 }
 
 export default FillQuery

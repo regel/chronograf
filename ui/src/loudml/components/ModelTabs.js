@@ -16,6 +16,9 @@ const ModelTabs = ({
     isCreating,
     annotation,
     onAnnotationChange,
+    datasources,
+    datasource,
+    locked,
 }) => {
     const tabs = [
         {
@@ -26,6 +29,7 @@ const ModelTabs = ({
                   onDatasourceChoose={onDatasourceChoose}
                   onInputChange={onInputChange}
                   isCreating={isCreating}
+                  datasources={datasources}
                 />
             ),
         },
@@ -35,6 +39,7 @@ const ModelTabs = ({
                 <ParametersPanel
                   model={model}
                   onInputChange={onInputChange}
+                  locked={locked}
                 />
             ),
         },
@@ -44,6 +49,8 @@ const ModelTabs = ({
                 <FeaturesPanel
                     features={model.features}
                     onInputChange={onInputChange}
+                    datasource={datasource}
+                    locked={locked}
                 />
             ),
         },
@@ -91,7 +98,7 @@ const ModelTabs = ({
     )
 }
 
-const {func, shape, bool} = PropTypes
+const {func, shape, bool, arrayOf} = PropTypes
 
 ModelTabs.propTypes = {
     model: shape({}).isRequired,
@@ -100,6 +107,9 @@ ModelTabs.propTypes = {
     isCreating: bool.isRequired,
     annotation: bool.isRequired,
     onAnnotationChange: func.isRequired,
+    datasources: arrayOf(shape()),
+    datasource: shape(),
+    locked: bool.isRequired,
 }
 
 export default ModelTabs

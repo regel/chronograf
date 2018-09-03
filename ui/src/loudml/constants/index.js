@@ -1,5 +1,7 @@
 import {INFLUXQL_FUNCTIONS} from 'src/data_explorer/constants'
 
+export const DEFAULT_LOUDML_RP = 'autogen'
+
 export const DEFAULT_MODEL = {
     bucket_interval: '20m',
     default_datasource: null,

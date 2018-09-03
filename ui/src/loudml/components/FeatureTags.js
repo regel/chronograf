@@ -1,39 +1,119 @@
-import React, {PropTypes} from 'react'
+import React, {PropTypes, Component} from 'react'
+import _ from 'lodash'
 
-const FeatureTags = ({
-    tags,
-    // onDelete,
-    // onEdit,
-    // onAdd,
-}) => (
-    <div>
-        <table className="table v-center">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th className="admin-table--left-offset">Value</th>
-                    <th/>
-                </tr>
-            </thead>
-            <tbody>
-                {tags&&tags.map((t, i) => (
-                <tr key={i}>
-                    <td>{t.tag}</td>
-                    <td>{t.value}</td>
-                    <td/>
-                </tr>))}
-            </tbody>
-        </table>
-    </div>
-)
+import TagListItem from 'src/loudml/components/TagListItem';
 
-const {arrayOf, func, shape} = PropTypes
+import {showTagKeys, showTagValues} from 'shared/apis/metaQuery'
+
+import showTagKeysParser from 'shared/parsing/showTagKeys'
+import showTagValuesParser from 'shared/parsing/showTagValues'
+
+class FeatureTags extends Component {
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            tags: []
+        }
+
+    }
+
+    componentDidMount() {
+        const {database, measurement, retentionPolicy} = this.props
+        if (!database || !measurement || !retentionPolicy) {
+            return
+        }
+    
+        this.getTags()
+      }
+    
+    componentDidUpdate(prevProps) {
+        const {source, database, measurement, retentionPolicy} = this.props
+    
+        if (!database || !measurement || !retentionPolicy) {
+            return
+        }
+    
+        if (
+            database === prevProps.database &&
+            measurement === prevProps.measurement &&
+            retentionPolicy === prevProps.retentionPolicy &&
+            _.isEqual(prevProps.source, source)
+        ) {
+            return
+        }
+    
+        this.getTags()
+      }
+    
+
+    getTags = async () => {
+        const {
+            source: {links: {proxy}},
+            database,
+            measurement,
+            retentionPolicy
+        } = this.props
+    
+        const {data} = await showTagKeys({
+            database,
+            measurement,
+            retentionPolicy,
+            source: proxy,
+        })
+        const {tagKeys} = showTagKeysParser(data)
+    
+        if (tagKeys.length===0) {
+            return this.setState({tags: []})
+        }
+
+        const response = await showTagValues({
+            database,
+            measurement,
+            retentionPolicy,
+            source: proxy,
+            tagKeys,
+        })
+        
+        const {tags} = showTagValuesParser(response.data)
+        
+        this.setState({tags})
+
+    }
+    
+    render() {
+        const {tags, onChooseTag, disabled} = this.props
+
+        return (
+            <div className="query-builder--sub-list">
+                {_.map(this.state.tags, (tagValues, tagKey) => (
+                    <TagListItem
+                        key={tagKey}
+                        tagKey={tagKey}
+                        tagValues={tagValues}
+                        onChooseTag={onChooseTag}
+                        selectedTagValues={
+                            tags
+                                .filter(t => t.tag === tagKey)
+                                .map(t => (t.value))}
+                        disabled={disabled}
+                    />
+                ))}
+            </div>
+        )
+    }
+}
+
+const {arrayOf, func, shape, string, bool} = PropTypes
 
 FeatureTags.propTypes = {
     tags: arrayOf(shape({})),
-    onDelete: func,
-    onEdit: func,
-    onAdd: func,
+    onChooseTag: func.isRequired,
+    database: string,
+    measurement: string,
+    retentionPolicy: string,
+    source: shape(),
+    disabled: bool,
 }
 
 export default FeatureTags

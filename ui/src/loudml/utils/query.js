@@ -2,9 +2,10 @@ import {buildQuery} from 'utils/influxql'
 import {TYPE_QUERY_CONFIG} from 'src/dashboards/constants'
 
 import FeaturesUtils from 'src/loudml/components/FeaturesUtils'
+import { DEFAULT_LOUDML_RP } from 'src/loudml/constants';
 
 const QUERY_CONFIG = {
-    retentionPolicy: 'autogen',
+    retentionPolicy: DEFAULT_LOUDML_RP,
     areTagsAccepted: true,
     rawText: null,
     range: {

@@ -5,6 +5,10 @@ import {notify as notifyAction} from 'shared/actions/notifications'
 
 import Feature from 'src/loudml/components/Feature'
 
+import {showMeasurements} from 'src/shared/apis/metaQuery'
+import showMeasurementsParser from 'src/shared/parsing/showMeasurements'
+import { findSource } from 'src/loudml/utils/datasource';
+
 import {TEN_SECONDS} from 'shared/constants/index'
 import {DEFAULT_FEATURE} from 'src/loudml/constants'
 
@@ -29,15 +33,39 @@ const notifyFeatureNameAlreadyExists = () => ({
 class FeaturesPanel extends Component {
     constructor(props) {
         super(props)
+
+        this.state = {
+            measurements: [],
+            source: null,
+            database: null,
+        }
     }
 
-    getMeasurements = () => {
+    componentDidMount = () => {
+        this.getMeasurements()
+    }
 
+    getMeasurements = async () => {
+        const {
+            sources,
+            datasource,
+            datasource: { database },
+        } = this.props
+        
+        
+        try {
+            const source = findSource(sources, datasource)
+            const {data} = await showMeasurements(source.links.proxy, database)
+            const {measurementSets} = showMeasurementsParser(data)
+            const measurements = measurementSets[0].measurements
+            this.setState({measurements, source, database})
+        } catch (err) {
+            console.error(err)
+        }
     }
 
     addFeature = () => {
         const {features} = this.props
-        // features.push({...DEFAULT_FEATURE, isEditing: true})
         this.onInputChange([
             {...DEFAULT_FEATURE, isEditing: true},
             ...features
@@ -115,16 +143,28 @@ class FeaturesPanel extends Component {
     }
 
     render() {
-        const {features} = this.props
+        const {features, locked} = this.props
+        const {
+            measurements,
+            source,
+            database,
+        } = this.state
 
         return (
             <div className="panel panel-solid">
+                {locked
+                    ?(<div className="panel-heading">
+                        <h4><span className="icon stop" /> This panel is locked
+                        </h4></div>)
+                    :null}
                 <div className="panel-heading">
                     <h2 className="panel-title">
                         {this.title}
                     </h2>
                     <button
                         className="btn btn-sm btn-primary"
+                        disabled={!!features.some(f => f.isEditing)
+                            ||locked}
                         onClick={this.addFeature}
                     >
                         <span className="icon plus" /> Add feature
@@ -141,6 +181,10 @@ class FeaturesPanel extends Component {
                                 onEdit={this.editFeature}
                                 onKeyDown={this.handleKeyDownFeature}
                                 onConfirm={this.handleConfirmFeature}
+                                measurements={measurements}
+                                source={source}
+                                database={database}
+                                locked={locked}
                             />))
                         : <i>No feature</i>}
                 </div>
@@ -149,16 +193,28 @@ class FeaturesPanel extends Component {
     }
 }
 
-const {arrayOf, func, shape} = PropTypes
+const {arrayOf, func, shape, bool} = PropTypes
 
 FeaturesPanel.propTypes = {
     features: arrayOf(shape({})),
     onInputChange: func.isRequired,
     notify: func.isRequired,
+    source: shape(),
+    datasource: shape(),
+    sources: arrayOf(shape()),
+    locked: bool.isRequired,
+}
+
+const mapStateToProps = state => {
+    const { sources } = state
+
+    return {
+        sources,
+    }
 }
 
 const mapDispatchToProps = dispatch => ({
     notify: message => dispatch(notifyAction(message))
 })
 
-export default connect(null, mapDispatchToProps)(FeaturesPanel)
+export default connect(mapStateToProps, mapDispatchToProps)(FeaturesPanel)
