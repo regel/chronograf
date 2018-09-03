@@ -55,7 +55,7 @@ const ModelTabs = ({
             ),
         },
         {
-            type: 'Prediction',
+            type: 'Predictions',
             component: (
                 <PredictionPanel
                     model={model}
@@ -64,7 +64,7 @@ const ModelTabs = ({
             )
         },
         {
-            type: 'Anomaly',
+            type: 'Anomalies',
             component: (
                 <AnomalyPanel
                     model={model}
