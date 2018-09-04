@@ -50,7 +50,7 @@ const ModelActions = ({
             />
             <TrainTimeJobButton
                 startLabel='Train'
-                stopLabel='Stop train'
+                stopLabel='Stop training'
                 onStart={handleOnTrain}
                 onStop={onStopTrain(model.settings.name)}
                 running={
