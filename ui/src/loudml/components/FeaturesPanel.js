@@ -49,12 +49,15 @@ class FeaturesPanel extends Component {
         const {
             sources,
             datasource,
-            datasource: { database },
         } = this.props
         
-        
+        if (!datasource) {
+            return
+        }
+
         try {
             const source = findSource(sources, datasource)
+            const {database} = datasource
             const {data} = await showMeasurements(source.links.proxy, database)
             const {measurementSets} = showMeasurementsParser(data)
             const measurements = measurementSets[0].measurements
@@ -73,10 +76,9 @@ class FeaturesPanel extends Component {
     }
 
     deleteFeature = toDelete => {
-        let {features} = this.props
+        const {features} = this.props
 
-        features = features.filter(feature => feature !== toDelete)
-        this.onInputChange(features)
+        this.onInputChange(features.filter(feature => feature !== toDelete))
     }
 
     editFeature = (toEdit, val) => {
@@ -111,11 +113,13 @@ class FeaturesPanel extends Component {
             return notify(notifyFeatureNameAlreadyExists())
         }
     
-        // delete feature.isEditing
         this.onInputChange(
             features.map(f => (
-                f===feature?delete f.isEditing&&f:f))
+                f===feature
+                    ?delete f.isEditing&&{...f}
+                    :{...f})
             )
+        )
     }
 
     handleKeyDownFeature = feature => e => {
@@ -154,8 +158,8 @@ class FeaturesPanel extends Component {
             <div className="panel panel-solid">
                 {locked
                     ?(<div className="panel-heading">
-                        <h4><span className="icon stop" /> This panel is locked
-                        </h4></div>)
+                        <h6><span className="icon stop" /> This panel is locked
+                        </h6></div>)
                     :null}
                 <div className="panel-heading">
                     <h2 className="panel-title">

@@ -7,6 +7,7 @@ const DatasourceSection = ({
     datasources,
     onChoose,
     buttonSize,
+    disabled,
 }) => {
     function handleOnChoose(e) {
         onChoose(e.text)
@@ -24,6 +25,7 @@ const DatasourceSection = ({
             selected={datasource || ''}
             className="dropdown-stretch"
             buttonSize={buttonSize}
+            disabled={disabled}
         />
     )
 }
@@ -32,13 +34,14 @@ DatasourceSection.defaultProps = {
     datasources: [],
 }
 
-const {func, string, arrayOf, shape} = PropTypes
+const {func, string, arrayOf, shape, bool} = PropTypes
 
 DatasourceSection.propTypes = {
     datasource: string,
     datasources: arrayOf(shape()).isRequired,
     onChoose: func,
     buttonSize: string,
+    disabled: bool.isRequired,
 }
 
 export default DatasourceSection

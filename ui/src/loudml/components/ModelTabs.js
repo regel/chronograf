@@ -7,13 +7,12 @@ import ParametersPanel from 'src/loudml/components/ParametersPanel'
 import FeaturesPanel from 'src/loudml/components/FeaturesPanel'
 import PredictionPanel from 'src/loudml/components/PredictionPanel'
 import AnomalyPanel from 'src/loudml/components/AnomalyPanel'
-// import InfoPanel from 'src/loudml/components/InfoPanel'
 
 const ModelTabs = ({
     model,
     onDatasourceChoose,
     onInputChange,
-    isCreating,
+    isEditing,
     annotation,
     onAnnotationChange,
     datasources,
@@ -25,22 +24,23 @@ const ModelTabs = ({
             type: 'General',
             component: (
                 <GeneralPanel
-                  model={model}
-                  onDatasourceChoose={onDatasourceChoose}
-                  onInputChange={onInputChange}
-                  isCreating={isCreating}
-                  datasources={datasources}
-                />
+                    model={model}
+                    onDatasourceChoose={onDatasourceChoose}
+                    onInputChange={onInputChange}
+                    isEditing={isEditing}
+                    datasources={datasources}
+                    locked={locked}
+                    />
             ),
         },
         {
             type: 'Parameters',
             component: (
                 <ParametersPanel
-                  model={model}
-                  onInputChange={onInputChange}
-                  locked={locked}
-                />
+                    model={model}
+                    onInputChange={onInputChange}
+                    locked={locked}
+                    />
             ),
         },
         {
@@ -74,14 +74,6 @@ const ModelTabs = ({
                 />
             )
         },
-/*        {
-            type: 'Infos',
-            component: (
-                <InfoPanel
-                    model={model}
-                />
-            )
-        },*/
     ]
 
     return (
@@ -104,7 +96,7 @@ ModelTabs.propTypes = {
     model: shape({}).isRequired,
     onDatasourceChoose: func.isRequired,
     onInputChange: func.isRequired,
-    isCreating: bool.isRequired,
+    isEditing: bool.isRequired,
     annotation: bool.isRequired,
     onAnnotationChange: func.isRequired,
     datasources: arrayOf(shape()),
