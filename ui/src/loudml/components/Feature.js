@@ -58,10 +58,12 @@ class Feature extends Component {
             database,
             feature: {measurement},
             measurements,
+            locked,
         } = this.props
 
         if (
-            !source
+            locked
+            ||!source
             ||!database
             ||measurements.length===0
             ||!measurement) {
@@ -76,20 +78,11 @@ class Feature extends Component {
                 return
             }
             this.setState({
-                fields: fieldSets[measurement],
+                fields: fieldSets[measurement]||[],
             })
         } catch (err) {
             console.error(err)
         }
-    }
-
-    handleEdit = e => {
-        const {feature, onEdit} = this.props
-
-        const val = (e.target.type==='number'?Number(e.target.value):e.target.value)
-        const name = e.target.name
-
-        onEdit(feature, {[name]: val})
     }
 
     handleTextChoose = key => item => {
@@ -98,22 +91,10 @@ class Feature extends Component {
         onEdit(feature, {[key]: item.text})
     }
 
-    handleMetricChoose = item => {
+    handleValueChoose = key => item => {
         const {feature, onEdit} = this.props
 
-        onEdit(feature, {metric: item.text})
-    }
-
-    handleIOChoose = item => {
-        const {feature, onEdit} = this.props
-
-        onEdit(feature, {io: item.value})
-    }
-
-    handleAnomalyChoose = item => {
-        const {feature, onEdit} = this.props
-
-        onEdit(feature, {anomaly_type: item.value})
+        onEdit(feature, {[key]: item.value})
     }
 
     handleFillChoose = item => {
@@ -132,12 +113,6 @@ class Feature extends Component {
         })
     }
 
-    handleFieldChoose = item => {
-        const {feature, onEdit} = this.props
-
-        onEdit(feature, {field: item.text})
-    }
-
     handleEditFeature = f => {
         const {onEdit} = this.props
 
@@ -152,6 +127,7 @@ class Feature extends Component {
         const shouldRemoveTag = feature.match_all.some(m => (m.tag === key && m.value === value))
 
         if (shouldRemoveTag) {
+            // toggle tag
             return onEdit(feature, { match_all: feature.match_all.filter(m => (m.tag !== key))})
         }
 
@@ -286,7 +262,7 @@ class Feature extends Component {
                                 <div className="form-group col-xs-8">
                                     <Dropdown
                                         name="io"
-                                        onChoose={this.handleIOChoose}
+                                        onChoose={this.handleValueChoose('io')}
                                         items={DEFAULT_IO}
                                         selected={DEFAULT_IO.find(i => i.value === feature.io).text}
                                         className="dropdown-stretch"
@@ -302,7 +278,7 @@ class Feature extends Component {
                                 <div className="form-group col-xs-8">
                                     <Dropdown
                                         name="anomaly_type"
-                                        onChoose={this.handleAnomalyChoose}
+                                        onChoose={this.handleValueChoose('anomaly_type')}
                                         items={DEFAULT_ANOMALY_TYPE}
                                         selected={DEFAULT_ANOMALY_TYPE.find(a => a.value === feature.anomaly_type).text}
                                         className="dropdown-stretch"

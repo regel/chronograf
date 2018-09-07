@@ -1,13 +1,19 @@
-import React, {PropTypes} from 'react'
+import React, {SFC} from 'react'
 
-const NameSection = ({
+interface Props {
+    modelName: string
+    onEdit: (e: any) => void
+    isEditing: boolean
+}
+
+const NameSection: SFC<Props> = ({
     modelName,
     onEdit,
-    isCreating,
+    isEditing,
 }) => {
-    if (!isCreating) {
+    if (!isEditing) {
         return (
-            <div>{modelName}</div>
+            <h3>{modelName}</h3>
         )
     }    
 
@@ -17,15 +23,10 @@ const NameSection = ({
             name="name"
             className="form-control input-md form-malachite"
             onChange={onEdit}
+            value={modelName}
             placeholder="ex: my-model"
         />
     )
-}
-
-NameSection.propTypes = {
-    modelName: PropTypes.string,
-    onEdit: PropTypes.func.isRequired,
-    isCreating: PropTypes.bool.isRequired,
 }
 
 export default NameSection

@@ -25,8 +25,8 @@ const ParametersPanel = ({
         <div className="panel panel-solid">
             {locked
                 ?(<div className="panel-heading">
-                    <h4><span className="icon stop" /> This panel is locked
-                    </h4></div>)
+                    <h6><span className="icon stop" /> This panel is locked
+                    </h6></div>)
                 :null}
             <div className="panel-heading">
                 <h2 className="panel-title"></h2>

@@ -23,7 +23,7 @@ const ModelHeader = ({
 }
 
 ModelHeader.propTypes = {
-    name: PropTypes.string.isRequired,
+    name: PropTypes.string,
     onSave: PropTypes.func.isRequired,
     validationError: PropTypes.string,
 }

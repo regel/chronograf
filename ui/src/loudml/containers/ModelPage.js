@@ -48,38 +48,63 @@ class ModelPage extends Component {
 
         this.state = {
             isLoading: true,
-            model: {
-                ...props.model,
-                features: FeaturesUtils.deserializedFeatures(props.model.features),
-            },
-            isCreating: props.params.name === undefined,
             annotation: false,
             datasources: [],
-            training: props.training,
+            training: {},
+            state: {},
         }
     }
 
     componentDidMount = async () => {
-        const {isCreating} = this.state
-        const {params: {name}, notify, model} = this.props
+        const {
+            params: {name},
+            notify,
+            models,
+        } = this.props
+
+        /*
+         * named if requested from route or cloned
+         * else new
+         */
+        const model = (name
+            ?models.find(m => m.settings.name === name)
+            :{...DEFAULT_MODEL}
+        )
 
         const cb = this.loadDatasources
 
-        if (isCreating) {
+        if (name&&model) {
+            // Cloned (isEditing) or in state
+            const {settings, state, training} = model
+            const isEditing = settings.isEditing||false
+            const annotation = (isEditing
+                ?false
+                :await this.hasHook(name))
             return this.setState({
                 isLoading: false,
-                // datasources,
+                isEditing,
+                model: {
+                    ...settings,
+                    features: FeaturesUtils.deserializedFeatures(settings.features),
+                },
+                state,
+                training: training||{},
+                annotation,
             }, cb)
         }
 
-        if (model.name) {
+        if (!name) {
+            // new
             try {
-                const annotation = await this.hasHook(model.name)
                 return this.setState(
                     {
                         isLoading: false,
-                        // datasources,
-                        annotation,
+                        isEditing: true,
+                        model: {
+                            ...model,
+                            features: FeaturesUtils.deserializedFeatures(model.features),
+                        },
+                        // annotation: false,
                     },
                     cb
                 )
@@ -90,23 +115,23 @@ class ModelPage extends Component {
         }
 
         try {
+            // fetch
             const {data: {settings, state, training}} = await getModelApi(name)
             const annotation = await this.hasHook(name)
             this.setState({
                 model: {
-                    ...DEFAULT_MODEL,
                     ...settings,
                     features: FeaturesUtils.deserializedFeatures(settings.features),
                 },
-                status: {...state},
-                training: {...training},
+                state,
+                training: training||{},
                 isLoading: false,
-                // datasources,
+                isEditing: false,
                 annotation,
             }, cb)
         } catch (error) {
             notify(notifyErrorGettingModel(parseError(error)))
-            this.setState({isLoading: false}, cb)
+            this._redirect()
         }
     }
 
@@ -137,7 +162,25 @@ class ModelPage extends Component {
     }
 
     get validationError() {
-        return null
+        const {model} = this.state
+        
+        if (!model.name) {
+            return 'Your model has no name'
+        }
+
+        if (!model.default_datasource) {
+            return 'Please choose a datasource'
+        }
+
+        if (model.features.some(f => f.isEditing)) {
+            return 'A feature is edited'
+        }
+
+        if (model.features.some(f => !f.field)) {
+            return 'A feature has no field'
+        }
+
+        return ''
     }
 
     onInputChange = e => {
@@ -165,16 +208,22 @@ class ModelPage extends Component {
     }
 
     handleSave = () => {
-        const {isCreating} = this.state
 
-        const cb = (isCreating ? this._createModel : this._updateModel)
-
-        this.setState(this._normalizeModel, cb)
+        this.setState(
+            this._normalizeModel,
+            (this.state.isEditing
+                ?this._createModel
+                :this._updateModel)
+        )
     }
 
-    _normalizeModel = (state) => ({
-        model: state.model
-    })
+    _normalizeModel = (state) => {
+        const model = state.model
+
+        delete model.isEditing
+
+        return model
+    }
 
     _createModel = async () => {
         const {model, annotation} = this.state
@@ -194,8 +243,6 @@ class ModelPage extends Component {
             this._redirect()
             notify(notifyModelCreated(model.name))
         } catch (error) {
-            console.error('ERROR')
-            console.error(error)
             notify(notifyModelCreationFailed(model.name, parseError(error)))
         }
     }
@@ -266,7 +313,7 @@ class ModelPage extends Component {
     render() {
         const {
             isLoading,
-            isCreating,
+            isEditing,
             model,
             annotation,
             datasources,
@@ -279,7 +326,7 @@ class ModelPage extends Component {
                     <div className="page-header__container">
                         <div className="page-header__left">
                             <h1 className="page-header__title">
-                                {isCreating ? 'Add a new model' : 'Configure model'}
+                                {isEditing ? 'Add a new model' : 'Configure model'}
                             </h1>
                         </div>
                         <div className="page-header__right">
@@ -296,7 +343,7 @@ class ModelPage extends Component {
                                 <div className="col-md-12">
                                     <div className="col-md-12">
                                         <ModelHeader
-                                            name={isCreating ? 'Model creator' : model.name}
+                                            name={isEditing ? 'Model creator' : model.name}
                                             onSave={this.handleSave}
                                             validationError={this.validationError}
                                         />
@@ -310,14 +357,13 @@ class ModelPage extends Component {
                                         onInputChange={this.onInputChange}
                                         onDatasourceChoose={this.onDatasourceChoose}
                                         onTrain={this.train}
-                                        isCreating={isCreating}
+                                        isEditing={isEditing}
                                         annotation={annotation}
                                         onAnnotationChange={this.onAnnotationChange}
                                         datasources={datasources}
                                         datasource={datasources.find(ds => ds.name === model.default_datasource)}
-                                        locked={training.state==='training'
-                                            ||training.state==='done'}
-                                    />
+                                        locked={['training', 'done'].includes(training.state)}
+                                        />
                                 </div>
                             </div>
                         </div>
@@ -328,13 +374,13 @@ class ModelPage extends Component {
     }
 }
 
-const {func, shape, string} = PropTypes
+const {func, shape, string, arrayOf} = PropTypes
 
 ModelPage.propTypes = {
     params: shape({
         name: string,
     }),
-    model: shape({}),
+    models: arrayOf(shape({})),
     training: shape(),
     source: shape({}),
     router: shape({
@@ -349,17 +395,15 @@ ModelPage.propTypes = {
 
 function mapStateToProps(state, ownProps) {
     const { models } = state.loudml.models
-    const { params: {name}} = ownProps
+    const {
+        params: {name},
+        router,
+    } = ownProps
 
-    // get model from state if exists...
-    const stateModel = (models && models.find(model => model.settings.name === name))
-    
     return {
-        model: {
-            ...DEFAULT_MODEL, // default init 
-            ...(stateModel&&stateModel.settings),
-        },
-        training: (stateModel&&stateModel.training)||{},
+        name,
+        models,
+        router,
     }
 }
 

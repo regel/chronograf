@@ -23,6 +23,7 @@ import {getSources} from 'src/shared/apis';
 import {
     modelsLoaded as modelsLoadedAction,
     modelDeleted as modelDeletedAction,
+    modelCreated as modelCreatedAction,
     jobStart as jobStartAction,
     jobStop as jobStopAction,
     jobsUpdate as jobsUpdateAction,
@@ -143,6 +144,25 @@ class LoudMLPage extends Component {
             .catch(error => {
                 errorThrown(error)
             })
+    }
+
+    cloneModel = name => {
+        const {
+            modelActions: {modelCreated},
+            router,
+            models,
+            source: {id},
+        } = this.props
+
+        const copy = {
+            ...models.find(m => m.settings.name === name).settings
+        }
+        copy.name = `Copy of ${name}`
+        copy.isEditing = true
+
+        modelCreated(copy)
+
+        router.push(`/sources/${id}/loudml/models/${copy.name}/edit`)
     }
 
     deleteModel = name => () => {
@@ -356,6 +376,7 @@ class LoudMLPage extends Component {
                                     source={source}
                                     models={models}
                                     jobs={jobs}
+                                    onClone={this.cloneModel}
                                     onDelete={this.deleteModel}
                                     onStart={this.startModel}
                                     onStop={this.stopModel}
@@ -378,6 +399,9 @@ const {arrayOf, func, shape, bool} = PropTypes
 
 LoudMLPage.propTypes = {
     source: shape({}),
+    router: shape({
+        push: func.isRequired,
+    }).isRequired,
     models: arrayOf(shape()).isRequired,
     isFetching: bool.isRequired,
     jobs: arrayOf(shape()).isRequired,
@@ -406,6 +430,7 @@ function mapStateToProps(state) {
 const mapDispatchToProps = dispatch => ({
     modelActions: {
         modelsLoaded: models => dispatch(modelsLoadedAction(models)),
+        modelCreated: name => dispatch(modelCreatedAction(name)),
         modelDeleted: name => dispatch(modelDeletedAction(name)),
         jobStart: job => dispatch(jobStartAction(job)),
         jobStop: job => dispatch(jobStopAction(job)),

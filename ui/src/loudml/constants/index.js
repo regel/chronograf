@@ -8,7 +8,7 @@ export const DEFAULT_MODEL = {
     features: {},
     interval: '1m',
     max_evals: 100,
-    name: null,
+    name: '',   // input value connot be null
     offset: '10s',
     seasonality: {
         daytime: false,

@@ -108,7 +108,6 @@ EditHeader.propTypes = {
   onKeyDown: func,
   onCancel: func,
   onConfirm: func,
-  disabled: bool.isRequired,
 }
 
 export default FeatureHeader
