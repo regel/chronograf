@@ -1,10 +1,16 @@
-import React, {PropTypes, Component} from 'react'
+import React, {Component} from 'react'
+import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
+
+import {Link} from 'react-router'
 
 import {errorThrown as errorThrownAction} from 'shared/actions/errors'
 import {notify as notifyAction} from 'shared/actions/notifications'
-import SourceIndicator from 'shared/components/SourceIndicator'
+import PageHeader from 'src/reusable_ui/components/page_layout/PageHeader'
 import FancyScrollbar from 'shared/components/FancyScrollbar'
+import SearchBar from 'src/hosts/components/SearchBar'
+
+import {ErrorHandling} from 'src/shared/decorators/errors'
 
 import ModelsTable from 'src/loudml/components/ModelsTable'
 
@@ -53,10 +59,14 @@ import {
     DEFAULT_CONFIDENT_CELL
 } from 'src/loudml/constants/dashboard';
 
+@ErrorHandling
 class LoudMLPage extends Component {
     constructor(props) {
         super(props)
 
+        this.state = {
+            searchTerm: '',
+          }      
     }
 
     componentDidMount() {
@@ -162,10 +172,10 @@ class LoudMLPage extends Component {
 
         modelCreated(copy)
 
-        router.push(`/sources/${id}/loudml/models/${copy.name}/edit`)
+        router.push(`/sources/${id}/loudml/models/${copy.name}/`)
     }
 
-    deleteModel = name => () => {
+    deleteModel = name => {
         const {
             modelActions: {modelDeleted},
             notify
@@ -350,31 +360,25 @@ class LoudMLPage extends Component {
     }
 
     render() {
-        const {isFetching, models, jobs, source} = this.props
+        const {isFetching, jobs, source} = this.props
 
         if (isFetching) {
             return <div className="page-spinner" />
         }
 
         return (
-            <div className="page loudml-page">
-                <div className="page-header">
-                    <div className="page-header__container">
-                        <div className="page-header__left">
-                            <h1 className="page-header__title">Manage Machine Learning Tasks</h1>
-                        </div>
-                        <div className="page-header__right">
-                            <SourceIndicator />
-                        </div>
-                    </div>
-                </div>
-                <FancyScrollbar className="page-contents" style={{'margin-bottom': '300px'}}>
+            <div className="page">
+                <PageHeader titleText="Manage Machine Learning Tasks" sourceIndicator={true} />
+                <FancyScrollbar className="page-contents">
                     <div className="container-fluid">
-                        <div className="row">
-                            <div className="col-md-12">
-                                <ModelsTable
+                    <div className="row">
+                        <div className="col-md-12">
+                        <div className="panel">
+                            {this.renderPanelHeading}
+                            <div className="panel-body">
+                            <ModelsTable
                                     source={source}
-                                    models={models}
+                                    models={this.filteredModels}
                                     jobs={jobs}
                                     onClone={this.cloneModel}
                                     onDelete={this.deleteModel}
@@ -388,11 +392,63 @@ class LoudMLPage extends Component {
                                 />
                             </div>
                         </div>
+                        </div>
+                    </div>
                     </div>
                 </FancyScrollbar>
             </div>
         )
     }
+
+    get renderPanelHeading() {
+        const {source: {id}} = this.props
+
+        return (
+            <div className="panel-heading">
+                <h2 className="panel-title">{this.panelTitle}</h2>
+                <div className="panel-controls">
+                    <SearchBar
+                        placeholder="Filter by Name..."
+                        onSearch={this.filterModels}
+                        />
+                    <Link
+                        // style={{marginLeft: '10px'}}
+                        to={`/sources/${id}/loudml/models/new`}
+                        className="btn btn-sm btn-primary btn-sm"
+                        >
+                        <span className="icon plus" />
+                        Create a model
+                    </Link>
+                </div>
+            </div>
+        )
+      }
+      
+    get panelTitle() {
+        const {models} = this.props
+    
+        if (models === null) {
+            return 'Loading Models...'
+        } else if (models.length === 1) {
+            return '1 Model'
+        }
+    
+        return `${models.length} Models`
+      }
+    
+    filterModels = (searchTerm) => {
+        this.setState({searchTerm})
+    }
+    
+    get filteredModels() {
+        const {models} = this.props
+        const {searchTerm} = this.state
+    
+        return models.filter(m =>
+            m.settings.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      }
+    
 }
 
 const {arrayOf, func, shape, bool} = PropTypes

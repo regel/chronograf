@@ -132,9 +132,10 @@ const RefreshingGraph = ({
     )
   }
 
-  if (type === 'confidence') {
+  if (type === 'error') {
     return (
       <RefreshingConfidenceGraph
+        source={source}
         key={manualRefresh}
         colors={colors}
         queries={queries}
@@ -142,13 +143,15 @@ const RefreshingGraph = ({
         autoRefresh={autoRefresh}
         cellHeight={cellHeight}
         resizerTopHeight={resizerTopHeight}
-        resizeCoords={resizeCoords}
+//         resizeCoords={resizeCoords}
         cellID={cellID}
         tableOptions={tableOptions}
-        hoverTime={hoverTime}
-        onSetHoverTime={onSetHoverTime}
+//        hoverTime={hoverTime}
+handleSetHoverTime={handleSetHoverTime}
+
+//        onSetHoverTime={onSetHoverTime}
         inView={inView}
-        setDataLabels={setDataLabels}
+//        setDataLabels={setDataLabels}
         onZoom={onZoom}
         timeRange={timeRange}
         staticLegend={staticLegend}

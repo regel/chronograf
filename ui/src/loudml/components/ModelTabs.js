@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Tab, Tabs, TabPanel, TabPanels, TabList } from 'shared/components/Tabs'
+import SubSections from 'src/shared/components/SubSections'
 
 import GeneralPanel from 'src/loudml/components/GeneralPanel'
 import ParametersPanel from 'src/loudml/components/ParametersPanel'
@@ -9,6 +9,8 @@ import PredictionPanel from 'src/loudml/components/PredictionPanel'
 import AnomalyPanel from 'src/loudml/components/AnomalyPanel'
 
 const ModelTabs = ({
+    sourceID,
+    tab,
     model,
     onDatasourceChoose,
     onInputChange,
@@ -19,9 +21,11 @@ const ModelTabs = ({
     datasource,
     locked,
 }) => {
-    const tabs = [
+    const sections = [
         {
-            type: 'General',
+            url: 'general',
+            name: 'General',
+            enabled: true,
             component: (
                 <GeneralPanel
                     model={model}
@@ -34,7 +38,9 @@ const ModelTabs = ({
             ),
         },
         {
-            type: 'Parameters',
+            url: 'parameters',
+            name: 'Parameters',
+            enabled: true,
             component: (
                 <ParametersPanel
                     model={model}
@@ -44,7 +50,9 @@ const ModelTabs = ({
             ),
         },
         {
-            type: 'Features',
+            url: 'features',
+            name: 'Features',
+            enabled: true,
             component: (
                 <FeaturesPanel
                     features={model.features}
@@ -55,7 +63,9 @@ const ModelTabs = ({
             ),
         },
         {
-            type: 'Predictions',
+            url: 'predictions',
+            name: 'Predictions',
+            enabled: true,
             component: (
                 <PredictionPanel
                     model={model}
@@ -64,7 +74,9 @@ const ModelTabs = ({
             )
         },
         {
-            type: 'Anomalies',
+            url: 'anomalies',
+            name: 'Anomalies',
+            enabled: true,
             component: (
                 <AnomalyPanel
                     model={model}
@@ -77,22 +89,20 @@ const ModelTabs = ({
     ]
 
     return (
-        <Tabs className="row">
-            <TabList customClass="col-md-2 admin-tabs">
-                {tabs.map((t, i) => <Tab key={tabs[i].type}>{tabs[i].type}</Tab>)}
-            </TabList>
-            <TabPanels customClass="col-md-10 admin-tabs--content">
-                {tabs.map((t, i) => (
-                    <TabPanel key={tabs[i].type}>{t.component}</TabPanel>
-                ))}
-            </TabPanels>
-        </Tabs>
+        <SubSections
+            parentUrl={`loudml/models/${model.name}`}
+            sourceID={sourceID}
+            activeSection={tab}
+            sections={sections}
+        />
     )
 }
 
-const {func, shape, bool, arrayOf} = PropTypes
+const {func, shape, bool, arrayOf, string} = PropTypes
 
 ModelTabs.propTypes = {
+    tab: string,
+    sourceID: string,
     model: shape({}).isRequired,
     onDatasourceChoose: func.isRequired,
     onInputChange: func.isRequired,

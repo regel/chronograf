@@ -1,4 +1,6 @@
-import React, {PropTypes, Component} from 'react'
+import React, {Component} from 'react'
+import PropTypes from 'prop-types'
+
 import _ from 'lodash'
 
 import FancyScrollbar from 'shared/components/FancyScrollbar';
@@ -19,7 +21,7 @@ import {
 import {DEFAULT_METRICS, DEFAULT_IO, DEFAULT_LOUDML_RP} from 'src/loudml/constants'
 import {DEFAULT_ANOMALY_TYPE} from 'src/loudml/constants/anomaly'
 
-import 'src/loudml/styles/feature.css'
+import 'src/loudml/styles/feature.scss'
 
 class Feature extends Component {
     constructor(props) {

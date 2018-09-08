@@ -1,8 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import ConfirmButtons from 'shared/components/ConfirmButtons'
-import DeleteConfirmButtons from '../../shared/components/DeleteConfirmButtons';
+import ConfirmButton from 'shared/components/ConfirmButton'
 
 const FeatureHeader = ({
   feature,
@@ -47,7 +46,8 @@ const Header = ({
                 {disabled
                 ?null
                 :(
-                <DeleteConfirmButtons
+                <ConfirmButton
+                    square={true}
                     item={feature}
                     onDelete={onDelete}
                     // onCancel={onCancel}
@@ -78,7 +78,7 @@ const EditHeader = ({
       spellCheck={false}
       autoComplete={false}
     />
-    <ConfirmButtons item={feature} onConfirm={onConfirm} onCancel={onCancel} />
+    <ConfirmButton item={feature} onConfirm={onConfirm} onCancel={onCancel} />
   </div>
 )
 

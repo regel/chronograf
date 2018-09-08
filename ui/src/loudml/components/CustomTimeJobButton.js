@@ -9,7 +9,7 @@ import CustomTimeRange from 'src/loudml/components/CustomTimeRange'
 import JobButton from 'src/loudml/components/JobButton'
 const emptyTime = {lower: '', upper: ''}
 
-import 'src/loudml/styles/loudml.css'
+import 'src/loudml/styles/loudml.scss'
 
 class CustomTimeJobButton extends Component {
     constructor(props) {
@@ -77,7 +77,7 @@ class CustomTimeJobButton extends Component {
                             disabled={disabled}
                             informParent={this.handleToggleConfirm}
                         />)
-                        : (<button className="btn btn-xs btn-default dropdown-toggle"
+                        : (<div className="btn btn-xs btn-default dropdown-toggle"
                             onClick={this.toggleMenu}
                             disabled={disabled}
                             >
@@ -86,7 +86,7 @@ class CustomTimeJobButton extends Component {
                                 {startLabel}
                             </span>
                             <span className="caret" />
-                        </button>)}
+                        </div>)}
                 </div>
                 {isCustomTimeRangeOpen ?
                     (<div className="custom-time--overlay">

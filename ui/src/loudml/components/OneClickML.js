@@ -233,7 +233,7 @@ class OneClickML extends Component {
             await createModelHook(model.name, createHook(ANOMALY_HOOK, model.default_datasource))
             modelCreated(model)
             notify(notifyModelCreated(model.name))
-            await this._trainModel(model.name)
+            this._trainModel(model.name)
         } catch (error) {
             console.error(error)
             notify(notifyModelCreationFailed(model.name, parseError(error)))

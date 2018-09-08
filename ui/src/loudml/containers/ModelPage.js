@@ -1,10 +1,11 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
+import {withRouter} from 'react-router'
 
 import {notify as notifyAction} from 'shared/actions/notifications'
 import FancyScrollbar from 'shared/components/FancyScrollbar'
-import SourceIndicator from 'shared/components/SourceIndicator'
+import PageHeader from 'src/reusable_ui/components/page_layout/PageHeader'
 
 import {
     getModel as getModelApi,
@@ -282,65 +283,58 @@ class ModelPage extends Component {
             datasources,
             training,
         } = this.state
+        const {source, params} = this.props
 
         return (
             <div className="page">
-                <div className="page-header">
-                    <div className="page-header__container">
-                        <div className="page-header__left">
-                            <h1 className="page-header__title">
-                                {isEditing ? 'Add a new model' : 'Configure model'}
-                            </h1>
-                        </div>
-                        <div className="page-header__right">
-                            <SourceIndicator />
+                <PageHeader titleText={isEditing ? 'Add a new model' : 'Configure model'} sourceIndicator={true} />
+                <FancyScrollbar className="page-contents">
+                    <div className="container-fluid">
+                        <div className="row">
+                            <div className="col-md-12">
+                                <div className="panel">
+                                    {isLoading ? (
+                                        <div className="page-spinner" />
+                                    ) : (
+                                        <div>
+                                            <ModelHeader
+                                                name={isEditing ? 'Model creator' : model.name}
+                                                onSave={this.handleSave}
+                                                validationError={this.validationError}
+                                                />
+                                            <div className="panel-body">
+                                                <ModelTabs
+                                                    sourceID={source.id}
+                                                    tab={params.tab}
+                                                    model={model}
+                                                    onInputChange={this.onInputChange}
+                                                    onDatasourceChoose={this.onDatasourceChoose}
+                                                    isEditing={isEditing}
+                                                    annotation={annotation}
+                                                    onAnnotationChange={this.onAnnotationChange}
+                                                    datasources={datasources}
+                                                    datasource={datasources.find(ds => ds.name === model.default_datasource)}
+                                                    locked={['training', 'done'].includes(training.state)}
+                                                    />
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <FancyScrollbar className="page-contents">
-                    {isLoading ? (
-                        <div className="page-spinner" />
-                    ) : (
-                        <div className="container-fluid">
-                            <div className="row">
-                                <div className="col-md-12">
-                                    <div className="col-md-12">
-                                        <ModelHeader
-                                            name={isEditing ? 'Model creator' : model.name}
-                                            onSave={this.handleSave}
-                                            validationError={this.validationError}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col-md-12">
-                                    <ModelTabs
-                                        model={model}
-                                        onInputChange={this.onInputChange}
-                                        onDatasourceChoose={this.onDatasourceChoose}
-                                        isEditing={isEditing}
-                                        annotation={annotation}
-                                        onAnnotationChange={this.onAnnotationChange}
-                                        datasources={datasources}
-                                        datasource={datasources.find(ds => ds.name === model.default_datasource)}
-                                        locked={['training', 'done'].includes(training.state)}
-                                        />
-                                </div>
-                            </div>
-                        </div>
-                    )}
                 </FancyScrollbar>
             </div>
         )
     }
+
 }
 
 const {func, shape, string, arrayOf} = PropTypes
 
 ModelPage.propTypes = {
     params: shape({
-        name: string,
+        tab: string,
     }),
     models: arrayOf(shape({})),
     training: shape(),
@@ -355,17 +349,11 @@ ModelPage.propTypes = {
     }).isRequired,
 }
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state) {
     const { models } = state.loudml.models
-    const {
-        params: {name},
-        router,
-    } = ownProps
 
     return {
-        name,
         models,
-        router,
     }
 }
 
@@ -377,4 +365,5 @@ const mapDispatchToProps = dispatch => ({
     notify: message => dispatch(notifyAction(message))
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(ModelPage)
+export default withRouter(
+    connect(mapStateToProps, mapDispatchToProps)(ModelPage))

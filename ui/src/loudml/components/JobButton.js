@@ -51,7 +51,7 @@ class JobButton extends Component {
         const {expanded} = this.state
 
         return (
-            <div style={{position: 'relative'}}>
+            <div>
                 <button className={classnames(
                     'btn',
                     'btn-xs',

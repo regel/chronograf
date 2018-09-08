@@ -2,13 +2,12 @@ import React, { PureComponent } from 'react'
 import {Link} from 'react-router'
 
 import {Model, TimeRange, Job} from 'src/loudml/types/model'
-import DeleteConfirmTableCell from 'src/shared/components/DeleteConfirmTableCell'
 
 import ModelStatus from 'src/loudml/components/ModelStatus'
 import ModelActions from 'src/loudml/components/ModelActions'
 import DashboardDropdown from 'src/loudml/components/DashboardDropdown'
 
-import 'src/loudml/styles/loudml.css'
+import 'src/loudml/styles/loudml.scss'
 
 interface Props {    
     source: {id: string}
@@ -30,15 +29,6 @@ class ModelsRow extends PureComponent<Props, {}> {
         super(props)
 
         this.onClone = this.onClone.bind(this)
-    }
-
-    public onClone() {
-        const {
-            model: {settings: {name}},
-            onClone,
-        } = this.props
-
-        onClone(name)
     }
 
     public render() {
@@ -63,7 +53,7 @@ class ModelsRow extends PureComponent<Props, {}> {
         return (
             <tr>
                 <td>
-                    <Link to={`/sources/${id}/loudml/models/${name}/edit`}>
+                    <Link to={`/sources/${id}/loudml/models/${name}/general`}>
                         {name}
                     </Link>
                 </td>
@@ -79,10 +69,10 @@ class ModelsRow extends PureComponent<Props, {}> {
                 <td className="text-right">
                     <div className="actions-container">
                         <button 
-                            className="btn btn-xs btn-default btn-square table--show-on-row-hover"
-                            title="Clone this model"
+                            className="btn btn-xs btn-default table--show-on-row-hover"
                             onClick={this.onClone}>
                             <span className="icon duplicate" />
+                            Clone
                         </button>
                         <DashboardDropdown
                             model={model}
@@ -100,16 +90,22 @@ class ModelsRow extends PureComponent<Props, {}> {
                         onStopTrain={onStopTrain}
                         onForecast={onForecast}
                         onStopForecast={onStopForecast}
+                        onDelete={onDelete}
                     />
                 </td>
-                <DeleteConfirmTableCell
-                    onDelete={onDelete(name)}
-                    item={model}
-                    buttonSize="btn-xs"
-                />
             </tr>
         )
     }
+
+    public onClone() {
+        const {
+            model: {settings: {name}},
+            onClone,
+        } = this.props
+
+        onClone(name)
+    }
+
 }
 
 export default ModelsRow

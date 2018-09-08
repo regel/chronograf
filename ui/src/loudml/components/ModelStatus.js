@@ -5,7 +5,7 @@ import RunningStatus from 'src/loudml/components/RunningStatus'
 import TrainingStatus from 'src/loudml/components/TrainingStatus'
 import JobStatus from 'src/loudml/components/JobStatus'
 
-import 'src/loudml/styles/status.css'
+import 'src/loudml/styles/status.scss'
 
 const ModelStatus = ({
     model: {

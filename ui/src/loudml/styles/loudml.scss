@@ -4,6 +4,10 @@
     justify-content: flex-end;
 }
 
+.time-job--button .btn {
+    width: 110px;
+}
+
 .time-job--button .custom-time--overlay {
     right: 0;
     position: relative;
@@ -12,8 +16,4 @@
 
 .time-job--button .custom-time--container {
     top: 0;
-}
-
-.actions-container > button {
-    width: 110px;
 }

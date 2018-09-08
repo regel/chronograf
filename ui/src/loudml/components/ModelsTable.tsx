@@ -22,26 +22,12 @@ interface Props {
 class ModelsTable extends PureComponent<Props, {}> {
 
     public render() {
-        const {source: {id}, models} = this.props
+        const {models} = this.props
         return (
-            <div className="panel">
-                <div className="panel-heading">
-                    <h2 className="panel-title">
-                        {this.title}
-                    </h2>
-                    <Link
-                        style={{marginLeft: '10px'}}
-                        to={`/sources/${id}/loudml/models/new`}
-                        className="btn btn-primary btn-sm"
-                    >
-                        <span className="icon plus" /> Create a new model
-                    </Link>
-                </div>
-                <div className="panel-body">
-                    {models.length
-                        ? this.renderTable()
-                        : this.renderTableEmpty() }
-                </div>
+            <div>
+                {models.length
+                    ? this.renderTable()
+                    : this.renderTableEmpty() }
             </div>
         )
     }
@@ -69,7 +55,6 @@ class ModelsTable extends PureComponent<Props, {}> {
                         <th>Name</th>
                         <th>Loss</th>
                         <th>Status</th>
-                        <th/>
                         <th className="admin-table--left-offset" />
                         <th/>
                     </tr>
@@ -110,6 +95,7 @@ class ModelsTable extends PureComponent<Props, {}> {
                         to={`/sources/${id}/loudml/models/new`}
                         className="btn btn-primary btn-sm"
                     >
+                        <span className="icon plus" />
                         Create a model
                     </Link>
                 </h6>

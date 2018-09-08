@@ -118,6 +118,7 @@ class SideNav extends PureComponent<Props> {
           </NavListItem>
         </NavBlock>
         <NavBlock
+          highlightWhen={['loudml']}
           icon="loudml-bold"
           link={`${sourcePrefix}/loudml`}
           location={location}

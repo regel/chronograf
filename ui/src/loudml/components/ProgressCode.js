@@ -1,7 +1,7 @@
 import React from 'react'
 import {PropTypes} from 'prop-types'
 
-import 'src/loudml/styles/progress.css'
+import 'src/loudml/styles/progress.scss'
 
 const ProgressCode = ({
     label,

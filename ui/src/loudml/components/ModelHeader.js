@@ -1,4 +1,5 @@
-import React, {PropTypes} from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import ModelHeaderSave from 'src/loudml/components/ModelHeaderSave'
 
 const ModelHeader = ({
@@ -7,11 +8,11 @@ const ModelHeader = ({
     validationError
 }) => {
     return (
-        <div className="panel">
-            <div className="panel-heading">
-                <h2 className="panel-title">
-                    {name}
-                </h2>
+        <div className="panel-heading">
+            <h2 className="panel-title">
+                {name}
+            </h2>
+            <div className="panel-controls">
                 <ModelHeaderSave
                     name={name}
                     onSave={onSave}

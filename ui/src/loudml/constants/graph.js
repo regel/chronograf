@@ -1,8 +1,8 @@
-export const CONFIDENT_GRAPH = 'confident'
+export const ERROR_GRAPH = 'error'
 
 export const MODEL_GRAPHS = [
     {
-        graph: CONFIDENT_GRAPH,
+        graph: ERROR_GRAPH,
         menuOption: 'Create prediction dashboard',
       },
 ]

@@ -1,5 +1,7 @@
 import React, { PureComponent } from 'react'
 
+import ConfirmButton from 'src/shared/components/ConfirmButton'
+
 import {Model, TimeRange, Job} from 'src/loudml/types/model'
 import JobButton from 'src/loudml/components/JobButton'
 import TrainTimeJobButton from 'src/loudml/components/TrainTimeJobButton'
@@ -14,6 +16,7 @@ interface Props {
     onStopTrain: (name: string) => void
     onForecast: (name: string, timeRange: TimeRange) => void
     onStopForecast: (name: string) => void
+    onDelete: (name: string) => void
 }
 
 class ModelActions extends PureComponent<Props, {}> {
@@ -34,6 +37,12 @@ class ModelActions extends PureComponent<Props, {}> {
         const {model, onForecast} = this.props
 
         onForecast(model.settings.name, timeRange)
+    }
+
+    public handleDeleteModel = () => {
+        const {model, onDelete} = this.props
+        
+        onDelete(model.settings.name)
     }
 
     public render() {
@@ -88,6 +97,15 @@ class ModelActions extends PureComponent<Props, {}> {
                                 && job.type === 'training'
                             ).length !== 0
                     }
+                />
+                <ConfirmButton
+                    confirmAction={this.handleDeleteModel}
+                    // item={model}
+                    size="btn-xs"
+                    square={true}
+                    icon="trash"
+                    confirmText="Delete this model"
+                    customClass="table--show-on-row-hover"
                 />
             </div>
         )

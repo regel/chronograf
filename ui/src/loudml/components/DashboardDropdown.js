@@ -5,7 +5,7 @@ import OnClickOutside from 'shared/components/OnClickOutside'
 
 import {MODEL_GRAPHS} from 'src/loudml/constants/graph'
 
-import 'src/loudml/styles/graph.css'
+import 'src/loudml/styles/graph.scss'
 
 class DashboardDropdown extends Component {
     constructor(props) {
