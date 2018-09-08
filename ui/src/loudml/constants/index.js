@@ -1,29 +1,35 @@
 import {INFLUXQL_FUNCTIONS} from 'src/data_explorer/constants'
 
+export const DEFAULT_LOUDML_RP = 'autogen'
+
 export const DEFAULT_MODEL = {
     bucket_interval: '20m',
     default_datasource: null,
     features: {},
     interval: '1m',
     max_evals: 100,
-    name: null,
+    name: '',   // input value connot be null
     offset: '10s',
     seasonality: {
         daytime: false,
         weekday: false,
     },
-    span: 5,
-    forecast: 2,
+    span: 10,
+    forecast: 5,
     type: 'timeseries',
+    min_threshold: 75,
+    max_threshold: 75,
 }
 
 export const DEFAULT_FEATURE = {
-    name: null,
+    name: '',      // input value connot be null
     measurement: null,
     field: null,
-    metric: 'avg',
+    metric: 'mean',
     default: null,
-    io: 'in/out',
+    io: 'io',
+    anomaly_type: 'low_high',
+    match_all: [],
 }
 
 export const DEFAULT_METRICS = [
@@ -33,8 +39,14 @@ export const DEFAULT_METRICS = [
     '10percentile',
     '90percentile',
     '95percentile',
-    ]
-export const DEFAULT_IO = [ 'in/out', 'in', 'out' ]
+]
+
+export const DEFAULT_IO  = [
+    { text: 'in', value: 'i', },
+    { text: 'out', value: 'o', },
+    { text: 'in/out', value: 'io', }
+]
+                                    
 
 export const MODEL_CREATED = 'MODEL_CREATED';
 export const MODEL_UPDATED = 'MODEL_UPDATED';

@@ -439,7 +439,6 @@ export const cellSupportsAnnotations = cellType => {
     'line-plus-single-stat',
     'line-stacked',
     'line-stepplot',
-    'confident-line',
   ]
   return !!supportedTypes.find(type => type === cellType)
 }

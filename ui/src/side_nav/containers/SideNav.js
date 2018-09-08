@@ -124,7 +124,7 @@ const SideNav = React.createClass({
           link={`${sourcePrefix}/loudml`}
           location={location}
         >
-          <NavHeader link={`${sourcePrefix}/loudml`} title={'LoudML'} />
+          <NavHeader link={`${sourcePrefix}/loudml`} title={'Loud ML'} />
         </NavBlock>
 
         <Authorized

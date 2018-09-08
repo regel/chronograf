@@ -86,3 +86,20 @@ export const notifyJobStoppedFailed = (name, message) => notifyError(
     INFINITE,
     `Stopping job failed for model '${name}': ${message}`,
 )
+
+export const notifyDashboardCreated = name => notifySuccess(`prediction dashboard for model '${name}' created`)
+
+export const notifyDashboardCreationFailed = (name, message) => notifyError(
+    INFINITE,
+    `cannot create prediction dashboard for model '${name}': ${message}`,
+)
+
+export const notifyErrorGettingDatasources = message => notifyError(
+    TEN_SECONDS,
+    `cannot get Loud ML datasources: ${message}`,
+)
+
+export const notifyErrorGettingModelHook = (model, hook, message) => notifyError(
+    TEN_SECONDS,
+    `cannot get hook '${hook}' for model ${model}: ${message}`,
+)

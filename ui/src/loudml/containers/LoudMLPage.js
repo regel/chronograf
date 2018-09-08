@@ -1,9 +1,6 @@
 import React, {PropTypes, Component} from 'react'
 import {connect} from 'react-redux'
 
-import moment from 'moment'
-import _ from 'lodash'
-
 import {errorThrown as errorThrownAction} from 'shared/actions/errors'
 import {notify as notifyAction} from 'shared/actions/notifications'
 import SourceIndicator from 'shared/components/SourceIndicator'
@@ -18,10 +15,15 @@ import {
     updateDashboardCell,
 } from 'src/dashboards/apis'
 import {createQueryFromModel} from 'src/loudml/utils/query'
+import {convertTimeRange} from 'src/loudml/utils/timerange'
+import {parseError} from 'src/loudml/utils/error'
+import {findSource} from 'src/loudml/utils/datasource';
 import * as api from 'src/loudml/apis'
+import {getSources} from 'src/shared/apis';
 import {
     modelsLoaded as modelsLoadedAction,
     modelDeleted as modelDeletedAction,
+    modelCreated as modelCreatedAction,
     jobStart as jobStartAction,
     jobStop as jobStopAction,
     jobsUpdate as jobsUpdateAction,
@@ -43,12 +45,13 @@ import {
     notifyJobFailed,
     notifyJobStopped,
     notifyJobStoppedFailed,
+    notifyDashboardCreated,
+    notifyDashboardCreationFailed,
 } from 'src/loudml/actions/notifications'
 import {
     DEFAULT_CONFIDENT_DASHBOARD,
     DEFAULT_CONFIDENT_CELL
 } from 'src/loudml/constants/dashboard';
-import { getSources } from '../../shared/apis';
 
 class LoudMLPage extends Component {
     constructor(props) {
@@ -97,7 +100,7 @@ class LoudMLPage extends Component {
             modelsLoaded(res.data)
         })
         .catch(error => {
-            notify(notifyErrorGettingModels(this._parseError(error)))
+            notify(notifyErrorGettingModels(parseError(error)))
         })
     }
 
@@ -143,8 +146,23 @@ class LoudMLPage extends Component {
             })
     }
 
-    _parseError = error => {
-        return _.get(error, ['data', 'message'], _.get(error, ['data'], error))
+    cloneModel = name => {
+        const {
+            modelActions: {modelCreated},
+            router,
+            models,
+            source: {id},
+        } = this.props
+
+        const copy = {
+            ...models.find(m => m.settings.name === name).settings
+        }
+        copy.name = `Copy of ${name}`
+        copy.isEditing = true
+
+        modelCreated(copy)
+
+        router.push(`/sources/${id}/loudml/models/${copy.name}/edit`)
     }
 
     deleteModel = name => () => {
@@ -188,34 +206,26 @@ class LoudMLPage extends Component {
                 notify(notifySucessCallback(job))
             })
             .catch(error => {
-                notify(notifyErrorCallback(name, this._parseError(error)))
+                notify(notifyErrorCallback(name, parseError(error)))
             })
     }
 
-    _convertTime = (from, to) => {
-        const regex = /[ \(\)]/
-        return {
-            fromT: moment(from.replace(regex, '')).format('X'),
-            toT: moment(to.replace(regex, '')).format('X')
-        }
-    }
-
-    trainModel = (name, from, to) => {
-        const {fromT, toT} = this._convertTime(from, to)
+    trainModel = (name, timeRange) => {
+        const {lower, upper} = convertTimeRange(timeRange)
         this.startJob(
             name,
-            api.trainModel(name, fromT, toT),
+            api.trainModel(name, lower, upper),
             'training',
             notifyModelTraining,
             notifyModelTrainingFailed,
         )
     }
 
-    forecastModel = (name, from, to) => {
-        const {fromT, toT} = this._convertTime(from, to)
+    forecastModel = (name, timeRange) => {
+        const {lower, upper} = convertTimeRange(timeRange)
         this.startJob(
             name,
-            api.forecastModel(name, fromT, toT),
+            api.forecastModel(name, lower, upper),
             'forecast',
             notifyModelForecasting,
             notifyModelForecastingFailed,
@@ -230,7 +240,7 @@ class LoudMLPage extends Component {
                 notify(notifyModelStarting(name))
             })
             .catch(error => {
-                notify(notifyModelStartingFailed({name}, this._parseError(error)))
+                notify(notifyModelStartingFailed(name, parseError(error)))
             })
     }
 
@@ -242,7 +252,7 @@ class LoudMLPage extends Component {
                 notify(notifyModelStopped(name))
             })
             .catch(error => {
-                notify(notifyModelStoppedFailed(name, this._parseError(error)))
+                notify(notifyModelStoppedFailed(name, parseError(error)))
             })
     }
 
@@ -261,7 +271,7 @@ class LoudMLPage extends Component {
                 notify(notifyJobStopped(name))
             })
             .catch(error => {
-                notify(notifyJobStoppedFailed(name, this._parseError(error)))
+                notify(notifyJobStoppedFailed(name, parseError(error)))
             })
     }
 
@@ -319,22 +329,23 @@ class LoudMLPage extends Component {
             queries,
         })
     }
-
+    
     selectModelGraph = async (model) => {
-        const {errorThrown} = this.props
-        const {settings: {name}} = model
-
+        const {notify} = this.props
+        const {settings} = model
+        
         try {
             const {data: {dashboards}} = await getDashboards()
-            const dashboard = dashboards.find(item => item.name === name)
+            const dashboard = dashboards.find(item => item.name === settings.name)
             const {data} = await api.getDatasources()
-            const datasource = data.find(d => d.name === model.settings.default_datasource)
+            const datasource = data.find(d => d.name === settings.default_datasource)
             const {data: {sources}} = await getSources()
-            const source = sources.find(s => s.url.match(new RegExp(`${datasource.addr}`)))
-            this.createOrUpdateConfident(dashboard, model, source, datasource.database)
+            const source = findSource(sources, datasource)
+            await this.createOrUpdateConfident(dashboard, model, source, datasource.database)
+            notify(notifyDashboardCreated(settings.name))
         } catch (error) {
             console.error(error)
-            errorThrown(error)
+            notify(notifyDashboardCreationFailed(settings.name, parseError(error)))
         }
     }
 
@@ -350,7 +361,7 @@ class LoudMLPage extends Component {
                 <div className="page-header">
                     <div className="page-header__container">
                         <div className="page-header__left">
-                            <h1 className="page-header__title">LoudML</h1>
+                            <h1 className="page-header__title">Manage Machine Learning Tasks</h1>
                         </div>
                         <div className="page-header__right">
                             <SourceIndicator />
@@ -365,6 +376,7 @@ class LoudMLPage extends Component {
                                     source={source}
                                     models={models}
                                     jobs={jobs}
+                                    onClone={this.cloneModel}
                                     onDelete={this.deleteModel}
                                     onStart={this.startModel}
                                     onStop={this.stopModel}
@@ -387,6 +399,9 @@ const {arrayOf, func, shape, bool} = PropTypes
 
 LoudMLPage.propTypes = {
     source: shape({}),
+    router: shape({
+        push: func.isRequired,
+    }).isRequired,
     models: arrayOf(shape()).isRequired,
     isFetching: bool.isRequired,
     jobs: arrayOf(shape()).isRequired,
@@ -405,8 +420,6 @@ function mapStateToProps(state) {
     const { isFetching, models } = state.loudml.models
     const { jobs } = state.loudml.jobs
 
-    models.sort((a, b) => a.settings.name > b.settings.name)
-
     return {
         models,
         isFetching,
@@ -417,6 +430,7 @@ function mapStateToProps(state) {
 const mapDispatchToProps = dispatch => ({
     modelActions: {
         modelsLoaded: models => dispatch(modelsLoadedAction(models)),
+        modelCreated: name => dispatch(modelCreatedAction(name)),
         modelDeleted: name => dispatch(modelDeletedAction(name)),
         jobStart: job => dispatch(jobStartAction(job)),
         jobStop: job => dispatch(jobStopAction(job)),

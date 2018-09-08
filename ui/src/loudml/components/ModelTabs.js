@@ -6,33 +6,41 @@ import GeneralPanel from 'src/loudml/components/GeneralPanel'
 import ParametersPanel from 'src/loudml/components/ParametersPanel'
 import FeaturesPanel from 'src/loudml/components/FeaturesPanel'
 import PredictionPanel from 'src/loudml/components/PredictionPanel'
-// import InfoPanel from 'src/loudml/components/InfoPanel'
+import AnomalyPanel from 'src/loudml/components/AnomalyPanel'
 
 const ModelTabs = ({
     model,
     onDatasourceChoose,
     onInputChange,
-    isCreating,
+    isEditing,
+    annotation,
+    onAnnotationChange,
+    datasources,
+    datasource,
+    locked,
 }) => {
     const tabs = [
         {
             type: 'General',
             component: (
                 <GeneralPanel
-                  model={model}
-                  onDatasourceChoose={onDatasourceChoose}
-                  onInputChange={onInputChange}
-                  isCreating={isCreating}
-                />
+                    model={model}
+                    onDatasourceChoose={onDatasourceChoose}
+                    onInputChange={onInputChange}
+                    isEditing={isEditing}
+                    datasources={datasources}
+                    locked={locked}
+                    />
             ),
         },
         {
             type: 'Parameters',
             component: (
                 <ParametersPanel
-                  model={model}
-                  onInputChange={onInputChange}
-                />
+                    model={model}
+                    onInputChange={onInputChange}
+                    locked={locked}
+                    />
             ),
         },
         {
@@ -41,11 +49,13 @@ const ModelTabs = ({
                 <FeaturesPanel
                     features={model.features}
                     onInputChange={onInputChange}
+                    datasource={datasource}
+                    locked={locked}
                 />
             ),
         },
         {
-            type: 'Prediction',
+            type: 'Predictions',
             component: (
                 <PredictionPanel
                     model={model}
@@ -53,14 +63,17 @@ const ModelTabs = ({
                 />
             )
         },
-/*        {
-            type: 'Infos',
+        {
+            type: 'Anomalies',
             component: (
-                <InfoPanel
+                <AnomalyPanel
                     model={model}
+                    annotation={annotation}
+                    onInputChange={onInputChange}
+                    onAnnotationChange={onAnnotationChange}
                 />
             )
-        },*/
+        },
     ]
 
     return (
@@ -77,11 +90,18 @@ const ModelTabs = ({
     )
 }
 
+const {func, shape, bool, arrayOf} = PropTypes
+
 ModelTabs.propTypes = {
-    model: PropTypes.shape({}).isRequired,
-    onDatasourceChoose: PropTypes.func.isRequired,
-    onInputChange: PropTypes.func.isRequired,
-    isCreating: PropTypes.bool.isRequired,
+    model: shape({}).isRequired,
+    onDatasourceChoose: func.isRequired,
+    onInputChange: func.isRequired,
+    isEditing: bool.isRequired,
+    annotation: bool.isRequired,
+    onAnnotationChange: func.isRequired,
+    datasources: arrayOf(shape()),
+    datasource: shape(),
+    locked: bool.isRequired,
 }
 
 export default ModelTabs

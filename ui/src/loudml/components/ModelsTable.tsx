@@ -1,18 +1,57 @@
-import React, {Component, PropTypes} from 'react'
+import React, {PureComponent} from 'react'
 import {Link} from 'react-router'
 
 import ModelsRow from 'src/loudml/components/ModelsRow'
+import { TimeRange, Model, Job } from 'src/loudml/types/model';
 
-class ModelsTable extends Component {
-    constructor(props) {
-        super(props)
+interface Props {
+    source: {id: string}
+    models: Model[]
+    jobs: Job[]
+    onClone: (name: string) => void
+    onDelete: (name: string) => void
+    onStart: (name: string) => void
+    onStop: (name: string) => void
+    onTrain: (name: string, timeRange: TimeRange) => void
+    onStopTrain: (name: string) => void
+    onForecast: (name: string, timeRange: TimeRange) => void
+    onStopForecast: (name: string) => void
+    onSelectModelGraph: (model: Model) => void
+}
+
+class ModelsTable extends PureComponent<Props, {}> {
+
+    public render() {
+        const {source: {id}, models} = this.props
+        return (
+            <div className="panel">
+                <div className="panel-heading">
+                    <h2 className="panel-title">
+                        {this.title}
+                    </h2>
+                    <Link
+                        style={{marginLeft: '10px'}}
+                        to={`/sources/${id}/loudml/models/new`}
+                        className="btn btn-primary btn-sm"
+                    >
+                        <span className="icon plus" /> Create a new model
+                    </Link>
+                </div>
+                <div className="panel-body">
+                    {models.length
+                        ? this.renderTable()
+                        : this.renderTableEmpty() }
+                </div>
+            </div>
+        )
     }
 
-    renderTable() {
+    private renderTable() {
         const {
             source,
             models,
             jobs,
+            onClone,
             onDelete,
             onStart,
             onStop,
@@ -28,7 +67,9 @@ class ModelsTable extends Component {
                 <thead>
                     <tr>
                         <th>Name</th>
+                        <th>Loss</th>
                         <th>Status</th>
+                        <th/>
                         <th className="admin-table--left-offset" />
                         <th/>
                     </tr>
@@ -40,6 +81,7 @@ class ModelsTable extends Component {
                                 model={model}
                                 jobs={jobs.filter(job => job.name === model.settings.name)}
                                 source={source}
+                                onClone={onClone}
                                 onDelete={onDelete}
                                 onStart={onStart}
                                 onStop={onStop}
@@ -56,11 +98,11 @@ class ModelsTable extends Component {
         )
     }
 
-    renderTableEmpty() {
+    private renderTableEmpty() {
         const {source: {id}} = this.props
         return (
             <div className="generic-empty-state">
-                <h4 className="no-user-select">No model</h4>
+                <h4 className="no-user-select">Looks like you don't have any models</h4>
                 <br />
                 <h6 className="no-user-select">
                     <Link
@@ -81,51 +123,6 @@ class ModelsTable extends Component {
         return `${models.length} Model${models.length>1 ? 's': ''}`
     }
 
-    render() {
-        const {source: {id}, models} = this.props
-        return (
-            <div className="panel">
-                <div className="panel-heading">
-                    <h2 className="panel-title">
-                        {this.title}
-                    </h2>
-                    <Link
-                        style={{marginLeft: '10px'}}
-                        to={`/sources/${id}/loudml/models/new`}
-                        className="btn btn-primary btn-sm"
-                    >
-                        <span className="icon plus" /> Create a new model
-                    </Link>
-                </div>
-                <div className="panel-body">
-                    {models.length ? this.renderTable() : this.renderTableEmpty() }
-                </div>
-            </div>
-        )
-    }
-}
-
-const {arrayOf, shape, string, func} = PropTypes
-
-ModelsTable.propTypes = {
-    models: arrayOf(
-        shape()
-    ),
-    jobs: arrayOf(
-        shape()
-    ),
-    source: shape({
-        id: string.isRequired,
-        name: string.isRequired,
-    }).isRequired,
-    onDelete: func.isRequired,
-    onStart: func.isRequired,
-    onStop: func.isRequired,
-    onTrain: func.isRequired,
-    onStopTrain: func.isRequired,
-    onForecast: func.isRequired,
-    onStopForecast: func.isRequired,
-    onSelectModelGraph: func.isRequired,
 }
 
 export default ModelsTable

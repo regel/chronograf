@@ -1,5 +1,10 @@
 import AJAX from 'utils/ajax'
 
+const DEFAULT_START_OPTIONS = {
+    save_prediction: true,
+    detect_anomalies: true,
+}
+
 export const getModels = () => {
     return AJAX({
         url: '/loudml/api/models',
@@ -80,6 +85,20 @@ export const trainModel = (name, from, to) => {
     })
 }
 
+export const trainAndStartModel = (name, from, to) => {
+    return AJAX({
+        method: 'POST',
+        url: `/loudml/api/models/${name}/_train`,
+        params: {
+            from,
+            to,
+            autostart: true,
+            ...DEFAULT_START_OPTIONS,
+        },
+        excludeBasepath: true,
+    })
+}
+
 export const forecastModel = (name, from, to) => {
     return AJAX({
         method: 'POST',
@@ -87,7 +106,9 @@ export const forecastModel = (name, from, to) => {
         params: {
             from,
             to,
-            save_prediction: true},
+            save_prediction: true,
+            bg: true,
+        },
         excludeBasepath: true,
     })
 }
@@ -97,8 +118,7 @@ export const startModel = name => {
         method: 'POST',
         url: `/loudml/api/models/${name}/_start`,
         params: {
-            save_prediction: true,
-            detect_anomalies: true,
+            ...DEFAULT_START_OPTIONS,
         },
         excludeBasepath: true,
     })
@@ -108,7 +128,6 @@ export const stopModel = name => {
     return AJAX({
         method: 'POST',
         url: `/loudml/api/models/${name}/_stop`,
-        // params: {save_prediction: true},
         excludeBasepath: true,
     })
 }
@@ -117,6 +136,30 @@ export const stopJob = id => {
     return AJAX({
         method: 'POST',
         url: `/loudml/api/jobs/${id}/_cancel`,
+        excludeBasepath: true,
+    })
+}
+
+export const getModelHooks = name => {
+    return AJAX({
+        url: `/loudml/api/models/${name}/hooks`,
+        excludeBasepath: true,
+    })
+}
+
+export const createModelHook = (name, hook) => {
+    return AJAX({
+        method: 'PUT',
+        url: `/loudml/api/models/${name}/hooks`,
+        data: hook,
+        excludeBasepath: true,
+    })
+}
+
+export const deleteModelHook = (name, hookName) => {
+    return AJAX({
+        method: 'DELETE',
+        url: `/loudml/api/models/${name}/hooks/${hookName}`,
         excludeBasepath: true,
     })
 }
