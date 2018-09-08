@@ -5,7 +5,7 @@ import FancyScrollbar from 'shared/components/FancyScrollbar';
 import Dropdown from 'shared/components/Dropdown'
 
 import FeatureHeader from 'src/loudml/components/FeatureHeader'
-import FillQuery from 'src/loudml/components/FillQuery'
+import FillFeature from 'src/loudml/components/FillFeature'
 import FeatureTags from 'src/loudml/components/FeatureTags'
 
 import {showFieldKeys} from 'src/shared/apis/metaQuery'
@@ -14,10 +14,12 @@ import showFieldKeysParser from 'shared/parsing/showFieldKeys'
 import {
     normalizeFeatureDefault,
     denormalizeFeatureDefault,
- } from 'src/loudml/utils/model';
+} from 'src/loudml/utils/model';
 
 import {DEFAULT_METRICS, DEFAULT_IO, DEFAULT_LOUDML_RP} from 'src/loudml/constants'
 import {DEFAULT_ANOMALY_TYPE} from 'src/loudml/constants/anomaly'
+
+import 'src/loudml/styles/feature.css'
 
 class Feature extends Component {
     constructor(props) {
@@ -246,7 +248,7 @@ class Feature extends Component {
                                         <label>Default</label>
                                     </div>
                                     <div className="form-group col-xs-8">
-                                        <FillQuery
+                                        <FillFeature
                                             value={denormalizeFeatureDefault(feature.default)}
                                             onChooseFill={this.handleFillChoose}
                                             theme="GREEN"
