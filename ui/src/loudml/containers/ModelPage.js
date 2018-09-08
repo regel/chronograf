@@ -4,14 +4,12 @@ import {connect} from 'react-redux'
 
 import {notify as notifyAction} from 'shared/actions/notifications'
 import FancyScrollbar from 'shared/components/FancyScrollbar'
-// import Notifications from 'shared/components/Notifications'
 import SourceIndicator from 'shared/components/SourceIndicator'
 
 import {
     getModel as getModelApi,
     createModel as createModelApi,
     updateModel as updateModelApi,
-    trainModel as trainModelApi,
     getModelHooks as getModelHookApi,
     createModelHook as createModelHookApi,
     deleteModelHook as deleteModelHookApi,
@@ -31,8 +29,6 @@ import {
     notifyModelCreationFailed,
     notifyModelUpdated,
     notifyModelUpdateFailed,
-    notifyModelTraining,
-    notifyModelTrainingFailed,
     notifyErrorGettingDatasources,
     notifyErrorGettingModelHook,
 } from 'src/loudml/actions/notifications'
@@ -104,7 +100,6 @@ class ModelPage extends Component {
                             ...model,
                             features: FeaturesUtils.deserializedFeatures(model.features),
                         },
-                        // annotation: false,
                     },
                     cb
                 )
@@ -145,7 +140,6 @@ class ModelPage extends Component {
         } catch (error) {
             notify(notifyErrorGettingDatasources(parseError(error)))
         }
-        // return []
     }
 
     hasHook = async (name) => {
@@ -209,33 +203,29 @@ class ModelPage extends Component {
 
     handleSave = () => {
 
-        this.setState(
-            this._normalizeModel,
-            (this.state.isEditing
-                ?this._createModel
-                :this._updateModel)
-        )
+        const cb =(this.state.isEditing
+            ?this._createModel
+            :this._updateModel)
+        cb(this._normalizeModel())
     }
 
-    _normalizeModel = (state) => {
-        const model = state.model
+    _normalizeModel = () => {
+        const {model} = this.state
 
         delete model.isEditing
 
-        return model
-    }
-
-    _createModel = async () => {
-        const {model, annotation} = this.state
-        const {notify, modelActions: {modelCreated}} = this.props
-
-        const serial = {
+        return {
             ...model,
             features: FeaturesUtils.serializedFeatures(model.features)
         }
+    }
+
+    _createModel = async (model) => {
+        const {annotation} = this.state
+        const {notify, modelActions: {modelCreated}} = this.props
 
         try {
-            await createModelApi(serial)
+            await createModelApi(model)
             if (annotation) {
                 await createModelHookApi(model.name, createHook(ANOMALY_HOOK, model.default_datasource))
             }
@@ -247,23 +237,15 @@ class ModelPage extends Component {
         }
     }
 
-    _updateModel = async () => {
-        const {
-            model,
-            annotation
-        } = this.state
+    _updateModel = async (model) => {
+        const {annotation} = this.state
         const {
             notify,
             modelActions: {modelUpdated},
         } = this.props
 
-        const serial = {
-            ...model,
-            features: FeaturesUtils.serializedFeatures(model.features)
-        }
-
         try {
-            await updateModelApi(serial)
+            await updateModelApi(model)
             const {data: hooks} = await getModelHookApi(model.name)
             const hook = hooks.find(h => h === ANOMALY_HOOK_NAME)
             if (annotation && !hook) {
@@ -289,25 +271,6 @@ class ModelPage extends Component {
     onAnnotationChange = (e) => {
         const {checked} = e.target
         this.setState({annotation: checked})
-    }
-
-    train = (from, to) => {
-        const {notify, modelActions: {jobStart}} = this.props
-        const {model} = this.state
-
-        trainModelApi(model.name, from, to)
-            .then(res => {
-                jobStart({
-                    name: model.name,
-                    id: res.data,
-                    type: 'training',
-                    state: 'waiting'
-                })
-                notify(notifyModelTraining())
-            })
-            .catch(error => {
-                notify(notifyModelTrainingFailed(model.name, parseError(error)))
-            })
     }
 
     render() {
@@ -356,7 +319,6 @@ class ModelPage extends Component {
                                         model={model}
                                         onInputChange={this.onInputChange}
                                         onDatasourceChoose={this.onDatasourceChoose}
-                                        onTrain={this.train}
                                         isEditing={isEditing}
                                         annotation={annotation}
                                         onAnnotationChange={this.onAnnotationChange}

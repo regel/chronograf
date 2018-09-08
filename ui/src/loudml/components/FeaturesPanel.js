@@ -12,8 +12,6 @@ import { findSource } from 'src/loudml/utils/datasource';
 import {TEN_SECONDS} from 'shared/constants/index'
 import {DEFAULT_FEATURE} from 'src/loudml/constants'
 
-import 'src/loudml/styles/feature.css'
-
 const defaultErrorNotification = {
     type: 'error',
     icon: 'alert-triangle',
