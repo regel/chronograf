@@ -44,7 +44,6 @@ class Feature extends Component {
             feature: {measurement},
         } = this.props
 
-        // Typical usage (don't forget to compare props):
         if (
             _.isEqual(source, prevProps.source)
             && database === prevProps.database
@@ -62,12 +61,10 @@ class Feature extends Component {
             database,
             feature: {measurement},
             measurements,
-            locked,
         } = this.props
 
         if (
-            locked
-            ||!source
+            !source
             ||!database
             ||measurements.length===0
             ||!measurement) {
@@ -165,8 +162,8 @@ class Feature extends Component {
         return (feature.match_all.length === 1
             ? '1 tag selected'
             : `${feature.match_all.length} tags selected`)
-
     }
+
     render() {
         const {
             onDelete,

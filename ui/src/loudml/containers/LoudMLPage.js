@@ -53,11 +53,13 @@ import {
     notifyJobStoppedFailed,
     notifyDashboardCreated,
     notifyDashboardCreationFailed,
+    notifyErrorGettingModelHook,
 } from 'src/loudml/actions/notifications'
 import {
     DEFAULT_CONFIDENT_DASHBOARD,
     DEFAULT_CONFIDENT_CELL
 } from 'src/loudml/constants/dashboard';
+import {ANOMALY_HOOK_NAME} from 'src/loudml/constants/anomaly'
 
 @ErrorHandling
 class LoudMLPage extends Component {
@@ -156,7 +158,7 @@ class LoudMLPage extends Component {
             })
     }
 
-    cloneModel = name => {
+    cloneModel = async (name) => {
         const {
             modelActions: {modelCreated},
             router,
@@ -170,9 +172,24 @@ class LoudMLPage extends Component {
         copy.name = `Copy of ${name}`
         copy.isEditing = true
 
-        modelCreated(copy)
+        const annotation = await this.hasHook(name)
+        copy.annotation = annotation
 
-        router.push(`/sources/${id}/loudml/models/${copy.name}/`)
+        modelCreated(copy)
+        router.push(`/sources/${id}/loudml/models/${copy.name}/edit`)
+    }
+
+    hasHook = async (name) => {
+        const {notify} = this.props
+
+        try {
+            const {data: hooks} = await api.getModelHooks(name)
+            const hook = hooks.find(h => h === ANOMALY_HOOK_NAME)
+            return (hook!==undefined)
+        } catch (error) {
+            notify(notifyErrorGettingModelHook(name, ANOMALY_HOOK_NAME, parseError(error)))
+        }
+        return false
     }
 
     deleteModel = name => {
@@ -359,6 +376,24 @@ class LoudMLPage extends Component {
         }
     }
 
+    openInNewTab = url => () => {
+        const win = window.open(url, '_loudml');
+        win.focus();
+    }
+    
+    renderHeaderOptions = () => {
+        return (
+            <div className="question-mark-tooltip">
+                <div
+                    className="question-mark-tooltip--icon"
+                    onClick={this.openInNewTab('http://loudml.io')}
+                    >
+                    ?
+                </div>
+            </div>
+        )
+    }
+    
     render() {
         const {isFetching, jobs, source} = this.props
 
@@ -368,7 +403,11 @@ class LoudMLPage extends Component {
 
         return (
             <div className="page">
-                <PageHeader titleText="Manage Machine Learning Tasks" sourceIndicator={true} />
+                <PageHeader
+                    titleText="Manage Machine Learning Tasks"
+                    sourceIndicator={true}
+                    optionsComponents={this.renderHeaderOptions()}
+                    />
                 <FancyScrollbar className="page-contents">
                     <div className="container-fluid">
                     <div className="row">
@@ -412,7 +451,6 @@ class LoudMLPage extends Component {
                         onSearch={this.filterModels}
                         />
                     <Link
-                        // style={{marginLeft: '10px'}}
                         to={`/sources/${id}/loudml/models/new`}
                         className="btn btn-sm btn-primary btn-sm"
                         >

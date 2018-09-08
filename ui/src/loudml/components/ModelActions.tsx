@@ -100,7 +100,6 @@ class ModelActions extends PureComponent<Props, {}> {
                 />
                 <ConfirmButton
                     confirmAction={this.handleDeleteModel}
-                    // item={model}
                     size="btn-xs"
                     square={true}
                     icon="trash"

@@ -53,7 +53,7 @@ class ModelsRow extends PureComponent<Props, {}> {
         return (
             <tr>
                 <td>
-                    <Link to={`/sources/${id}/loudml/models/${name}/general`}>
+                    <Link to={`/sources/${id}/loudml/models/${name}/edit`}>
                         {name}
                     </Link>
                 </td>

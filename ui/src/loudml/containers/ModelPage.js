@@ -39,6 +39,8 @@ import {createHook} from 'src/loudml/utils/hook'
 import {DEFAULT_MODEL} from 'src/loudml/constants'
 import {ANOMALY_HOOK_NAME, ANOMALY_HOOK} from 'src/loudml/constants/anomaly'
 
+import 'src/loudml/styles/model.scss'
+
 class ModelPage extends Component {
     constructor(props) {
         super(props)
@@ -75,7 +77,7 @@ class ModelPage extends Component {
             const {settings, state, training} = model
             const isEditing = settings.isEditing||false
             const annotation = (isEditing
-                ?false
+                ?settings.annotation
                 :await this.hasHook(name))
             return this.setState({
                 isLoading: false,
@@ -214,6 +216,7 @@ class ModelPage extends Component {
         const {model} = this.state
 
         delete model.isEditing
+        delete model.annotation
 
         return {
             ...model,
@@ -274,6 +277,15 @@ class ModelPage extends Component {
         this.setState({annotation: checked})
     }
 
+    get isLocked() {
+        const {training, state} = this.state
+
+        return (
+            ['running', 'done'].includes(training.state)
+            ||state.trained
+            ||false)
+    }
+
     render() {
         const {
             isLoading,
@@ -281,9 +293,7 @@ class ModelPage extends Component {
             model,
             annotation,
             datasources,
-            training,
         } = this.state
-        const {source, params} = this.props
 
         return (
             <div className="page">
@@ -292,7 +302,7 @@ class ModelPage extends Component {
                     <div className="container-fluid">
                         <div className="row">
                             <div className="col-md-12">
-                                <div className="panel">
+                                <div className="panel model-panel">
                                     {isLoading ? (
                                         <div className="page-spinner" />
                                     ) : (
@@ -304,8 +314,6 @@ class ModelPage extends Component {
                                                 />
                                             <div className="panel-body">
                                                 <ModelTabs
-                                                    sourceID={source.id}
-                                                    tab={params.tab}
                                                     model={model}
                                                     onInputChange={this.onInputChange}
                                                     onDatasourceChoose={this.onDatasourceChoose}
@@ -314,7 +322,7 @@ class ModelPage extends Component {
                                                     onAnnotationChange={this.onAnnotationChange}
                                                     datasources={datasources}
                                                     datasource={datasources.find(ds => ds.name === model.default_datasource)}
-                                                    locked={['training', 'done'].includes(training.state)}
+                                                    locked={this.isLocked}
                                                     />
                                             </div>
                                         </div>
@@ -330,12 +338,10 @@ class ModelPage extends Component {
 
 }
 
-const {func, shape, string, arrayOf} = PropTypes
+const {func, shape, arrayOf} = PropTypes
 
 ModelPage.propTypes = {
-    params: shape({
-        tab: string,
-    }),
+    params: shape({}),
     models: arrayOf(shape({})),
     training: shape(),
     source: shape({}),
