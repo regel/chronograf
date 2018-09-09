@@ -7,6 +7,7 @@ import ParametersPanel from 'src/loudml/components/ParametersPanel'
 import FeaturesPanel from 'src/loudml/components/FeaturesPanel'
 import PredictionPanel from 'src/loudml/components/PredictionPanel'
 import AnomalyPanel from 'src/loudml/components/AnomalyPanel'
+import AboutPanel from 'src/loudml/components/AboutPanel'
 
 const ModelTabs = ({
     model,
@@ -73,6 +74,10 @@ const ModelTabs = ({
                     onAnnotationChange={onAnnotationChange}
                 />
             )
+        },
+        {
+            type: 'About',
+            component: <AboutPanel />
         },
     ]
 

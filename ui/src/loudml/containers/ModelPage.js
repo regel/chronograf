@@ -5,6 +5,7 @@ import {connect} from 'react-redux'
 import {notify as notifyAction} from 'shared/actions/notifications'
 import FancyScrollbar from 'shared/components/FancyScrollbar'
 import SourceIndicator from 'shared/components/SourceIndicator'
+import QuestionMark from 'src/loudml/components/QuestionMark'
 
 import {
     getModel as getModelApi,
@@ -74,7 +75,7 @@ class ModelPage extends Component {
             const {settings, state, training} = model
             const isEditing = settings.isEditing||false
             const annotation = (isEditing
-                ?false
+                ?settings.annotation
                 :await this.hasHook(name))
             return this.setState({
                 isLoading: false,
@@ -213,6 +214,7 @@ class ModelPage extends Component {
         const {model} = this.state
 
         delete model.isEditing
+        delete model.annotation
 
         return {
             ...model,
@@ -281,6 +283,7 @@ class ModelPage extends Component {
             annotation,
             datasources,
             training,
+            state,
         } = this.state
 
         return (
@@ -294,6 +297,7 @@ class ModelPage extends Component {
                         </div>
                         <div className="page-header__right">
                             <SourceIndicator />
+                            <QuestionMark />
                         </div>
                     </div>
                 </div>
@@ -324,7 +328,11 @@ class ModelPage extends Component {
                                         onAnnotationChange={this.onAnnotationChange}
                                         datasources={datasources}
                                         datasource={datasources.find(ds => ds.name === model.default_datasource)}
-                                        locked={['training', 'done'].includes(training.state)}
+                                        locked={
+                                            ['running', 'done'].includes(training.state)
+                                            ||state.trained
+                                            ||false
+                                            }
                                         />
                                 </div>
                             </div>

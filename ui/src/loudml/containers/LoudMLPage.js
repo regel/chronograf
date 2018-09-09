@@ -7,6 +7,7 @@ import SourceIndicator from 'shared/components/SourceIndicator'
 import FancyScrollbar from 'shared/components/FancyScrollbar'
 
 import ModelsTable from 'src/loudml/components/ModelsTable'
+import QuestionMark from 'src/loudml/components/QuestionMark'
 
 import {
     getDashboards,
@@ -47,11 +48,13 @@ import {
     notifyJobStoppedFailed,
     notifyDashboardCreated,
     notifyDashboardCreationFailed,
+    notifyErrorGettingModelHook,
 } from 'src/loudml/actions/notifications'
 import {
     DEFAULT_CONFIDENT_DASHBOARD,
     DEFAULT_CONFIDENT_CELL
 } from 'src/loudml/constants/dashboard';
+import {ANOMALY_HOOK_NAME} from 'src/loudml/constants/anomaly'
 
 class LoudMLPage extends Component {
     constructor(props) {
@@ -146,7 +149,7 @@ class LoudMLPage extends Component {
             })
     }
 
-    cloneModel = name => {
+    cloneModel = async (name) => {
         const {
             modelActions: {modelCreated},
             router,
@@ -159,10 +162,24 @@ class LoudMLPage extends Component {
         }
         copy.name = `Copy of ${name}`
         copy.isEditing = true
+        copy.annotation = await this.hasHook(name)
 
         modelCreated(copy)
 
         router.push(`/sources/${id}/loudml/models/${copy.name}/edit`)
+    }
+
+    hasHook = async (name) => {
+        const {notify} = this.props
+
+        try {
+            const {data: hooks} = await api.getModelHooks(name)
+            const hook = hooks.find(h => h === ANOMALY_HOOK_NAME)
+            return (hook!==undefined)
+        } catch (error) {
+            notify(notifyErrorGettingModelHook(name, ANOMALY_HOOK_NAME, parseError(error)))
+        }
+        return false
     }
 
     deleteModel = name => () => {
@@ -365,6 +382,7 @@ class LoudMLPage extends Component {
                         </div>
                         <div className="page-header__right">
                             <SourceIndicator />
+                            <QuestionMark />
                         </div>
                     </div>
                 </div>

@@ -60,12 +60,10 @@ class Feature extends Component {
             database,
             feature: {measurement},
             measurements,
-            locked,
         } = this.props
 
         if (
-            locked
-            ||!source
+            !source
             ||!database
             ||measurements.length===0
             ||!measurement) {
