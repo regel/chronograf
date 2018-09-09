@@ -197,11 +197,7 @@ export class TableOptions extends Component<Props, {}> {
 
 const mapStateToProps = ({
   cellEditorOverlay: {
-<<<<<<< HEAD
     cell: {tableOptions, timeFormat, fieldOptions, decimalPlaces},
-=======
-    cell: {tableOptions},
->>>>>>> fix build err/warn
   },
 }) => ({
   tableOptions,
