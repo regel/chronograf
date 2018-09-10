@@ -69,6 +69,7 @@ class ModelActions extends PureComponent<Props, {}> {
                     running={run!==undefined}
                     disabled={trained===false
                         &&run===undefined}
+                    customClass="table--show-on-row-hover"
                 />
                 <ForecastTimeJobButton
                     startLabel='Forecast'

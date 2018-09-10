@@ -1,94 +1,67 @@
 import React, {Component} from 'react'
 import {PropTypes} from 'prop-types'
-import OnClickOutside from 'react-onclickoutside'
-import classnames from 'classnames'
+import ConfirmButton from 'src/shared/components/ConfirmButton'
 
 class JobButton extends Component {
     constructor(props) {
         super(props)
     
-        this.state = {
-            expanded: false,
-        }
     }
 
-    handleClickOutside = () => {
-        const {expanded} = this.state
-        const {informParent} = this.props
-    
-        if (expanded === false) {
-          return
-        }
-        this.setState({expanded: false})
-        informParent()
-      }
-    
-    handleToggleSubMenu = () => {
-        const {running, onStart, informParent} = this.props
-
-        if (running) {
-            this.setState({expanded: !this.state.expanded})
-            informParent()
-        } else {
-            onStart()
-        }
-    }
-    
     handleConfirm = () => {
-        const {informParent} = this.props
-        this.setState({expanded: false})
-        informParent()
         this.props.onStop()
     }
 
     render() {
         const {
-            disabled,
-            running,
             stopLabel,
             startLabel,
+            disabled,
+            running,
+            onStart,
+            customClass,
+            confirmText,
         } = this.props
-        const {expanded} = this.state
+
+        if (running) {
+            return (
+                <ConfirmButton
+                    text={stopLabel}
+                    confirmText={confirmText}
+                    confirmAction={this.handleConfirm}
+                    size="btn-xs"
+                    customClass={customClass}
+                />)
+        }
 
         return (
-            <div>
-                <button className={classnames(
-                    'btn',
-                    'btn-xs',
-                    'btn-default', {
-                        'table--show-on-row-hover': !expanded,
-                    })}
-                    onClick={this.handleToggleSubMenu}
-                    disabled={disabled}>
-                    {running ? stopLabel : startLabel}
-                </button>
-                {expanded ? (
-                    <div className="dash-graph-context--menu danger">
-                        <div className="dash-graph-context--menu-item"
-                            onClick={this.handleConfirm} >
-                            Confirm
-                        </div>
-                    </div>
-                ) : null}
-            </div>
-        )
+            <button
+                className={`btn btn-xs btn-default ${customClass}`}
+                onClick={onStart}
+                disabled={disabled}
+            >
+                {startLabel}
+            </button>)
     }
 }
 
 JobButton.defaultProps = {
-    informParent: () => {},
     onStart: () => {},
     startLabel: '',
+    customClass: '',
 }
+
+const {string, func, bool} = PropTypes
 
 JobButton.propTypes = {
-    startLabel: PropTypes.string,
-    stopLabel: PropTypes.string.isRequired,
-    onStart: PropTypes.func,
-    onStop: PropTypes.func.isRequired,
-    running: PropTypes.bool.isRequired,
-    disabled: PropTypes.bool.isRequired,
-    informParent: PropTypes.func,
+    startLabel: string,
+    stopLabel: string.isRequired,
+    onStart: func,
+    onStop: func.isRequired,
+    running: bool.isRequired,
+    disabled: bool.isRequired,
+    customClass: string,
+    confirmText: string,
 }
 
-export default OnClickOutside(JobButton)
+export default JobButton
