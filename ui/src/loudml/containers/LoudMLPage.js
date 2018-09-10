@@ -103,8 +103,13 @@ class LoudMLPage extends Component {
     _loadModels() {
         const {
             modelActions: {modelsLoaded},
-            notify
+            notify,
+            isFetching,
         } = this.props
+
+        if (isFetching && this._asyncRequest) {
+            return
+        }
 
         this._asyncRequest = api.getModels()
         .then(res => {
@@ -353,6 +358,7 @@ class LoudMLPage extends Component {
         }
         return updateDashboardCell({
             ...cell,
+            type: 'error',
             queries,
         })
     }
