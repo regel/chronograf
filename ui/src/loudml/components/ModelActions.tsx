@@ -7,6 +7,8 @@ import JobButton from 'src/loudml/components/JobButton'
 import TrainTimeJobButton from 'src/loudml/components/TrainTimeJobButton'
 import ForecastTimeJobButton from 'src/loudml/components/ForecastTimeJobButton'
 
+import 'src/loudml/styles/loudml.scss'
+
 interface Props {
     model: Model
     jobs: Job[]

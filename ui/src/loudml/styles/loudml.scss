@@ -4,8 +4,16 @@
     justify-content: flex-end;
 }
 
+.time-job--button {
+    position: relative;
+}
+
 .time-job--button .btn {
     width: 110px;
+}
+
+.time-job--button .dropdown-toggle {
+    display: flex!important;
 }
 
 .time-job--button .custom-time--overlay {

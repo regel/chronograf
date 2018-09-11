@@ -55,7 +55,7 @@ class ModelsTable extends PureComponent<Props, {}> {
                         <th>Name</th>
                         <th>Loss</th>
                         <th>Status</th>
-                        <th className="admin-table--left-offset" />
+                        <th/>
                         <th/>
                     </tr>
                 </thead>

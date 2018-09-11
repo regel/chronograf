@@ -3,13 +3,12 @@ import {PropTypes} from 'prop-types'
 import classnames from 'classnames'
 import moment from 'moment'
 
+import ConfirmButton from 'src/shared/components/ConfirmButton'
 import OnClickOutside from 'shared/components/OnClickOutside'
 
 import CustomTimeRange from 'src/loudml/components/CustomTimeRange'
-import JobButton from 'src/loudml/components/JobButton'
-const emptyTime = {lower: '', upper: ''}
 
-import 'src/loudml/styles/loudml.scss'
+const emptyTime = {lower: '', upper: ''}
 
 class CustomTimeJobButton extends Component {
     constructor(props) {
@@ -22,7 +21,6 @@ class CustomTimeJobButton extends Component {
         this.state = {
             isCustomTimeRangeOpen: false,
             customTimeRange,
-            isConfirmOpen: false,
         }
     }
 
@@ -40,15 +38,10 @@ class CustomTimeJobButton extends Component {
         this.setState({customTimeRange, isCustomTimeRangeOpen: false})
     }
 
-    handleToggleConfirm = () => {
-        this.setState({isConfirmOpen: !this.state.isConfirmOpen})
-    }
-
     render() {
         const {
             isCustomTimeRangeOpen,
             customTimeRange,
-            isConfirmOpen,
         } = this.state
 
         const {
@@ -63,33 +56,31 @@ class CustomTimeJobButton extends Component {
 
         return (
             <div className="time-job--button">
-                <div className={classnames(
+                {running
+                ?(<ConfirmButton
+                        text={stopLabel}
+                        confirmAction={onStop}
+                        size="btn-xs"
+                        disabled={disabled}
+                        customClass="table--show-on-row-hover" />)
+                :(<div className={classnames(
                     'dropdown',
                     'dropdown-110', {
-                        'table--show-on-row-hover': !(isCustomTimeRangeOpen||isConfirmOpen),
+                        'table--show-on-row-hover': !isCustomTimeRangeOpen,
                         open: isCustomTimeRangeOpen,
                     })}>
-                    {running ?
-                        (<JobButton
-                            stopLabel={stopLabel}
-                            onStop={onStop}
-                            running={running}
-                            disabled={disabled}
-                            informParent={this.handleToggleConfirm}
-                        />)
-                        : (<div className="btn btn-xs btn-default dropdown-toggle"
-                            onClick={this.toggleMenu}
-                            disabled={disabled}
-                            >
-                            <span className="icon clock" />
-                            <span className="dropdown-selected">
-                                {startLabel}
-                            </span>
-                            <span className="caret" />
-                        </div>)}
-                </div>
-                {isCustomTimeRangeOpen ?
-                    (<div className="custom-time--overlay">
+                    <div className="btn btn-xs btn-default dropdown-toggle"
+                        onClick={this.toggleMenu}
+                        disabled={disabled}>
+                        <span className="icon clock" />
+                        <span className="dropdown-selected">
+                            {startLabel}
+                        </span>
+                        <span className="caret" />
+                    </div>
+                </div>)}
+                {isCustomTimeRangeOpen
+                    ?(<div className="custom-time--overlay">
                         <CustomTimeRange
                             onApplyTimeRange={this.handleApplyCustomTimeRange}
                             timeRange={customTimeRange}
@@ -98,7 +89,7 @@ class CustomTimeJobButton extends Component {
                             handleTimeRangeShortcut={handleTimeRangeShortcut}
                         />
                     </div>)
-                : null}
+                    : null}
             </div>
         )
     }

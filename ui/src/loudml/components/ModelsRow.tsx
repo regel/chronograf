@@ -66,7 +66,7 @@ class ModelsRow extends PureComponent<Props, {}> {
                         jobs={jobs}
                     />
                 </td>
-                <td className="text-right">
+                <td>
                     <div className="actions-container">
                         <button 
                             className="btn btn-xs btn-default table--show-on-row-hover"
