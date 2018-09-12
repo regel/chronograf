@@ -7,6 +7,13 @@ import {notify as notifyAction} from 'shared/actions/notifications'
 import FancyScrollbar from 'shared/components/FancyScrollbar'
 import PageHeader from 'src/reusable_ui/components/page_layout/PageHeader'
 
+import GeneralPanel from 'src/loudml/components/GeneralPanel'
+import ParametersPanel from 'src/loudml/components/ParametersPanel'
+import FeaturesPanel from 'src/loudml/components/FeaturesPanel'
+import PredictionPanel from 'src/loudml/components/PredictionPanel'
+import AnomalyPanel from 'src/loudml/components/AnomalyPanel'
+import AboutPanel from 'src/loudml/components/AboutPanel';
+
 import {
     getModel as getModelApi,
     createModel as createModelApi,
@@ -51,6 +58,7 @@ class ModelPage extends Component {
             datasources: [],
             training: {},
             state: {},
+            activeSection: 'general',
         }
     }
 
@@ -131,6 +139,45 @@ class ModelPage extends Component {
             notify(notifyErrorGettingModel(parseError(error)))
             this._redirect()
         }
+    }
+
+    render() {
+        const {
+            isLoading,
+            isEditing,
+            model,
+            activeSection,
+        } = this.state
+
+        return (
+            <div className="page">
+                <PageHeader titleText={isEditing ? 'Add a new model' : 'Configure model'} sourceIndicator={true} />
+                <FancyScrollbar className="page-contents">
+                    {isLoading ? (
+                        <div className="container-fluid">
+                            <div className="page-spinner" />
+                        </div>
+                    ) : (
+                        <div className="container-fluid">
+                            <div className="row">
+                                <div className="col-md-12">
+                                    <ModelHeader
+                                        name={isEditing ? 'Model creator' : model.name}
+                                        onSave={this.handleSave}
+                                        validationError={this.validationError}
+                                        />
+                                </div>
+                            </div>
+                            <ModelTabs
+                                sections={this.modelSubSections}
+                                activeSection={activeSection}
+                                onTabClick={this.handleTabClick}
+                                />
+                        </div>
+                    )}
+                </FancyScrollbar>
+            </div>
+        )
     }
 
     loadDatasources = async () => {
@@ -286,54 +333,94 @@ class ModelPage extends Component {
             ||false)
     }
 
-    render() {
+    get modelSubSections() {
         const {
-            isLoading,
-            isEditing,
             model,
+            isEditing,
             annotation,
             datasources,
         } = this.state
 
-        return (
-            <div className="page">
-                <PageHeader titleText={isEditing ? 'Add a new model' : 'Configure model'} sourceIndicator={true} />
-                <FancyScrollbar className="page-contents">
-                    <div className="container-fluid">
-                        <div className="row">
-                            <div className="col-md-12">
-                                <div className="panel model-panel">
-                                    {isLoading ? (
-                                        <div className="page-spinner" />
-                                    ) : (
-                                        <div>
-                                            <ModelHeader
-                                                name={isEditing ? 'Model creator' : model.name}
-                                                onSave={this.handleSave}
-                                                validationError={this.validationError}
-                                                />
-                                            <div className="panel-body">
-                                                <ModelTabs
-                                                    model={model}
-                                                    onInputChange={this.onInputChange}
-                                                    onDatasourceChoose={this.onDatasourceChoose}
-                                                    isEditing={isEditing}
-                                                    annotation={annotation}
-                                                    onAnnotationChange={this.onAnnotationChange}
-                                                    datasources={datasources}
-                                                    datasource={datasources.find(ds => ds.name === model.default_datasource)}
-                                                    locked={this.isLocked}
-                                                    />
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </FancyScrollbar>
-            </div>
-        )
+        const datasource = datasources.find(ds => ds.name === model.default_datasource)
+        const locked = this.isLocked
+
+        return [
+            {
+                name: 'General',
+                url: 'general',
+                enabled: true,
+                component: (
+                    <GeneralPanel
+                        model={model}
+                        onDatasourceChoose={this.onDatasourceChoose}
+                        onInputChange={this.onInputChange}
+                        isEditing={isEditing}
+                        datasources={datasources}
+                        locked={locked}
+                        />
+                ),
+            },
+            {
+                name: 'Parameters',
+                url: 'parameters',
+                enabled: true,
+                component: (
+                    <ParametersPanel
+                        model={model}
+                        onInputChange={this.onInputChange}
+                        locked={locked}
+                        />
+                ),
+            },
+            {
+                name: 'Features',
+                url: 'features',
+                enabled: true,
+                component: (
+                    <FeaturesPanel
+                        features={model.features}
+                        onInputChange={this.onInputChange}
+                        datasource={datasource}
+                        locked={locked}
+                    />
+                ),
+            },
+            {
+                name: 'Predictions',
+                url: 'predictions',
+                enabled: true,
+                component: (
+                    <PredictionPanel
+                        model={model}
+                        onInputChange={this.onInputChange}
+                    />
+                )
+            },
+            {
+                name: 'Anomalies',
+                url: 'anomalies',
+                enabled: true,
+                component: (
+                    <AnomalyPanel
+                        model={model}
+                        annotation={annotation}
+                        onInputChange={this.onInputChange}
+                        onAnnotationChange={this.onAnnotationChange}
+                    />
+                )
+            },
+            {
+                name: 'About',
+                url: 'about',
+                enabled: true,
+                component: <AboutPanel />
+            },
+        ]
+        
+    }
+
+    handleTabClick = url => () => {
+        this.setState({activeSection: url})
     }
 
 }

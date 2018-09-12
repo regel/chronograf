@@ -6,6 +6,7 @@ const AboutTextStyle = {
     margin: 0,
     textAlign: 'center',
     whiteSpace: 'pre-wrap',
+    color: '#eeeff2',
 }
 
 const AboutPanel = () => {
