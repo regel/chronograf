@@ -10,7 +10,7 @@ import LineGraph from 'shared/components/LineGraph'
 import SingleStat from 'shared/components/SingleStat'
 import GaugeChart from 'shared/components/GaugeChart'
 import TableGraph from 'shared/components/TableGraph'
-import ConfidenceGraph from 'src/loudml/components/ConfidenceGraph'
+import ErrorGraph from 'src/loudml/components/ErrorGraph';
 
 import {colorsStringSchema} from 'shared/schemas'
 import {setHoverTime} from 'src/dashboards/actions'
@@ -23,7 +23,7 @@ const RefreshingLineGraph = AutoRefresh(LineGraph)
 const RefreshingSingleStat = AutoRefresh(SingleStat)
 const RefreshingGaugeChart = AutoRefresh(GaugeChart)
 const RefreshingTableGraph = AutoRefresh(TableGraph)
-const RefreshingConfidenceGraph = AutoRefresh(ConfidenceGraph)
+const RefreshingErrorGraph = AutoRefresh(ErrorGraph)
 
 const RefreshingGraph = ({
   axes,
@@ -134,27 +134,33 @@ const RefreshingGraph = ({
 
   if (type === 'error') {
     return (
-      <RefreshingConfidenceGraph
-        source={source}
-        key={manualRefresh}
-        colors={colors}
-        queries={queries}
-        templates={templates}
-        autoRefresh={autoRefresh}
-        cellHeight={cellHeight}
-        resizerTopHeight={resizerTopHeight}
+      <RefreshingErrorGraph
+      type={type}
+      axes={axes}
+      source={source}
+      cellID={cellID}
+      colors={colors}
+      onZoom={onZoom}
+      queries={queries}
+      inView={inView}
+      key={manualRefresh}
+      templates={templates}
+      timeRange={timeRange}
+      cellHeight={cellHeight}
+      autoRefresh={autoRefresh}
+      decimalPlaces={decimalPlaces}
+      staticLegend={staticLegend}
+//      displayOptions={displayOptions}
+      editQueryStatus={editQueryStatus}
+      grabDataForDownload={grabDataForDownload}
+      handleSetHoverTime={handleSetHoverTime}
+      onSetResolution={onSetResolution}
+//        resizerTopHeight={resizerTopHeight}
 //         resizeCoords={resizeCoords}
-        cellID={cellID}
-        tableOptions={tableOptions}
+//        tableOptions={tableOptions}
 //        hoverTime={hoverTime}
-handleSetHoverTime={handleSetHoverTime}
-
 //        onSetHoverTime={onSetHoverTime}
-        inView={inView}
 //        setDataLabels={setDataLabels}
-        onZoom={onZoom}
-        timeRange={timeRange}
-        staticLegend={staticLegend}
       />
     )
   }
