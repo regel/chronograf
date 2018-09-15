@@ -17,8 +17,10 @@ import {DecimalPlaces} from 'src/types/dashboards'
 import {ColorString} from 'src/types/colors'
 import {Data} from 'src/types/dygraphs'
 
+// @ts-ignore
 const validateTimeSeries = ts => {
   return true
+  /*
   return _.every(ts, r =>
     _.every(
       r,
@@ -26,6 +28,7 @@ const validateTimeSeries = ts => {
         (i === 0 && Date.parse(v)) || _.isNumber(v) || _.isNull(v)
     )
   )
+  */
 }
 
 interface Props {
@@ -117,6 +120,7 @@ class ErrorGraph extends PureComponent<Props> {
       return <GraphSpinner />
     }
 
+    // @ts-ignore
     const valueFormatter = (value, opts, seriesName, dygraph, row, col) => {
       const rowData = dygraph.getValue(row, col)
       if (Array.isArray(rowData)) {
@@ -141,6 +145,7 @@ class ErrorGraph extends PureComponent<Props> {
       && timeSeries.length !== 0
       && timeSeries[0].length>1
       && Array.isArray(timeSeries[0][1])
+      // @ts-ignore
       && timeSeries[0][1].length === 3)
     const fillGraph = !customBars
 
@@ -200,6 +205,7 @@ class ErrorGraph extends PureComponent<Props> {
     return {height: '100%'}
   }
 
+  /*
   private get prefix(): string {
     const {axes} = this.props
 
@@ -219,6 +225,7 @@ class ErrorGraph extends PureComponent<Props> {
 
     return axes.y.suffix
   }
+  */
 
   private get containerStyle(): CSSProperties {
     return {
