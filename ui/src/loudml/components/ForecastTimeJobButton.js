@@ -87,6 +87,7 @@ const ForecastTimeJobButton = ({
             shortcuts={forecastTimeRangeDefaults}
             handleTimeRangeShortcut={handleTimeRangeShortcut}
             disabled={disabled}
+            now="lower"
         />
     );
   }

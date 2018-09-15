@@ -47,7 +47,7 @@ class CustomTimeRange extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      isNow: this.props.timeRange.upper === 'now()',
+      isNow: this.props.timeRange[this.props.now] === 'now()',
     }
   }
 
@@ -176,8 +176,11 @@ class CustomTimeRange extends Component {
 
   render() {
     const {isNow} = this.state
-    const {page, shortcuts} = this.props
+    const {page, shortcuts, now} = this.props
     const isNowDisplayed = page !== 'DataExplorer'
+
+    const isUpperNow = now === 'upper' && isNow
+    const isLowerNow = now === 'lower' && isNow
 
     return (
       <div className="custom-time--container">
@@ -198,20 +201,38 @@ class CustomTimeRange extends Component {
             <div
               className="custom-time--lower-container"
               ref={r => (this.lowerContainer = r)}
+              disabled={isLowerNow}
             >
+              {now === 'lower' && isNowDisplayed ? (
+                <div
+                  className={`btn btn-xs custom-time--now ${
+                    isNow ? 'btn-primary' : 'btn-default'
+                  }`}
+                  onClick={this.handleToggleNow}
+                >
+                  Now
+                </div>
+              ) : null}
               <input
                 className="custom-time--lower form-control input-sm"
                 ref={r => (this.lower = r)}
                 placeholder="from"
                 onKeyUp={this.handleRefreshCals}
+                disabled={isLowerNow}
               />
+              {isLowerNow && isNowDisplayed ? (
+                <div
+                  className="custom-time--mask"
+                  onClick={this.handleNowOff}
+                />
+              ) : null}
             </div>
             <div
               className="custom-time--upper-container"
               ref={r => (this.upperContainer = r)}
-              disabled={isNow}
+              disabled={isUpperNow}
             >
-              {isNowDisplayed ? (
+              {now === 'upper' && isNowDisplayed ? (
                 <div
                   className={`btn btn-xs custom-time--now ${
                     isNow ? 'btn-primary' : 'btn-default'
@@ -226,9 +247,9 @@ class CustomTimeRange extends Component {
                 ref={r => (this.upper = r)}
                 placeholder="to"
                 onKeyUp={this.handleRefreshCals}
-                disabled={isNow}
+                disabled={isUpperNow}
               />
-              {isNow && page !== 'DataExplorer' ? (
+              {isUpperNow && isNowDisplayed ? (
                 <div
                   className="custom-time--mask"
                   onClick={this.handleNowOff}
@@ -251,6 +272,7 @@ class CustomTimeRange extends Component {
 CustomTimeRange.defaultProps = {
     shortcuts: timeRangeDefaults,
     handleTimeRangeShortcut: defaultTimeRangeShortcut,
+    now: 'upper',
 }
 
 const {func, shape, string} = PropTypes
@@ -268,6 +290,7 @@ CustomTimeRange.propTypes = {
       name: string.isRequired,
   })),
   handleTimeRangeShortcut: func,
+  now: string.isRequired,
 }
 
 export default CustomTimeRange

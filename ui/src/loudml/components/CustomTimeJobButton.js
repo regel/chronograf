@@ -29,7 +29,11 @@ class CustomTimeJobButton extends Component {
     }
 
     toggleMenu = () => {
-        this.setState({isCustomTimeRangeOpen: !this.state.isCustomTimeRangeOpen})
+        const {disabled} = this.props
+
+        if (!disabled) {
+            this.setState({isCustomTimeRangeOpen: !this.state.isCustomTimeRangeOpen})
+        }
     }
     
     handleApplyCustomTimeRange = customTimeRange => {
@@ -52,6 +56,7 @@ class CustomTimeJobButton extends Component {
             shortcuts,
             handleTimeRangeShortcut,
             disabled,
+            now,
         } = this.props
 
         return (
@@ -87,6 +92,7 @@ class CustomTimeJobButton extends Component {
                             onClose={this.handleClose}
                             shortcuts={shortcuts}
                             handleTimeRangeShortcut={handleTimeRangeShortcut}
+                            now={now}
                         />
                     </div>)
                     : null}
@@ -101,21 +107,25 @@ CustomTimeJobButton.defaultProps = {
         upper: null,
     },
     disabled: false,
+    now: 'upper',
 }
-  
+
+const {string, func, bool, shape, arrayOf} = PropTypes
+
 CustomTimeJobButton.propTypes = {
-    startLabel: PropTypes.string.isRequired,
-    stopLabel: PropTypes.string.isRequired,
-    onStart: PropTypes.func.isRequired,
-    onStop: PropTypes.func.isRequired,
-    running: PropTypes.bool,
-    selected: PropTypes.shape({
-        lower: PropTypes.string,
-        upper: PropTypes.string,
+    startLabel: string.isRequired,
+    stopLabel: string.isRequired,
+    onStart: func.isRequired,
+    onStop: func.isRequired,
+    running: bool,
+    selected: shape({
+        lower: string,
+        upper: string,
     }),
-    shortcuts: PropTypes.arrayOf(PropTypes.shape({})),
-    handleTimeRangeShortcut: PropTypes.func,
-    disabled: PropTypes.bool,
+    shortcuts: arrayOf(shape({})),
+    handleTimeRangeShortcut: func,
+    disabled: bool,
+    now: string.isRequired
 }
 
 export default OnClickOutside(CustomTimeJobButton)
