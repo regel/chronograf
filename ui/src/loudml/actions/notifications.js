@@ -2,14 +2,14 @@ import {FIVE_SECONDS, TEN_SECONDS, INFINITE} from 'shared/constants/index'
 
 const notifySuccess = message => ({
     type: 'success',
-    icon: 'checkmark',
+    icon: 'loudml-bold',
     duration: FIVE_SECONDS,
     message,
 })
 
 const notifyError = (duration, message) => ({
     type: 'error',
-    icon: 'alert-triangle',
+    icon: 'loudml-bold',
     duration,
     message,
 })

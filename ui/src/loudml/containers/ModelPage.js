@@ -47,6 +47,7 @@ import {DEFAULT_MODEL} from 'src/loudml/constants'
 import {ANOMALY_HOOK_NAME, ANOMALY_HOOK} from 'src/loudml/constants/anomaly'
 
 import 'src/loudml/styles/model.scss'
+import 'src/loudml/styles/notification.scss'
 
 class ModelPage extends Component {
     constructor(props) {

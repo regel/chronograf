@@ -61,6 +61,8 @@ import {
 } from 'src/loudml/constants/dashboard';
 import {ANOMALY_HOOK_NAME} from 'src/loudml/constants/anomaly'
 
+import 'src/loudml/styles/notification.scss'
+
 @ErrorHandling
 class LoudMLPage extends Component {
     constructor(props) {

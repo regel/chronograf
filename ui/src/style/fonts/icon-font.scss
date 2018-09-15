@@ -105,10 +105,12 @@
 
   &.loudml {
     font-family: 'loudml' !important;
+    font-size: 2em;
     &:before {content: "\e900";}
   }
   &.loudml-bold {
     font-family: 'loudml' !important;
+    font-size: 2em;
     &:before {content: "\e901";}
   }
 }
