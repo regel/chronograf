@@ -40,6 +40,7 @@ import {ANOMALY_HOOK} from 'src/loudml/constants/anomaly'
 const UNDEFINED_DATASOURCE = 'Unable to find LoudML datasource for selected database. Check configuration'
 const SELECT_FEATURE = 'Select one field'
 const SELECT_BUCKET_INTERVAL = 'Select a \'Group by\' value'
+const SELECT_ONLY_ONE_TAG = 'Select only one tag'
 const LINEAR_NOTSUPPORTED = 'Linear mode not supported'
 
 const formatNotification = s => {
@@ -72,6 +73,11 @@ const notifyInterval = time => {
 
 const notifyMatch = tags => {
     const keys = Object.keys(tags)
+
+    if (keys.some(k => tags[k].length>1)) {
+        return `<h1>Match all:</h1><p>${SELECT_ONLY_ONE_TAG}</p>`
+    }
+
     if (keys.length>0) {
         const matches = keys
             .map(k => {
@@ -82,6 +88,7 @@ const notifyMatch = tags => {
             .join('')
         return `<h1>Match all:</h1><p>${matches}</p>`
     }
+
     return ''
 }
 
@@ -104,7 +111,10 @@ const notifyTagsAccepted = areTagsAccepted => {
 
 const checkTags = (tags) => {
     // really length > 1. Can we have zero length?
-    return Object.values(tags).find(v => v.length!==1) === undefined
+    const keys = Object.keys(tags)
+    const values = Object.values(tags)
+
+    return keys.length<2&&values.find(v => v.length!==1) === undefined
 }
 
 class OneClickML extends Component {
@@ -257,13 +267,18 @@ class OneClickML extends Component {
             }
         } = this.props
         const {datasource} = this.state
+        const isCheckTags = checkTags(tags)
+        const checkTagsAccepted = (Object.keys(tags).length>0
+            ? isCheckTags && areTagsAccepted
+            :true)  // don't care
+
         return [
             notifyDatasource(datasource),
             notifyFeature(fields),
             notifyInterval(time),
             notifyMatch(tags),
             notifyFillValue(fill),
-            notifyTagsAccepted(areTagsAccepted),
+            notifyTagsAccepted(checkTagsAccepted),
         ].join('')
     }
 
@@ -276,12 +291,13 @@ class OneClickML extends Component {
             areTagsAccepted,
         }} = this.props
         const {datasource} = this.state
+        const isCheckTags = checkTags(tags)
         return (datasource!==undefined)
             && (fields&&fields.length===1)
             && (time!==null&&time!=='auto')
-            && (checkTags(tags)===true)
+            && (isCheckTags===true)
             && (fill!=='linear')
-            && (areTagsAccepted===true)
+            && (isCheckTags && Object.keys(tags).length>0 && areTagsAccepted)
     }
 
     render() {
@@ -294,7 +310,7 @@ class OneClickML extends Component {
                 data-for={uuidTooltip}
                 data-tip={this.sourceNameTooltip}
             >
-                <span className="icon loudml-bold" />
+                <span className="icon loudml-gradcap" />
                 1-Click ML
                 <ReactTooltip
                     id={uuidTooltip}
