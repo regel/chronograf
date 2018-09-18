@@ -75,52 +75,33 @@ class LoudMLPage extends Component {
 
     componentDidMount() {
         this._loadModels()
+        this.interval = setInterval(() => this._tickLoad(), 10000);
+    }
 
-        this.jobFetchID = setInterval(
-            () => this.fetchJobsState(),
-            10000
-        )
-        this.jobStatusID = setInterval(
-            () => this.notifyJobsState(),
-            10000
-        )
-        this.fetchModelsID = setInterval(
-            () => this._loadModels(),
-            10000
-        )
+    _tickLoad() {
+        this._loadModels()
+        this.fetchJobsState()
+        this.notifyJobsState()
     }
 
     componentWillUnmount() {
-        if (this._asyncRequest) {
-            this._asyncRequest.cancel();
-        }
-        clearInterval(this.fetchModelsID)
-        this.fetchModelsID = false
-        clearInterval(this.jobStatusID)
-        this.jobStatusID = false
-        clearInterval(this.jobFetchID)
-        this.jobFetchID = false
+        clearInterval(this.interval);
     }
 
-    _loadModels() {
+    _loadModels = async () => {
         const {
             modelActions: {modelsLoaded},
             notify,
-            isFetching,
         } = this.props
 
-        if (isFetching && this._asyncRequest) {
-            return
-        }
-
-        this._asyncRequest = api.getModels()
-        .then(res => {
-            this._asyncRequest = null;
-            modelsLoaded(res.data)
-        })
-        .catch(error => {
+        try {
+            const {data} = await api.getModels()
+            modelsLoaded(data)
+        } catch(error) {
             notify(notifyErrorGettingModels(parseError(error)))
-        })
+        } finally {
+            this.setState({isFetching: false})
+        }
     }
 
     notifyJobsState() {
@@ -156,13 +137,13 @@ class LoudMLPage extends Component {
                 job => api.getJob(job.id)
             )
         )
-            .then(res => {
-                const datas = res.map(v => v.data)
-                jobsUpdate(datas)
-            })
-            .catch(error => {
-                errorThrown(error)
-            })
+        .then(res => {
+            const datas = res.map(v => v.data)
+            jobsUpdate(datas)
+        })
+        .catch(error => {
+            errorThrown(error)
+        })
     }
 
     cloneModel = async (name) => {
@@ -176,6 +157,7 @@ class LoudMLPage extends Component {
         const copy = {
             ...models.find(m => m.settings.name === name).settings
         }
+        delete copy.run
         copy.name = `Copy of ${name}`
         copy.isEditing = true
 

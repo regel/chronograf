@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {PropTypes} from 'prop-types'
 
-import 'src/loudml/styles/progress.css'
+import 'src/loudml/styles/progress.scss'
 
 class Progress extends Component {
     constructor(props) {
