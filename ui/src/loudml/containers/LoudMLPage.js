@@ -73,54 +73,94 @@ class LoudMLPage extends Component {
           }      
     }
 
-    componentDidMount() {
-        this._loadModels()
-
-        this.jobFetchID = setInterval(
-            () => this.fetchJobsState(),
-            10000
-        )
-        this.jobStatusID = setInterval(
-            () => this.notifyJobsState(),
-            10000
-        )
-        this.fetchModelsID = setInterval(
-            () => this._loadModels(),
-            10000
-        )
+    componentDidMount = async () => {
+        this.startNewPolling()
     }
 
     componentWillUnmount() {
-        if (this._asyncRequest) {
-            this._asyncRequest.cancel();
-        }
-        clearInterval(this.fetchModelsID)
-        this.fetchModelsID = false
-        clearInterval(this.jobStatusID)
-        this.jobStatusID = false
-        clearInterval(this.jobFetchID)
-        this.jobFetchID = false
+        this.clearInterval()
     }
 
-    _loadModels() {
-        const {
-            modelActions: {modelsLoaded},
-            notify,
-            isFetching,
-        } = this.props
+    render() {
+        const {isFetching, jobs, source} = this.props
 
-        if (isFetching && this._asyncRequest) {
-            return
+        if (isFetching) {
+            return <div className="page-spinner" />
         }
 
-        this._asyncRequest = api.getModels()
-        .then(res => {
-            this._asyncRequest = null;
-            modelsLoaded(res.data)
-        })
-        .catch(error => {
+        return (
+            <div className="page">
+                <PageHeader
+                    titleText="Manage Machine Learning Tasks"
+                    sourceIndicator={true}
+                    optionsComponents={this.renderHeaderOptions()}
+                    />
+                <FancyScrollbar className="page-contents">
+                    <div className="container-fluid">
+                    <div className="row">
+                        <div className="col-md-12">
+                        <div className="panel">
+                            {this.renderPanelHeading}
+                            <div className="panel-body">
+                            <ModelsTable
+                                    source={source}
+                                    models={this.filteredModels}
+                                    jobs={jobs}
+                                    onClone={this.cloneModel}
+                                    onDelete={this.deleteModel}
+                                    onStart={this.startModel}
+                                    onStop={this.stopModel}
+                                    onTrain={this.trainModel}
+                                    onStopTrain={this.stopTrain}
+                                    onForecast={this.forecastModel}
+                                    onStopForecast={this.stopForecast}
+                                    onSelectModelGraph={this.selectModelGraph}
+                                />
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                </FancyScrollbar>
+            </div>
+        )
+    }
+
+    clearInterval() {
+        if (!this.intervalID) {
+              return
+        }
+  
+        clearInterval(this.intervalID)
+        this.intervalID = null
+    }
+  
+    startNewPolling() {
+        this.clearInterval()
+  
+        this.executeRequests()
+  
+        this.intervalID = window.setInterval(this.executeRequests, 10000)
+    }
+    
+    executeRequests = async () => {
+        const {
+            modelActions: {
+                modelsLoaded,
+                jobsUpdate
+            },
+            notify,
+        } = this.props
+
+        try {
+            const {data: models} = await api.getModels()
+            modelsLoaded(models)
+            const datas = await this.fetchJobsState()
+            jobsUpdate(datas.map(d => d.data))
+            this.notifyJobsState()
+        } catch(error) {
             notify(notifyErrorGettingModels(parseError(error)))
-        })
+        }
     }
 
     notifyJobsState() {
@@ -140,29 +180,20 @@ class LoudMLPage extends Component {
         jobsFinished.forEach(job => jobStop(job))
     }
 
-    fetchJobsState() {
+    fetchJobsState = async () => {
         const {
             jobs,
-            modelActions: {jobsUpdate},
-            errorThrown,
         } = this.props
 
-        if (!jobs || !jobs.length) {
-            return
+        if (!jobs || jobs.length===0) {
+            return Promise.resolve([])
         }
 
-        Promise.all(
+        return Promise.all(
             jobs.map(
                 job => api.getJob(job.id)
             )
         )
-            .then(res => {
-                const datas = res.map(v => v.data)
-                jobsUpdate(datas)
-            })
-            .catch(error => {
-                errorThrown(error)
-            })
     }
 
     cloneModel = async (name) => {
@@ -400,52 +431,7 @@ class LoudMLPage extends Component {
                 </div>
             </div>
         )
-    }
-    
-    render() {
-        const {isFetching, jobs, source} = this.props
-
-        if (isFetching) {
-            return <div className="page-spinner" />
-        }
-
-        return (
-            <div className="page">
-                <PageHeader
-                    titleText="Manage Machine Learning Tasks"
-                    sourceIndicator={true}
-                    optionsComponents={this.renderHeaderOptions()}
-                    />
-                <FancyScrollbar className="page-contents">
-                    <div className="container-fluid">
-                    <div className="row">
-                        <div className="col-md-12">
-                        <div className="panel">
-                            {this.renderPanelHeading}
-                            <div className="panel-body">
-                            <ModelsTable
-                                    source={source}
-                                    models={this.filteredModels}
-                                    jobs={jobs}
-                                    onClone={this.cloneModel}
-                                    onDelete={this.deleteModel}
-                                    onStart={this.startModel}
-                                    onStop={this.stopModel}
-                                    onTrain={this.trainModel}
-                                    onStopTrain={this.stopTrain}
-                                    onForecast={this.forecastModel}
-                                    onStopForecast={this.stopForecast}
-                                    onSelectModelGraph={this.selectModelGraph}
-                                />
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
-                </FancyScrollbar>
-            </div>
-        )
-    }
+    }    
 
     get renderPanelHeading() {
         const {source: {id}} = this.props
