@@ -5,32 +5,7 @@ import moment from 'moment'
 
 import CustomTimeJobButton from 'src/loudml/components/CustomTimeJobButton'
 
-const forecastTimeRangeDefaults = [
-    {
-        id: 'thisWeek',
-        name: 'This Week',
-    },
-    {
-        id: 'thisMonth',
-        name: 'This Month',
-    },
-    {
-        id: 'thisYear',
-        name: 'This Year',
-    },
-    {
-        id: 'nextWeek',
-        name: 'Next Week',
-    },
-    {
-        id: 'nextMonth',
-        name: 'Next Month',
-    },
-    {
-        id: 'nextYear',
-        name: 'Next Year',
-    },
-]
+import {forecastTimeRangeDefaults} from 'src/loudml/constants/timeRange'
   
 const ForecastTimeJobButton = ({
     startLabel,
@@ -92,13 +67,15 @@ const ForecastTimeJobButton = ({
     );
   }
 
+const {string, func, bool} = PropTypes
+
 ForecastTimeJobButton.propTypes = {
-    startLabel: PropTypes.string,
-    stopLabel: PropTypes.string,
-    onStart: PropTypes.func,
-    onStop: PropTypes.func,
-    running: PropTypes.bool,
-    disabled: PropTypes.bool,
+    startLabel: string.isRequired,
+    stopLabel: string.isRequired,
+    onStart: func.isRequired,
+    onStop: func.isRequired,
+    running: bool,
+    disabled: bool,
 }
 
 export default ForecastTimeJobButton
