@@ -1,16 +1,16 @@
 import React from 'react'
-import {ForecastTimeJobButton} from 'src/loudml/components/ForecastTimeJobButton'
+import {TrainTimeJobButton} from 'src/loudml/components/TrainTimeJobButton'
 import CustomTimeRange from 'src/loudml/components/CustomTimeRange';
 
 import moment from 'moment'
 import {mount} from 'enzyme'
 
-import {forecastTimeRangeDefaults} from 'src/loudml/constants/timeRange'
+import timeRangeDefaults from 'shared/data/timeRangeShortcuts'
 
 const dateFormat = 'YYYY-MM-DD HH:mm'
 
-const lower = moment().subtract(1, 'days').format(dateFormat)
-const upper = moment().add(7, 'days').format(dateFormat)
+const lower = moment().subtract(7, 'days').format(dateFormat)
+const upper = moment().add(1, 'days').format(dateFormat)
 const timeRange = {lower, upper}
 
 // automate shallow render and providing new props
@@ -28,7 +28,7 @@ const setup = (override = {}) => {
     const defaultState = {
     }
   
-    const button = mount(<ForecastTimeJobButton {...props} />)
+    const button = mount(<TrainTimeJobButton {...props} />)
   
     return {
         props,
@@ -37,10 +37,10 @@ const setup = (override = {}) => {
     }
 }
 
-describe('Components.Loudml.ForecastTimeJobButton', () => {
+describe('Components.Loudml.TrainTimeJobButton', () => {
     describe('rendering', () => {
         describe('initial render', () => {
-            it('renders the <ForecastTimeJobButton/> button', () => {
+            it('renders the <TrainTimeJobButton/> button', () => {
                 const {button} = setup()
 
                 expect(button.exists()).toBe(true)
@@ -56,7 +56,7 @@ describe('Components.Loudml.ForecastTimeJobButton', () => {
     })
 
     describe('user interactions', () => {
-        describe('click the <ForecastTimeJobButton/> button', () => {
+        describe('click the <TrainTimeJobButton/> button', () => {
             it('shows the <CustomTimeRange/> when clicked', () => {
                 const {button} = setup()
   
@@ -68,7 +68,7 @@ describe('Components.Loudml.ForecastTimeJobButton', () => {
                 expect(customTimeRange.exists()).toBe(true)
             })
         })
-        describe('forecast using 2 dates from the calendar', () => {
+        describe('training using 2 dates from the calendar', () => {
             it('apply the correct time when submitted', () => {
                 const onStart = jest.fn()
                 const {button} = setup({
@@ -89,7 +89,7 @@ describe('Components.Loudml.ForecastTimeJobButton', () => {
                 })
             })
         })
-        describe('forecast using 1 date from the calendar, and \'now\'', () => {
+        describe('training using 1 date from the calendar, and \'now\'', () => {
             it('apply the correct time when submitted', () => {
                 const onStart = jest.fn()
                 const {button} = setup({
@@ -109,12 +109,12 @@ describe('Components.Loudml.ForecastTimeJobButton', () => {
                 apply.simulate('click')
 
                 expect(onStart).toHaveBeenCalledWith({
-                    lower: 'now()',
-                    upper: moment(upper).toISOString(),
+                    lower: moment(lower).toISOString(),
+                    upper: 'now()',
                 })
             })
         })
-        describe('forecast using 1 shortcut, eg \'next week\'', () => {
+        describe('training using 1 shortcut, eg \'past week\'', () => {
             it('apply the correct time when submitted', () => {
                 const onStart = jest.fn()
                 const {button} = setup({
@@ -130,14 +130,14 @@ describe('Components.Loudml.ForecastTimeJobButton', () => {
                 instance.forceUpdate()
                 
                 // click 'next week'
-                const index = forecastTimeRangeDefaults.findIndex(s => s.name === 'Next Week')
-                const next = button.find('div.custom-time--shortcut').filterWhere(n => n.text() === forecastTimeRangeDefaults[index].name)
+                const index = timeRangeDefaults.findIndex(s => s.name === 'Past Week')
+                const next = button.find('div.custom-time--shortcut').filterWhere(n => n.text() === timeRangeDefaults[index].name)
                 
                 next.simulate('click')
 
                 expect(spy).toHaveBeenCalledTimes(1)
-                const upperDate = instance.upperCal.getMoment()
-                expect(upperDate.get('date') - moment().get('date')).toBe(7)
+                const lowerDate = instance.lowerCal.getMoment()
+                expect(moment().get('date') - lowerDate.get('date')).toBe(7)
 
                 // click 'apply'
                 const apply = button.find('div.custom-time--apply')
@@ -149,4 +149,3 @@ describe('Components.Loudml.ForecastTimeJobButton', () => {
         })
     })
 })
-  

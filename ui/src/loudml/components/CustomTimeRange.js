@@ -47,7 +47,7 @@ class CustomTimeRange extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            isNow: this.props.timeRange[this.props.now] === 'now()',
+            isNow: props.timeRange[props.now] === 'now()',
         }
     }
 
