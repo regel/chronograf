@@ -1,6 +1,9 @@
+import { DEFAULT_FEATURE } from 'src/loudml//constants';
+
 export default class {
     static deserializeFeature(feature, direction) {
         return {
+            ...DEFAULT_FEATURE, // force new parameters on Loudl ML upgrades
             ...feature,
             io: direction
         }
@@ -8,9 +11,9 @@ export default class {
 
     static deserializedFeatures(features) {
         return (
-            Array.isArray(features) // LoudML 1.3
+            Array.isArray(features)     // LoudML 1.3
             ? features.map(feature => this.deserializeFeature(feature, 'io'))
-            : Object.entries(features)
+            : Object.entries(features)  // Loud ML 1.4 (introducing io for timeseries)
                 .map(([key, value]) => value.map(f => this.deserializeFeature(f, key)))
                 .reduce((a, f) => [...a, ...f], [])
         )
