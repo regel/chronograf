@@ -13,12 +13,7 @@ const AnomalyPanel = ({
     function onSetThreshold(field) {
         
         return (value) => {
-            const num = Number.parseFloat(value)
-            let fixed = Math.min(100, num)
-            if (fixed!==0) {
-                fixed = Math.max(0.1, fixed)
-            }
-            onThresholdChange(field, fixed)
+            onThresholdChange(field, value)
         }
     }
 

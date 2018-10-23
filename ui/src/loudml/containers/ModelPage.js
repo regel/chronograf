@@ -261,7 +261,13 @@ class ModelPage extends Component {
     }
 
     onThresholdChange = (field, value) => {
-        this.handleEdit(field, value)
+        const num = value
+        let fixed = Math.min(100, num)
+        if (fixed!==0) {
+            fixed = Math.max(0.1, fixed)
+        }
+
+        this.handleEdit(field, fixed)
     }
 
     handleEdit = (field, value) => {

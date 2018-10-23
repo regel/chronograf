@@ -1,6 +1,8 @@
 import React from 'react'
+
 import AnomalyPanel from 'src/loudml/components/AnomalyPanel'
 import OptIn from 'src/shared/components/OptIn';
+import OnOff from 'src/loudml/components/OnOff';
 
 import {mount} from 'enzyme'
 
@@ -8,7 +10,6 @@ import {mount} from 'enzyme'
 const model = {
     min_threshold: 0.5,
     max_threshold: 25,
-    annotation: true,
 }
 
 // automate shallow render and providing new props
@@ -46,66 +47,42 @@ describe('Components.Loudml.AnomalyPanel', () => {
         })
     })
 
-    describe('user interactions', () => {
-        describe('handle click on threshold label', () => {
-            it('it calls onThresholdChange', () => {
-                const onThresholdChange = jest.fn()
-                const {wrapper} = setup({model, onThresholdChange})
-      
-                const minThreshold = wrapper.find(OptIn).filterWhere(n => n.prop('name') === 'min_threshold')
-                minThreshold.find('.opt-in--label').simulate('click')
-                
-                expect(onThresholdChange).toHaveBeenCalledTimes(1)
-                expect(onThresholdChange).toHaveBeenCalledWith('min_threshold', 0)
-            })
-        })      
-    })
-
-    describe('input validation', () => {
+    describe('threshold user interactions', () => {
         const onThresholdChange = jest.fn()
         const {wrapper} = setup({model, onThresholdChange})
-
         const minThreshold = wrapper.find(OptIn).filterWhere(n => n.prop('name') === 'min_threshold')
-        const input = minThreshold.find('input')
-        input.simulate('focus')
-        expect(onThresholdChange).toHaveBeenCalledTimes(1)
-        
-        describe('handle in range on threshold input', () => {
+
+        describe('handle click on threshold label', () => {
+            it('it calls onThresholdChange with default value', () => {
+                minThreshold.find('.opt-in--label').simulate('click')
+                
+                expect(onThresholdChange).toHaveBeenLastCalledWith('min_threshold', "0")
+            })
+        })      
+        describe('handle change on threshold input', () => {
             it('it calls onThresholdChange with same value', () => {
+                const input = minThreshold.find('input')
+                input.simulate('focus')
+        
                 const value = '34'
       
                 input.simulate('change', {target: {value}})
 
-                expect(onThresholdChange).toHaveBeenLastCalledWith('min_threshold', Number.parseInt(value, 10))
-            })
-            it('it calls onThresholdChange with float value', () => {
-                const value = '34.6'
-      
-                input.simulate('change', {target: {value}})
-
-                expect(onThresholdChange).toHaveBeenLastCalledWith('min_threshold', Number.parseFloat(value))
+                expect(onThresholdChange).toHaveBeenLastCalledWith('min_threshold', value)
             })
         })
-        describe('handle out of range on threshold input', () => {
-            it('it calls onThresholdChange with min value', () => {
+    })
 
-                input.simulate('change', {target: {value: '-10'}})
-                
-                expect(onThresholdChange).toHaveBeenLastCalledWith('min_threshold', 0.1)
-            })
-            it('it calls onThresholdChange with max value', () => {
+    describe('annotation user interactions', () => {
+        const onAnnotationChange = jest.fn()
+        const {wrapper, props} = setup({onAnnotationChange})
+        const annotation = wrapper.find(OnOff)
 
-                input.simulate('change', {target: {value: '101'}})
+        describe('handle click on knob', () => {
+            it('it calls onAnnotationChange with NOT value', () => {
+                annotation.find('.opt-in--groove-knob').simulate('click')
                 
-                expect(onThresholdChange).toHaveBeenLastCalledWith('min_threshold', 100)
-            })
-        })
-        describe('handle 0 on threshold input', () => {
-            it('it calls onThresholdChange with 0', () => {
-
-                input.simulate('change', {target: {value: '0'}})
-                
-                expect(onThresholdChange).toHaveBeenLastCalledWith('min_threshold', 0)
+                expect(onAnnotationChange).toHaveBeenLastCalledWith(!props.annotation)
             })
         })
     })
