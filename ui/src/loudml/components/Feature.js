@@ -5,10 +5,12 @@ import _ from 'lodash'
 
 import FancyScrollbar from 'shared/components/FancyScrollbar';
 import Dropdown from 'shared/components/Dropdown'
+import OptIn from 'src/shared/components/OptIn';
 
 import FeatureHeader from 'src/loudml/components/FeatureHeader'
 import FillFeature from 'src/loudml/components/FillFeature'
 import FeatureTags from 'src/loudml/components/FeatureTags'
+import DisabledValue from 'src/loudml/components/DisabledValue';
 
 import {showFieldKeys} from 'src/shared/apis/metaQuery'
 import showFieldKeysParser from 'shared/parsing/showFieldKeys'
@@ -22,6 +24,101 @@ import {DEFAULT_METRICS, DEFAULT_IO, DEFAULT_LOUDML_RP} from 'src/loudml/constan
 import {DEFAULT_ANOMALY_TYPE} from 'src/loudml/constants/anomaly'
 
 import 'src/loudml/styles/feature.scss'
+
+const IOComponent = ({
+    feature,
+    onChoose,
+    disabled,
+}) => {
+    const value = DEFAULT_IO.find(i => i.value === feature.io).text
+
+    const Value = (disabled
+        ?<DisabledValue value={value} />
+        :<Dropdown
+            name="io"
+            onChoose={onChoose}
+            items={DEFAULT_IO}
+            selected={value}
+            className="dropdown-stretch"
+            buttonSize="btn-sm"
+            />
+    )
+    
+    return (
+        <div className="feature-row">
+            <div className="form-group col-xs-4">
+                <label htmlFor="io">Input/Output</label>
+            </div>
+            <div className="form-group col-xs-8">
+                {Value}
+            </div>
+        </div>
+    )
+}
+
+const EnabledWatermarkValue = ({
+    value,
+    name,
+    onEdit
+}) => {
+    return (
+        <OptIn
+            type="number"
+            onSetValue={onEdit(name)}
+            customPlaceholder="ex 0"
+            customValue={value}
+            fixedPlaceholder="none"
+            fixedValue=""
+            />
+    )
+}
+
+const WatermarkComponent = ({
+    feature,
+    onEdit,
+    disabled,
+}) => {
+    function formatWatermark(value) {
+        return (value?value:'none')
+    }
+
+    function Value(name) {
+        if (disabled) {
+            return (<DisabledValue value={formatWatermark(feature[name])} />)
+        }
+
+        return (
+            <EnabledWatermarkValue
+                value={feature[name]}
+                name={name}
+                onEdit={onEdit}
+                />
+        )
+    }
+
+    return (
+        <div className="feature-row">
+            <div className="form-group col-xs-2">
+                <label>Low watermark</label>
+            </div>
+            <div className="form-group col-xs-4">
+                {Value('low_watermark')}
+            </div>
+            <div className="form-group col-xs-2">
+                <label>High watermark</label>
+            </div>
+            <div className="form-group col-xs-4">
+                {Value('high_watermark')}
+            </div>
+        </div>)
+}
+
+const FeatureDropdown = (props) => {
+    if (props.disabled) {
+        return (<DisabledValue value={props.selected} />)
+    }
+    return (<Dropdown {...props} />)
+}
 
 class Feature extends Component {
     constructor(props) {
@@ -84,6 +181,12 @@ class Feature extends Component {
         } catch (err) {
             console.error(err)
         }
+    }
+        
+    handleWatermarkValue = field => value => {
+        const {feature, onEdit} = this.props
+        const formatted = (value===''?null:value)
+        onEdit(feature, {[field]: formatted})
     }
 
     handleTextChoose = key => item => {
@@ -171,6 +274,7 @@ class Feature extends Component {
             onConfirm,
             measurements,
             feature,
+            timeseries,
             database,
             source,
             locked,
@@ -199,7 +303,7 @@ class Feature extends Component {
                                     <label htmlFor="measurement">Measurement</label>
                                 </div>
                                 <div className="form-group col-xs-8">
-                                    <Dropdown
+                                    <FeatureDropdown
                                         name="measurement"
                                         onChoose={this.handleMeasurementChoose}
                                         items={measurements.map(m => ({text: m}))}
@@ -215,7 +319,7 @@ class Feature extends Component {
                                     <label htmlFor="field">Field</label>
                                 </div>
                                 <div className="form-group col-xs-8">
-                                    <Dropdown
+                                    <FeatureDropdown
                                         name="field"
                                         onChoose={this.handleTextChoose('field')}
                                         items={fields.map(f => ({text: f}))}
@@ -224,6 +328,7 @@ class Feature extends Component {
                                         buttonSize="btn-sm"
                                         disabled={locked}
                                         />
+
                                 </div>
                             </div>
                             <div className="feature-row">
@@ -231,7 +336,7 @@ class Feature extends Component {
                                     <label htmlFor="metric">Metric</label>
                                 </div>
                                 <div className="form-group col-xs-8">
-                                    <Dropdown
+                                    <FeatureDropdown
                                         name="metric"
                                         onChoose={this.handleTextChoose('metric')}
                                         items={DEFAULT_METRICS.map(m => ({text: m}))}
@@ -247,37 +352,33 @@ class Feature extends Component {
                                         <label>Default</label>
                                     </div>
                                     <div className="form-group col-xs-8">
-                                        <FillFeature
-                                            value={denormalizeFeatureDefault(feature.default)}
-                                            onChooseFill={this.handleFillChoose}
-                                            theme="GREEN"
-                                            size="sm"
-                                            disabled={locked}
-                                            />
+                                        {locked
+                                            ?<DisabledValue value={denormalizeFeatureDefault(feature.default)} />
+                                            :<FillFeature
+                                                value={denormalizeFeatureDefault(feature.default)}
+                                                onChooseFill={this.handleFillChoose}
+                                                theme="GREEN"
+                                                size="sm"
+                                                />}
                                     </div>
                             </div>
-                            <div className="feature-row">
-                                <div className="form-group col-xs-4">
-                                    <label htmlFor="io">Input/Output</label>
-                                </div>
-                                <div className="form-group col-xs-8">
-                                    <Dropdown
-                                        name="io"
-                                        onChoose={this.handleValueChoose('io')}
-                                        items={DEFAULT_IO}
-                                        selected={DEFAULT_IO.find(i => i.value === feature.io).text}
-                                        className="dropdown-stretch"
-                                        buttonSize="btn-sm"
-                                        disabled={locked}
-                                        />
-                                </div>
-                            </div>
+                            {timeseries
+                                ?(<IOComponent
+                                    feature={feature}
+                                    onChoose={this.handleValueChoose('io')}
+                                    disabled={locked}
+                                    />)
+                                :(<WatermarkComponent
+                                    feature={feature}
+                                    onEdit={this.handleWatermarkValue}
+                                    disabled={locked}
+                                    />)}
                             <div className="feature-row">
                                 <div className="form-group col-xs-4">
                                     <label htmlFor="anomaly_type">Anomaly type</label>
                                 </div>
                                 <div className="form-group col-xs-8">
-                                    <Dropdown
+                                    <FeatureDropdown
                                         name="anomaly_type"
                                         onChoose={this.handleValueChoose('anomaly_type')}
                                         items={DEFAULT_ANOMALY_TYPE}
@@ -314,10 +415,34 @@ class Feature extends Component {
     }
 }
 
-const {func, shape, arrayOf, string, bool} = PropTypes
+const {func, shape, arrayOf, string, bool, number, oneOfType} = PropTypes
+
+IOComponent.propTypes = {
+    feature: shape({}).isRequired,
+    onChoose: func.isRequired,
+    disabled: bool.isRequired,
+}
+
+EnabledWatermarkValue.propTypes = {
+    value: number,
+    name: string.isRequired,
+    onEdit: func.isRequired,
+}
+
+WatermarkComponent.propTypes = {
+    feature: shape({}).isRequired,
+    onEdit: func.isRequired,
+    disabled: bool.isRequired,
+}
+
+FeatureDropdown.propTypes = {
+    selected: oneOfType([string, number]),
+    disabled: bool.isRequired,
+}
 
 Feature.propTypes = {
     feature: shape({}).isRequired,
+    timeseries: bool.isRequired,
     onDelete: func.isRequired,
     onEdit: func.isRequired,
     onKeyDown: func.isRequired,

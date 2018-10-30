@@ -18,7 +18,6 @@ interface Props {
     value: string
     size?: string
     theme?: string
-    disabled?: boolean
 }
 
 interface FillType {
@@ -62,7 +61,7 @@ class FillFeature extends PureComponent<Props, State> {
     }
 
     public render() {
-        const {size, theme, disabled} = this.props
+        const {size, theme} = this.props
         const {selected, currentNumberValue} = this.state
 
         return (
@@ -76,7 +75,6 @@ class FillFeature extends PureComponent<Props, State> {
                         className="dropdown-100"
                         buttonSize={`btn-${size}`}
                         onChoose={this.handleDropdown}
-                        disabled={disabled}
                         />
                 </div>
                 {selected.type === NUMBER && (
@@ -93,7 +91,6 @@ class FillFeature extends PureComponent<Props, State> {
                             onKeyDown={this.handleKeyDown}
                             onChange={this.handleInputChange}
                             onBlur={this.handleInputBlur}
-                            disabled={disabled}
                             />
                     </div>
                 )}

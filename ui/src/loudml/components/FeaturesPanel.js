@@ -5,6 +5,7 @@ import {connect} from 'react-redux'
 import {notify as notifyAction} from 'shared/actions/notifications'
 
 import Feature from 'src/loudml/components/Feature'
+import LockablePanel from 'src/loudml/components/LockablePanel';
 
 import {showMeasurements} from 'src/shared/apis/metaQuery'
 import showMeasurementsParser from 'src/shared/parsing/showMeasurements'
@@ -49,7 +50,7 @@ class FeaturesPanel extends Component {
             sources,
             datasource,
         } = this.props
-        
+
         if (!datasource) {
             return
         }
@@ -146,7 +147,12 @@ class FeaturesPanel extends Component {
     }
 
     render() {
-        const {features, locked} = this.props
+        const {
+            features,
+            type,
+            locked,
+        } = this.props
+        
         const {
             measurements,
             source,
@@ -154,12 +160,7 @@ class FeaturesPanel extends Component {
         } = this.state
 
         return (
-            <div className="panel panel-solid">
-                {locked
-                    ?(<div className="panel-heading">
-                        <h6><span className="icon stop" /> This panel is locked
-                        </h6></div>)
-                    :null}
+            <LockablePanel locked={locked}>
                 <div className="panel-heading">
                     <h2 className="panel-title">
                         {this.title}
@@ -169,7 +170,7 @@ class FeaturesPanel extends Component {
                         disabled={!!features.some(f => f.isEditing)
                             ||locked}
                         onClick={this.addFeature}
-                    >
+                        >
                         <span className="icon plus" /> Add feature
                     </button>
                 </div>
@@ -179,6 +180,7 @@ class FeaturesPanel extends Component {
                             <Feature
                                 key={`${index}_${features.length}`}
                                 feature={feature}
+                                timeseries={type==='timeseries'}
                                 onDelete={this.deleteFeature}
                                 onCancel={this.deleteFeature}
                                 onEdit={this.editFeature}
@@ -191,18 +193,20 @@ class FeaturesPanel extends Component {
                             />))
                         : <i>No feature</i>}
                 </div>
-            </div>
+            </LockablePanel>
         )
     }
+
 }
 
-const {arrayOf, func, shape, bool} = PropTypes
+const {arrayOf, func, shape, bool, string} = PropTypes
 
 FeaturesPanel.propTypes = {
     features: arrayOf(shape({})),
+    type: string.isRequired,
     onInputChange: func.isRequired,
     notify: func.isRequired,
-    source: shape(),
+//    source: shape(),
     datasource: shape(),
     sources: arrayOf(shape()),
     locked: bool.isRequired,

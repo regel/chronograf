@@ -4,10 +4,14 @@ interface Feature {
 
 export interface ModelSettings {
     name: string
+    type: string
     run: {}
     features: Feature[]
     default_datasource: string
     max_evals: number
+    width?: number
+    height?: number
+    key?: string
 }
 
 interface ModelState {

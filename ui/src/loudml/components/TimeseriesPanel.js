@@ -1,7 +1,9 @@
 import React from 'react'
 import {PropTypes} from 'prop-types'
 
-const ParametersPanel = ({
+import LockablePanel from 'src/loudml/components/LockablePanel'
+
+const TimeseriesPanel = ({
     model,
     onInputChange,
     locked,
@@ -22,12 +24,7 @@ const ParametersPanel = ({
     }
     
     return (
-        <div className="panel panel-solid">
-            {locked
-                ?(<div className="panel-heading">
-                    <h6><span className="icon stop" /> This panel is locked
-                    </h6></div>)
-                :null}
+        <LockablePanel locked={locked}>
             <div className="panel-heading">
                 <h2 className="panel-title"></h2>
             </div>
@@ -98,16 +95,16 @@ const ParametersPanel = ({
                     </div>
                 </div>
             </div>
-        </div>
+        </LockablePanel>
     )
 }
 
 const {func, shape, bool} = PropTypes
 
-ParametersPanel.propTypes = {
+TimeseriesPanel.propTypes = {
     model: shape({}),
     onInputChange: func.isRequired,
     locked: bool.isRequired,
 }
 
-export default ParametersPanel
+export default TimeseriesPanel
