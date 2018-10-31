@@ -51,6 +51,7 @@ export const DEFAULT_IO  = [
                                     
 export const DEFAULT_SCORES  = [
     { text: 'min/max', value: 'min_max', },
+    { text: 'normalize', value: 'normalize', },
     { text: 'standardize', value: 'standardize', },
 ]
 
