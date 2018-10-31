@@ -10,7 +10,7 @@ import CustomTimeRange from 'src/loudml/components/CustomTimeRange'
 
 const emptyTime = {lower: '', upper: ''}
 
-class CustomTimeJobButton extends Component {
+export class CustomTimeJobButton extends Component {
     constructor(props) {
         super(props)
         const {lower, upper} = props.selected
