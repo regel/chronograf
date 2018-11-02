@@ -257,6 +257,16 @@ class ModelPage extends Component {
         this.handleEdit(field, value)
     }
 
+    onThresholdChange = (field, value) => {
+        const num = value
+        let fixed = Math.min(100, num)
+        if (fixed!==0) {
+            fixed = Math.max(0.1, fixed)
+        }
+
+        this.handleEdit(field, fixed)
+    }
+
     handleEdit = (field, value) => {
         this.setState(prevState => {
             const model = {
@@ -336,8 +346,8 @@ class ModelPage extends Component {
         router.push(`/sources/${id}/loudml`)
     }
 
-    onAnnotationChange = (e) => {
-        const {checked} = e.target
+    onAnnotationChange = (checked) => {
+        // const {checked} = e.target
         this.setState({annotation: checked})
     }
 
@@ -422,7 +432,7 @@ class ModelPage extends Component {
                     <AnomalyPanel
                         model={model}
                         annotation={annotation}
-                        onInputChange={this.onInputChange}
+                        onThresholdChange={this.onThresholdChange}
                         onAnnotationChange={this.onAnnotationChange}
                     />
                 )

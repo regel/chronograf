@@ -4,6 +4,7 @@
 
 1.  [#3](https://github.com/regel/chronograf/pull/3): About panel
 1.  [#17](https://github.com/regel/chronograf/pull/17): cellSupportsAnnotations for error graph
+1.  [#23](https://github.com/regel/chronograf/pull/23): Scores and Transform settings in Feature panel
 1.  [#24](https://github.com/regel/chronograf/pull/24): Datasink
 
 ### UI Improvements
@@ -11,6 +12,7 @@
 1.  [#6](https://github.com/regel/chronograf/pull/6): resize loud ML notification icon
 1.  [#8](https://github.com/regel/chronograf/pull/8): visit loudml.io question mark
 1.  [#21](https://github.com/regel/chronograf/pull/21): Add to dashboard : more UX options
+1.  [#25](https://github.com/regel/chronograf/pull/25): default threshold values with OptIn
 
 ### Bug Fixes
 

@@ -5,40 +5,16 @@ import moment from 'moment'
 
 import CustomTimeJobButton from 'src/loudml/components/CustomTimeJobButton'
 
-const forecastTimeRangeDefaults = [
-    {
-        id: 'thisWeek',
-        name: 'This Week',
-    },
-    {
-        id: 'thisMonth',
-        name: 'This Month',
-    },
-    {
-        id: 'thisYear',
-        name: 'This Year',
-    },
-    {
-        id: 'nextWeek',
-        name: 'Next Week',
-    },
-    {
-        id: 'nextMonth',
-        name: 'Next Month',
-    },
-    {
-        id: 'nextYear',
-        name: 'Next Year',
-    },
-]
+import {forecastTimeRangeDefaults} from 'src/loudml/constants/timeRange'
   
-const ForecastTimeJobButton = ({
+export const ForecastTimeJobButton = ({
     startLabel,
     stopLabel,
     onStart,
     onStop,
     running,
     disabled,
+    timeRange,
 }) => {
     function handleTimeRangeShortcut(shortcut) {
         const lower = moment()
@@ -75,7 +51,7 @@ const ForecastTimeJobButton = ({
           lower,
           upper,
         }
-      }
+    }
     
     return (
         <CustomTimeJobButton
@@ -88,17 +64,24 @@ const ForecastTimeJobButton = ({
             handleTimeRangeShortcut={handleTimeRangeShortcut}
             disabled={disabled}
             now="lower"
+            selected={timeRange}
         />
     );
   }
 
+const {string, func, bool, shape} = PropTypes
+    
 ForecastTimeJobButton.propTypes = {
-    startLabel: PropTypes.string,
-    stopLabel: PropTypes.string,
-    onStart: PropTypes.func,
-    onStop: PropTypes.func,
-    running: PropTypes.bool,
-    disabled: PropTypes.bool,
+    startLabel: string.isRequired,
+    stopLabel: string.isRequired,
+    onStart: func.isRequired,
+    onStop: func.isRequired,
+    running: bool,
+    disabled: bool,
+    timeRange: shape({
+        lower: string.isRequired,
+        upper: string,
+        }),
 }
 
 export default ForecastTimeJobButton
