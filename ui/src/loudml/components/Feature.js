@@ -20,7 +20,13 @@ import {
     denormalizeFeatureDefault,
 } from 'src/loudml/utils/model';
 
-import {DEFAULT_METRICS, DEFAULT_IO, DEFAULT_LOUDML_RP} from 'src/loudml/constants'
+import {
+    DEFAULT_METRICS,
+    DEFAULT_IO,
+    DEFAULT_SCORES,
+    DEFAULT_TRANSFORM,
+    DEFAULT_LOUDML_RP
+} from 'src/loudml/constants'
 import {DEFAULT_ANOMALY_TYPE} from 'src/loudml/constants/anomaly'
 
 import 'src/loudml/styles/feature.scss'
@@ -299,10 +305,10 @@ class Feature extends Component {
                     <div className="feature-row">
                         <div className="feature-column">
                             <div className="feature-row">
-                                <div className="form-group col-xs-4">
+                                <div className="form-group col-xs-3">
                                     <label htmlFor="measurement">Measurement</label>
                                 </div>
-                                <div className="form-group col-xs-8">
+                                <div className="form-group col-xs-3">
                                     <FeatureDropdown
                                         name="measurement"
                                         onChoose={this.handleMeasurementChoose}
@@ -313,12 +319,10 @@ class Feature extends Component {
                                         disabled={locked}
                                         />
                                 </div>
-                            </div>
-                            <div className="feature-row">
-                                <div className="form-group col-xs-4">
+                                <div className="form-group col-xs-3">
                                     <label htmlFor="field">Field</label>
                                 </div>
-                                <div className="form-group col-xs-8">
+                                <div className="form-group col-xs-3">
                                     <FeatureDropdown
                                         name="field"
                                         onChoose={this.handleTextChoose('field')}
@@ -332,10 +336,10 @@ class Feature extends Component {
                                 </div>
                             </div>
                             <div className="feature-row">
-                                <div className="form-group col-xs-4">
+                                <div className="form-group col-xs-2">
                                     <label htmlFor="metric">Metric</label>
                                 </div>
-                                <div className="form-group col-xs-8">
+                                <div className="form-group col-xs-3">
                                     <FeatureDropdown
                                         name="metric"
                                         onChoose={this.handleTextChoose('metric')}
@@ -346,43 +350,81 @@ class Feature extends Component {
                                         disabled={locked}
                                         />
                                 </div>
-                            </div>
-                            <div className="feature-row">
-                                    <div className="form-group col-xs-4">
-                                        <label>Default</label>
-                                    </div>
-                                    <div className="form-group col-xs-8">
-                                        {locked
-                                            ?<DisabledValue value={denormalizeFeatureDefault(feature.default)} />
-                                            :<FillFeature
-                                                value={denormalizeFeatureDefault(feature.default)}
-                                                onChooseFill={this.handleFillChoose}
-                                                theme="GREEN"
-                                                size="sm"
-                                                />}
-                                    </div>
+                                <div className="form-group col-xs-2">
+                                    <label>Default</label>
+                                </div>
+                                <div className="form-group col-xs-5">
+                                {locked
+                                    ?<DisabledValue value={denormalizeFeatureDefault(feature.default)} />
+                                    :<FillFeature
+                                        value={denormalizeFeatureDefault(feature.default)}
+                                        onChooseFill={this.handleFillChoose}
+                                        theme="GREEN"
+                                        size="sm"
+                                        />}
+                                </div>
                             </div>
                             {timeseries
-                                ?(<IOComponent
-                                    feature={feature}
-                                    onChoose={this.handleValueChoose('io')}
-                                    disabled={locked}
-                                    />)
+                                ?(null)
                                 :(<WatermarkComponent
                                     feature={feature}
                                     onEdit={this.handleWatermarkValue}
                                     disabled={locked}
                                     />)}
                             <div className="feature-row">
-                                <div className="form-group col-xs-4">
+                                <div className="form-group col-xs-2">
+                                    <label htmlFor="io">Input Output</label>
+                                </div>
+                                <div className="form-group col-xs-3">
+                                    <FeatureDropdown
+                                        name="io"
+                                        onChoose={this.handleValueChoose('io')}
+                                        items={DEFAULT_IO}
+                                        selected={DEFAULT_IO.find(i => i.value === feature.io).text}
+                                        className="dropdown-stretch"
+                                        buttonSize="btn-sm"
+                                        disabled={locked}
+                                        />
+                                </div>
+                                <div className="form-group col-xs-2">
                                     <label htmlFor="anomaly_type">Anomaly type</label>
                                 </div>
-                                <div className="form-group col-xs-8">
+                                <div className="form-group col-xs-3">
                                     <FeatureDropdown
                                         name="anomaly_type"
                                         onChoose={this.handleValueChoose('anomaly_type')}
                                         items={DEFAULT_ANOMALY_TYPE}
                                         selected={DEFAULT_ANOMALY_TYPE.find(a => a.value === feature.anomaly_type).text}
+                                        className="dropdown-stretch"
+                                        buttonSize="btn-sm"
+                                        disabled={locked}
+                                        />
+                                </div>
+                            </div>
+                            <div className="feature-row">
+                                <div className="form-group col-xs-2">
+                                    <label htmlFor="scores">Scores</label>
+                                </div>
+                                <div className="form-group col-xs-3">
+                                    <FeatureDropdown
+                                        name="scores"
+                                        onChoose={this.handleValueChoose('scores')}
+                                        items={DEFAULT_SCORES}
+                                        selected={DEFAULT_SCORES.find(i => i.value === feature.scores).text}
+                                        className="dropdown-stretch"
+                                        buttonSize="btn-sm"
+                                        disabled={locked}
+                                        />
+                                </div>
+                                <div className="form-group col-xs-2">
+                                    <label htmlFor="transform">Transform</label>
+                                </div>
+                                <div className="form-group col-xs-3">
+                                    <FeatureDropdown
+                                        name="transform"
+                                        onChoose={this.handleValueChoose('transform')}
+                                        items={DEFAULT_TRANSFORM}
+                                        selected={DEFAULT_TRANSFORM.find(a => a.value === feature.transform).text}
                                         className="dropdown-stretch"
                                         buttonSize="btn-sm"
                                         disabled={locked}

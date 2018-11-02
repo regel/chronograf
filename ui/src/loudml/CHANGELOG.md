@@ -4,6 +4,7 @@
 
 1.  [#3](https://github.com/regel/chronograf/pull/3): About panel
 1.  [#17](https://github.com/regel/chronograf/pull/17): cellSupportsAnnotations for error graph
+1.  [#23](https://github.com/regel/chronograf/pull/23): Scores and Transform settings in Feature panel
 
 ### UI Improvements
 
