@@ -37,7 +37,6 @@ class FillFeature extends PureComponent<Props, State> {
         size: 'sm',
         theme: 'blue',
         value: NULL_STRING,
-        // disabled: false,
     }
     
     private numberInput: HTMLElement

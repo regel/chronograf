@@ -64,13 +64,13 @@ const IOComponent = ({
 
 const EnabledWatermarkValue = ({
     value,
-    name,
+    // name,
     onEdit
 }) => {
     return (
         <OptIn
             type="number"
-            onSetValue={onEdit(name)}
+            onSetValue={onEdit}
             customPlaceholder="ex 0"
             customValue={value}
             fixedPlaceholder="none"
@@ -80,7 +80,9 @@ const EnabledWatermarkValue = ({
 }
 
 const WatermarkComponent = ({
-    feature,
+    // feature,
+    // name,
+    watermark,
     onEdit,
     disabled,
 }) => {
@@ -88,35 +90,17 @@ const WatermarkComponent = ({
         return (value?value:'none')
     }
 
-    function Value(name) {
-        if (disabled) {
-            return (<DisabledValue value={formatWatermark(feature[name])} />)
-        }
-
-        return (
-            <EnabledWatermarkValue
-                value={feature[name]}
-                name={name}
-                onEdit={onEdit}
-                />
-        )
+    if (disabled) {
+        return (<DisabledValue value={formatWatermark(watermark)} />)
     }
 
     return (
-        <div className="feature-row">
-            <div className="form-group col-xs-2">
-                <label>Low watermark</label>
-            </div>
-            <div className="form-group col-xs-4">
-                {Value('low_watermark')}
-            </div>
-            <div className="form-group col-xs-2">
-                <label>High watermark</label>
-            </div>
-            <div className="form-group col-xs-4">
-                {Value('high_watermark')}
-            </div>
-        </div>)
+        <EnabledWatermarkValue
+            value={watermark}
+            // name={name}
+            onEdit={onEdit}
+            />
+    )
 }
 
 const FeatureDropdown = (props) => {
@@ -278,17 +262,11 @@ class Feature extends Component {
             onDelete,
             onKeyDown,
             onConfirm,
-            measurements,
             feature,
-            timeseries,
             database,
             source,
             locked,
         } = this.props
-
-        const {
-            fields,
-        } = this.state
 
         return(
             <div className="db-manager">
@@ -305,131 +283,12 @@ class Feature extends Component {
                     <div className="feature-row">
                         <div className="feature-column">
                             <div className="feature-row">
-                                <div className="form-group col-xs-3">
-                                    <label htmlFor="measurement">Measurement</label>
-                                </div>
-                                <div className="form-group col-xs-3">
-                                    <FeatureDropdown
-                                        name="measurement"
-                                        onChoose={this.handleMeasurementChoose}
-                                        items={measurements.map(m => ({text: m}))}
-                                        selected={measurements.find(m => m === feature.measurement)||''}
-                                        className="dropdown-stretch"
-                                        buttonSize="btn-sm"
-                                        disabled={locked}
-                                        />
-                                </div>
-                                <div className="form-group col-xs-3">
-                                    <label htmlFor="field">Field</label>
-                                </div>
-                                <div className="form-group col-xs-3">
-                                    <FeatureDropdown
-                                        name="field"
-                                        onChoose={this.handleTextChoose('field')}
-                                        items={fields.map(f => ({text: f}))}
-                                        selected={fields.find(f => f === feature.field)||''}
-                                        className="dropdown-stretch"
-                                        buttonSize="btn-sm"
-                                        disabled={locked}
-                                        />
-
-                                </div>
-                            </div>
-                            <div className="feature-row">
-                                <div className="form-group col-xs-2">
-                                    <label htmlFor="metric">Metric</label>
-                                </div>
-                                <div className="form-group col-xs-3">
-                                    <FeatureDropdown
-                                        name="metric"
-                                        onChoose={this.handleTextChoose('metric')}
-                                        items={DEFAULT_METRICS.map(m => ({text: m}))}
-                                        selected={feature.metric}
-                                        className="dropdown-stretch"
-                                        buttonSize="btn-sm"
-                                        disabled={locked}
-                                        />
-                                </div>
-                                <div className="form-group col-xs-2">
-                                    <label>Default</label>
-                                </div>
-                                <div className="form-group col-xs-5">
-                                {locked
-                                    ?<DisabledValue value={denormalizeFeatureDefault(feature.default)} />
-                                    :<FillFeature
-                                        value={denormalizeFeatureDefault(feature.default)}
-                                        onChooseFill={this.handleFillChoose}
-                                        theme="GREEN"
-                                        size="sm"
-                                        />}
-                                </div>
-                            </div>
-                            {timeseries
-                                ?(null)
-                                :(<WatermarkComponent
-                                    feature={feature}
-                                    onEdit={this.handleWatermarkValue}
-                                    disabled={locked}
-                                    />)}
-                            <div className="feature-row">
-                                <div className="form-group col-xs-2">
-                                    <label htmlFor="io">Input Output</label>
-                                </div>
-                                <div className="form-group col-xs-3">
-                                    <FeatureDropdown
-                                        name="io"
-                                        onChoose={this.handleValueChoose('io')}
-                                        items={DEFAULT_IO}
-                                        selected={DEFAULT_IO.find(i => i.value === feature.io).text}
-                                        className="dropdown-stretch"
-                                        buttonSize="btn-sm"
-                                        disabled={locked}
-                                        />
-                                </div>
-                                <div className="form-group col-xs-2">
-                                    <label htmlFor="anomaly_type">Anomaly type</label>
-                                </div>
-                                <div className="form-group col-xs-3">
-                                    <FeatureDropdown
-                                        name="anomaly_type"
-                                        onChoose={this.handleValueChoose('anomaly_type')}
-                                        items={DEFAULT_ANOMALY_TYPE}
-                                        selected={DEFAULT_ANOMALY_TYPE.find(a => a.value === feature.anomaly_type).text}
-                                        className="dropdown-stretch"
-                                        buttonSize="btn-sm"
-                                        disabled={locked}
-                                        />
-                                </div>
-                            </div>
-                            <div className="feature-row">
-                                <div className="form-group col-xs-2">
-                                    <label htmlFor="scores">Scores</label>
-                                </div>
-                                <div className="form-group col-xs-3">
-                                    <FeatureDropdown
-                                        name="scores"
-                                        onChoose={this.handleValueChoose('scores')}
-                                        items={DEFAULT_SCORES}
-                                        selected={DEFAULT_SCORES.find(i => i.value === feature.scores).text}
-                                        className="dropdown-stretch"
-                                        buttonSize="btn-sm"
-                                        disabled={locked}
-                                        />
-                                </div>
-                                <div className="form-group col-xs-2">
-                                    <label htmlFor="transform">Transform</label>
-                                </div>
-                                <div className="form-group col-xs-3">
-                                    <FeatureDropdown
-                                        name="transform"
-                                        onChoose={this.handleValueChoose('transform')}
-                                        items={DEFAULT_TRANSFORM}
-                                        selected={DEFAULT_TRANSFORM.find(a => a.value === feature.transform).text}
-                                        className="dropdown-stretch"
-                                        buttonSize="btn-sm"
-                                        disabled={locked}
-                                        />
-                                </div>
+                                {this.featureFields.map(c => (
+                                    <div className="form-group col-xs-6" key={c.label}>
+                                        <label htmlFor={c.label}>{c.label}</label>
+                                        {c.component}
+                                    </div>
+                                ))}
                             </div>
                         </div>
                         <div className="feature-column feature-column-tags">
@@ -455,6 +314,147 @@ class Feature extends Component {
             </div>
         )
     }
+
+    get featureFields() {
+        const {
+            feature,
+            measurements,
+            timeseries,
+            locked,
+        } = this.props
+
+        const {
+            fields,
+        } = this.state
+
+        const base = [
+            {
+                label: 'Measurement',
+                component: (<FeatureDropdown
+                    name="measurement"
+                    onChoose={this.handleMeasurementChoose}
+                    items={measurements.map(m => ({text: m}))}
+                    selected={measurements.find(m => m === feature.measurement)||''}
+                    className="dropdown-stretch"
+                    buttonSize="btn-sm"
+                    disabled={locked}
+                    />),
+            },
+            {
+                label: 'Field',
+                component: (<FeatureDropdown
+                    name="field"
+                    onChoose={this.handleTextChoose('field')}
+                    items={fields.map(f => ({text: f}))}
+                    selected={fields.find(f => f === feature.field)||''}
+                    className="dropdown-stretch"
+                    buttonSize="btn-sm"
+                    disabled={locked}
+                    />),
+            },
+            {
+                label: 'Metric',
+                component: (<FeatureDropdown
+                    name="metric"
+                    onChoose={this.handleTextChoose('metric')}
+                    items={DEFAULT_METRICS.map(m => ({text: m}))}
+                    selected={feature.metric}
+                    className="dropdown-stretch"
+                    buttonSize="btn-sm"
+                    disabled={locked}
+                    />),
+            },
+            {
+                label: 'Default',
+                component: (locked
+                    ?<DisabledValue value={denormalizeFeatureDefault(feature.default)} />
+                    :<FillFeature
+                        value={denormalizeFeatureDefault(feature.default)}
+                        onChooseFill={this.handleFillChoose}
+                        theme="GREEN"
+                        size="sm"
+                        disabled={locked}
+                />)
+            },
+            {
+                label: 'Anomaly type',
+                component: (<FeatureDropdown
+                    name="anomaly_type"
+                    onChoose={this.handleValueChoose('anomaly_type')}
+                    items={DEFAULT_ANOMALY_TYPE}
+                    selected={DEFAULT_ANOMALY_TYPE.find(a => a.value === feature.anomaly_type).text}
+                    className="dropdown-stretch"
+                    buttonSize="btn-sm"
+                    disabled={locked}
+                />)
+            },
+            {
+                label: 'Scores',
+                component: (<FeatureDropdown
+                    name="scores"
+                    onChoose={this.handleValueChoose('scores')}
+                    items={DEFAULT_SCORES}
+                    selected={DEFAULT_SCORES.find(i => i.value === feature.scores).text}
+                    className="dropdown-stretch"
+                    buttonSize="btn-sm"
+                    disabled={locked}
+                />)
+            },
+            {
+                label: 'Transform',
+                component: (<FeatureDropdown
+                    name="transform"
+                    onChoose={this.handleValueChoose('transform')}
+                    items={DEFAULT_TRANSFORM}
+                    selected={DEFAULT_TRANSFORM.find(a => a.value === feature.transform).text}
+                    className="dropdown-stretch"
+                    buttonSize="btn-sm"
+                    disabled={locked}
+                />)
+            }
+        ]
+
+        if (timeseries) {
+            return [
+                ...base,
+                {
+                    label: 'Input/Output',
+                    component: (<FeatureDropdown
+                        name="io"
+                        onChoose={this.handleValueChoose('io')}
+                        items={DEFAULT_IO}
+                        selected={DEFAULT_IO.find(i => i.value === feature.io).text}
+                        className="dropdown-stretch"
+                        buttonSize="btn-sm"
+                        disabled={locked}
+                    />)
+                }
+            ]
+        }
+
+        return [
+            ...base,
+            {
+                label: 'Low watermark',
+                component: (<WatermarkComponent
+                    // feature={feature}
+                    watermark={feature.low_watermark}
+                    onEdit={this.handleWatermarkValue('low_watermark')}
+                    disabled={locked}
+                    />)
+            },
+            {
+                label: 'High watermark',
+                component: (<WatermarkComponent
+                    // feature={feature}
+                    watermark={feature.high_watermark}
+                    onEdit={this.handleWatermarkValue('high_watermark')}
+                    disabled={locked}
+                    />)
+            }
+        ]
+
+    }
 }
 
 const {func, shape, arrayOf, string, bool, number, oneOfType} = PropTypes
@@ -467,12 +467,13 @@ IOComponent.propTypes = {
 
 EnabledWatermarkValue.propTypes = {
     value: number,
-    name: string.isRequired,
+    // name: string.isRequired,
     onEdit: func.isRequired,
 }
 
 WatermarkComponent.propTypes = {
-    feature: shape({}).isRequired,
+    // feature: shape({}).isRequired,
+    watermark: number,
     onEdit: func.isRequired,
     disabled: bool.isRequired,
 }
