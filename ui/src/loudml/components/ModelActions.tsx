@@ -84,8 +84,8 @@ class ModelActions extends PureComponent<Props, {}> {
                             job =>
                                 job.name === name
                                 && job.type === 'forecast'
-                        ).length !== 0
-                    }
+                        ).length !== 0}
+                    timeRange={null}
                 />
                 <TrainTimeJobButton
                     startLabel='Train'
@@ -100,6 +100,7 @@ class ModelActions extends PureComponent<Props, {}> {
                                 && job.type === 'training'
                             ).length !== 0
                     }
+                    timeRange={null}
                 />
                 <ConfirmButton
                     confirmAction={this.handleDeleteModel}
