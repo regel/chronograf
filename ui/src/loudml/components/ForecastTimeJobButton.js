@@ -6,7 +6,7 @@ import moment from 'moment'
 import CustomTimeJobButton from 'src/loudml/components/CustomTimeJobButton'
 
 import {forecastTimeRangeDefaults} from 'src/loudml/constants/timeRange'
-  
+
 export const ForecastTimeJobButton = ({
     startLabel,
     stopLabel,
@@ -79,7 +79,7 @@ ForecastTimeJobButton.propTypes = {
     running: bool,
     disabled: bool,
     timeRange: shape({
-        lower: string.isRequired,
+        lower: string,
         upper: string,
         }),
 }

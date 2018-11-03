@@ -137,7 +137,7 @@ describe('Components.Loudml.TrainTimeJobButton', () => {
 
                 expect(spy).toHaveBeenCalledTimes(1)
                 const lowerDate = instance.lowerCal.getMoment()
-                expect(moment().get('date') - lowerDate.get('date')).toBe(7)
+                expect(moment().subtract(7, 'days').get('date')).toBe(lowerDate.get('date'))
 
                 // click 'apply'
                 const apply = button.find('div.custom-time--apply')

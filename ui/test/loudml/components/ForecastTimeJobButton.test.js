@@ -137,7 +137,7 @@ describe('Components.Loudml.ForecastTimeJobButton', () => {
 
                 expect(spy).toHaveBeenCalledTimes(1)
                 const upperDate = instance.upperCal.getMoment()
-                expect(upperDate.get('date') - moment().get('date')).toBe(7)
+                expect(moment().add(7, 'days').get('date')).toBe(upperDate.get('date'))
 
                 // click 'apply'
                 const apply = button.find('div.custom-time--apply')

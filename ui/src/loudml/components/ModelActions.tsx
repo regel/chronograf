@@ -9,6 +9,11 @@ import ForecastTimeJobButton from 'src/loudml/components/ForecastTimeJobButton'
 
 import 'src/loudml/styles/loudml.scss'
 
+const defaultTimeRange = {
+    lower: null,
+    upper: null,
+}
+
 interface Props {
     model: Model
     jobs: Job[]
@@ -86,6 +91,7 @@ class ModelActions extends PureComponent<Props, {}> {
                                 && job.type === 'forecast'
                         ).length !== 0
                     }
+                    timeRange={defaultTimeRange}
                 />
                 <TrainTimeJobButton
                     startLabel='Train'
@@ -100,6 +106,7 @@ class ModelActions extends PureComponent<Props, {}> {
                                 && job.type === 'training'
                             ).length !== 0
                     }
+                    timeRange={defaultTimeRange}
                 />
                 <ConfirmButton
                     confirmAction={this.handleDeleteModel}
