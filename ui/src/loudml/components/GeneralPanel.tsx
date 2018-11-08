@@ -68,7 +68,6 @@ const GeneralPanel: SFC<Props> = ({
                     datasources={datasources}
                     onChoose={onDatasourceChoose}
                     buttonSize="btn-md"
-                    disabled={locked}
                 />
             </div>
         </div>
