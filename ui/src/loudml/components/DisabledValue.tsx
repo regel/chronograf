@@ -9,7 +9,9 @@ const DisabledValue: SFC<Props> = ({
 }) => {
         
     return (
-        <span className="empty-string">{value}</span>
+        <div>
+            <span className="empty-string">{value}</span>
+        </div>
     )
 }
 

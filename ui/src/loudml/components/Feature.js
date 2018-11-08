@@ -287,8 +287,10 @@ class Feature extends Component {
                                 <div
                                     className={`form-group ${c.customClass}`}
                                     key={c.label}>
-                                    <label htmlFor={c.label}>{c.label}</label>
-                                    {c.component}
+                                    <label htmlFor={c.label}>
+                                        {c.label}
+                                        {c.component}
+                                    </label>
                                 </div>
                             ))}
                             </div>
@@ -397,7 +399,7 @@ class Feature extends Component {
             },
             {
                 label: 'Scores',
-                customClass: "col-xs-offset-1 col-xs-4",
+                customClass: "col-xs-offset-1 col-xs-3",
                 component: (<FeatureDropdown
                     name="scores"
                     onChoose={this.handleValueChoose('scores')}
