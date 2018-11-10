@@ -12,6 +12,7 @@
 1.  [#6](https://github.com/regel/chronograf/pull/6): resize loud ML notification icon
 1.  [#8](https://github.com/regel/chronograf/pull/8): visit loudml.io question mark
 1.  [#21](https://github.com/regel/chronograf/pull/21): Add to dashboard : more UX options
+1.  [#28](https://github.com/regel/chronograf/pull/28): Model name input/display in Model Page
 1.  [#28](https://github.com/regel/chronograf/pull/28): Icons for Play/Stops
 
 ### Bug Fixes
