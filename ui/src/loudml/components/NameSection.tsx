@@ -1,31 +1,33 @@
 import React, {SFC} from 'react'
 
 interface Props {
-    modelName: string
+    name: string
     onEdit: (e: any) => void
     isEditing: boolean
 }
 
 const NameSection: SFC<Props> = ({
-    modelName,
+    name,
     onEdit,
     isEditing,
 }) => {
-    if (!isEditing) {
+    if (isEditing) {
         return (
-            <h3>{modelName}</h3>
+            <div className="model--name">
+                <input
+                    type="text"
+                    name="name"
+                    className="form-control input-sm"
+                    onChange={onEdit}
+                    value={name}
+                    placeholder="Name this model"
+                />
+            </div>
         )
-    }    
-
+    }
+        
     return (
-        <input
-            type="text"
-            name="name"
-            className="form-control input-md form-malachite"
-            onChange={onEdit}
-            value={modelName}
-            placeholder="ex: my-model"
-        />
+        <h3>{name}</h3>        
     )
 }
 

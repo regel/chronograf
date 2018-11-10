@@ -1,17 +1,22 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ModelHeaderSave from 'src/loudml/components/ModelHeaderSave'
+import NameSection from 'src/loudml/components/NameSection';
 
 const ModelHeader = ({
     name,
+    isEditing,
+    onEdit,
     onSave,
     validationError
 }) => {
     return (
         <div className="panel-heading">
-            <h2 className="panel-title">
-                {name}
-            </h2>
+            <NameSection
+                name={name}
+                isEditing={isEditing}
+                onEdit={onEdit}
+                />
             <div className="panel-controls">
                 <ModelHeaderSave
                     name={name}
@@ -23,10 +28,14 @@ const ModelHeader = ({
     )
 }
 
+const {func, string, bool} = PropTypes
+
 ModelHeader.propTypes = {
-    name: PropTypes.string,
-    onSave: PropTypes.func.isRequired,
-    validationError: PropTypes.string,
+    name: string.isRequired,
+    isEditing: bool.isRequired,
+    onEdit: func.isRequired,
+    onSave: func.isRequired,
+    validationError: string,
 }
 
 export default ModelHeader

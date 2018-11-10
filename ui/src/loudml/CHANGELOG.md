@@ -6,6 +6,7 @@
 1.  [#17](https://github.com/regel/chronograf/pull/17): cellSupportsAnnotations for error graph
 1.  [#23](https://github.com/regel/chronograf/pull/23): Scores and Transform settings in Feature panel
 1.  [#24](https://github.com/regel/chronograf/pull/24): Datasink
+1.  [#28](https://github.com/regel/chronograf/pull/28): Unserialized Features in model
 
 ### UI Improvements
 
@@ -13,11 +14,14 @@
 1.  [#8](https://github.com/regel/chronograf/pull/8): visit loudml.io question mark
 1.  [#21](https://github.com/regel/chronograf/pull/21): Add to dashboard : more UX options
 1.  [#25](https://github.com/regel/chronograf/pull/25): default threshold values with OptIn
+1.  [#28](https://github.com/regel/chronograf/pull/28): Model name input/display in Model Page
+1.  [#28](https://github.com/regel/chronograf/pull/28): Icons for Play/Stop
 
 ### Bug Fixes
 
 1.  [#5](https://github.com/regel/chronograf/pull/5): cloned model is not running
 1.  [#9](https://github.com/regel/chronograf/pull/9): database match for dashboard
+1.  [#28](https://github.com/regel/chronograf/pull/28): Trained status lost on server restart
 
 ## v1.4.3 [2018-03-27]
 

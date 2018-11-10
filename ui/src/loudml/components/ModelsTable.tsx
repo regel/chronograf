@@ -2,8 +2,8 @@ import React, {PureComponent} from 'react'
 import {Link} from 'react-router'
 
 import ModelsRow from 'src/loudml/components/ModelsRow'
-import { TimeRange, Model, Job } from 'src/loudml/types/model';
-import { Dashboard } from 'src/types';
+import { Model, Job } from 'src/loudml/types/model';
+import { Dashboard, TimeRange } from 'src/types';
 
 interface Props {
     source: {id: string}

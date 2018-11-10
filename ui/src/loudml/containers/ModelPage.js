@@ -9,10 +9,11 @@ import PageHeader from 'src/reusable_ui/components/page_layout/PageHeader'
 import QuestionMark from 'src/loudml/components/QuestionMark'
 
 import GeneralPanel from 'src/loudml/components/GeneralPanel'
-import ParametersPanel from 'src/loudml/components/ParametersPanel'
+import TimeseriesPanel from 'src/loudml/components/TimeseriesPanel'
 import FeaturesPanel from 'src/loudml/components/FeaturesPanel'
 import PredictionPanel from 'src/loudml/components/PredictionPanel'
 import AnomalyPanel from 'src/loudml/components/AnomalyPanel'
+import FingerprintsPanel from 'src/loudml/components/FingerprintsPanel'
 import AboutPanel from 'src/loudml/components/AboutPanel';
 
 import {
@@ -171,7 +172,9 @@ class ModelPage extends Component {
                             <div className="row">
                                 <div className="col-md-12">
                                     <ModelHeader
-                                        name={isEditing ? 'Model creator' : model.name}
+                                        name={model.name}
+                                        isEditing={isEditing}
+                                        onEdit={this.onInputChange}
                                         onSave={this.handleSave}
                                         validationError={this.validationError}
                                         />
@@ -294,7 +297,6 @@ class ModelPage extends Component {
 
         return {
             ...model,
-            features: FeaturesUtils.serializedFeatures(model.features)
         }
     }
 
@@ -363,7 +365,6 @@ class ModelPage extends Component {
     get modelSubSections() {
         const {
             model,
-            isEditing,
             annotation,
             datasources,
             version,
@@ -381,8 +382,7 @@ class ModelPage extends Component {
                     <GeneralPanel
                         model={model}
                         onDatasourceChoose={this.onDatasourceChoose}
-                        onInputChange={this.onInputChange}
-                        isEditing={isEditing}
+                        onEdit={this.handleEdit}
                         datasources={datasources}
                         locked={locked}
                         />
@@ -392,12 +392,20 @@ class ModelPage extends Component {
                 name: 'Parameters',
                 url: 'parameters',
                 enabled: true,
-                component: (
-                    <ParametersPanel
+                component: (model.type==='timeseries'
+                    ?(
+                    <TimeseriesPanel
                         model={model}
                         onInputChange={this.onInputChange}
                         locked={locked}
-                        />
+                        />)
+                    :(
+                    <FingerprintsPanel
+                        model={model}
+                        onEdit={this.handleEdit}
+                        keys={[]}
+                        locked={locked}
+                    />)
                 ),
             },
             {
@@ -407,6 +415,7 @@ class ModelPage extends Component {
                 component: (
                     <FeaturesPanel
                         features={model.features}
+                        type={model.type}
                         onInputChange={this.onInputChange}
                         datasource={datasource}
                         locked={locked}

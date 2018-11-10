@@ -1,11 +1,12 @@
 import React, { PureComponent } from 'react'
 import {Link} from 'react-router'
 
-import {Model, TimeRange, Job} from 'src/loudml/types/model'
-
 import ModelStatus from 'src/loudml/components/ModelStatus'
 import ModelActions from 'src/loudml/components/ModelActions'
 import DashboardDropdown from 'src/loudml/components/DashboardDropdown'
+
+import {TimeRange} from 'src/types'
+import {Model, Job} from 'src/loudml/types/model'
 
 import 'src/loudml/styles/loudml.scss'
 import { Dashboard } from 'src/types';

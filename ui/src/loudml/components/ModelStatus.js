@@ -8,18 +8,19 @@ import JobStatus from 'src/loudml/components/JobStatus'
 import 'src/loudml/styles/status.scss'
 
 const ModelStatus = ({
-    model: {
-        settings: {
-            run,
-        },
-        training,
-    },
+    model,
     jobs,
 }) => {
+    const {
+        settings,
+        training,
+        state,
+    } = model
+
     return (
         <div className="status">
-            <RunningStatus run={run} />
-            <TrainingStatus training={training} />
+            <RunningStatus run={settings.run} />
+            <TrainingStatus training={training} state={state} />
             <JobStatus jobs={jobs} />
         </div>
     )
