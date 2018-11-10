@@ -18,6 +18,7 @@
 
 1.  [#5](https://github.com/regel/chronograf/pull/5): cloned model is not running
 1.  [#9](https://github.com/regel/chronograf/pull/9): database match for dashboard
+1.  [#29](https://github.com/regel/chronograf/pull/29): Datasink dropdown always enabled
 
 ## v1.4.3 [2018-03-27]
 
