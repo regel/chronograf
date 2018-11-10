@@ -20,7 +20,7 @@ const setup = (override = {}) => {
         name: 'myprop',
         datasources,
         onChoose: () => {},
-        disabled: false,
+        // disabled: false,
         ...override,
     }
 

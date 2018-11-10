@@ -78,7 +78,7 @@ const GeneralPanel: SFC<Props> = ({
                         placeholder="ex: 100"
                     />
                 </div>
-                <div className="form-group col-xs-12 col-sm-6">
+                <div className="form-group col-xs-offset-6 col-xs-6">
                     <label>Data sink</label>
                     <DatasourceSection
                         name="default_datasink"
