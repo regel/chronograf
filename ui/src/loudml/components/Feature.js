@@ -386,7 +386,7 @@ class Feature extends Component {
             },
             {
                 label: 'Anomaly type',
-                customClass: "col-xs-3",
+                customClass: "col-xs-4",
                 component: (<FeatureDropdown
                     name="anomaly_type"
                     onChoose={this.handleValueChoose('anomaly_type')}
@@ -399,7 +399,7 @@ class Feature extends Component {
             },
             {
                 label: 'Scores',
-                customClass: "col-xs-offset-1 col-xs-3",
+                customClass: "col-xs-4",
                 component: (<FeatureDropdown
                     name="scores"
                     onChoose={this.handleValueChoose('scores')}
@@ -412,7 +412,7 @@ class Feature extends Component {
             },
             {
                 label: 'Transform',
-                customClass: "col-xs-offset-1 col-xs-3",
+                customClass: "col-xs-3",
                 component: (<FeatureDropdown
                     name="transform"
                     onChoose={this.handleValueChoose('transform')}
@@ -430,7 +430,7 @@ class Feature extends Component {
                 ...base,
                 {
                     label: 'Input/Output',
-                    customClass: "col-xs-3",
+                    customClass: "col-xs-4",
                     component: (<FeatureDropdown
                         name="io"
                         onChoose={this.handleValueChoose('io')}
@@ -448,7 +448,7 @@ class Feature extends Component {
             ...base,
             {
                 label: 'Low watermark',
-                customClass: "col-xs-5",
+                customClass: "col-md-5",
                 component: (<WatermarkComponent
                     // feature={feature}
                     watermark={feature.low_watermark}

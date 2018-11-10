@@ -39,8 +39,8 @@ function handleTimeRangeShortcut(shortcut) {
     }
 
     return {
-      lower,
-      upper,
+        lower,
+        upper,
     }
 }
 

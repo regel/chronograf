@@ -2,7 +2,8 @@ import React, { PureComponent } from 'react'
 
 import ConfirmButton from 'src/shared/components/ConfirmButton'
 
-import {Model, TimeRange, Job} from 'src/loudml/types/model'
+import {Model, Job} from 'src/loudml/types/model'
+import {TimeRange} from 'src/types'
 import JobButton from 'src/loudml/components/JobButton'
 import TrainTimeJobButton from 'src/loudml/components/TrainTimeJobButton'
 import ForecastTimeJobButton from 'src/loudml/components/ForecastTimeJobButton'

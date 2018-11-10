@@ -51,8 +51,8 @@ const GeneralPanel: SFC<Props> = ({
                             buttons={[ModelTypeTabs.Timeseries, ModelTypeTabs.Fingerprints]}
                             onChange={onSetActiveTypeTab}
                             shape={ButtonShape.StretchToFit}
-                            size={ComponentSize.Medium}
-                            // disabled={true}
+                            size={ComponentSize.Small}
+                            disabled={true}
                             />
                     </div>
                 </div>

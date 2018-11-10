@@ -290,7 +290,6 @@ class ModelPage extends Component {
 
         return {
             ...model,
-            features: FeaturesUtils.serializedFeatures(model.features)
         }
     }
 
