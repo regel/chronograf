@@ -41,7 +41,7 @@ TrainTimeJobButton.propTypes = {
     onStop: func,
     running: bool,
     timeRange: shape({
-        lower: string.isRequired,
+        lower: string,
         upper: string,
         }),
 }
