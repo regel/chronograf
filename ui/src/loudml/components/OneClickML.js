@@ -206,12 +206,13 @@ class OneClickML extends Component {
             interval: normalizeInterval(time),
             default_datasource: datasource,
             bucket_interval: time,
-            features: { io: fields.map(
+            features: fields.map(
                 (field) => ({
                         name: field.alias,
                         measurement,
                         field: field.args[0].value,
                         metric: field.value,
+                        io: 'io',
                         default: normalizeFeatureDefault(fill),
                         match_all: Object
                             .keys(tags)
@@ -228,8 +229,7 @@ class OneClickML extends Component {
                                 return [...a, ...v]
                             }, []),
                     })
-                )
-            },
+                ),
         }
 
         try {
@@ -291,7 +291,7 @@ class OneClickML extends Component {
         ? areTagsAccepted
         : true)  // don't care
 
-        return (datasource!==undefined)
+        return (datasource)
             && (fields&&fields.length===1)
             && (time!==null&&time!=='auto')
             && (isCheckTags===true)

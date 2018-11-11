@@ -23,6 +23,7 @@
 1.  [#9](https://github.com/regel/chronograf/pull/9): database match for dashboard
 1.  [#28](https://github.com/regel/chronograf/pull/28): Trained status lost on server restart
 1.  [#29](https://github.com/regel/chronograf/pull/29): Datasink dropdown always enabled
+1.  [#](): Unserialized Features in 1-Click model
 
 ## v1.4.3 [2018-03-27]
 
