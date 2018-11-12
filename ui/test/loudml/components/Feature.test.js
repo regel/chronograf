@@ -6,6 +6,11 @@ import {Dropdown} from 'src/shared/components/Dropdown'
 
 import {mount} from 'enzyme'
 
+const badFeature = {
+    ...DEFAULT_FEATURE,
+    scores: 'unknown',
+}
+
 // automate shallow render and providing new props
 const setup = (override = {}) => {
     const props = {
@@ -39,6 +44,13 @@ describe('Components.Loudml.Feature', () => {
         describe('initial render', () => {
             it('renders the <Feature /> card', () => {
                 const {wrapper} = setup()
+
+                expect(wrapper.exists()).toBe(true)
+            })
+        })
+        describe('unknown values render', () => {
+            it('renders the <Feature /> card', () => {
+                const {wrapper} = setup({feature: badFeature})
 
                 expect(wrapper.exists()).toBe(true)
             })
