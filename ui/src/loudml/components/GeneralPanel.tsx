@@ -52,7 +52,7 @@ const GeneralPanel: SFC<Props> = ({
                             onChange={onSetActiveTypeTab}
                             shape={ButtonShape.StretchToFit}
                             size={ComponentSize.Small}
-                            disabled={false}
+                            disabled={true}
                             />
                     </div>
                 </div>

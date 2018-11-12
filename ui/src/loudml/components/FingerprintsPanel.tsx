@@ -33,7 +33,31 @@ const FingerprintsPanel: SFC<Props> = ({
     return (
         <LockablePanel locked={locked}>
             <div className="panel-body">
-                <div className="form-group col-xs-4">
+                <div className="form-group col-sm-4">
+                    <label htmlFor="bucket_interval">groupBy bucket interval</label>
+                    <input
+                        type="text"
+                        name="bucket_interval"
+                        className="form-control input-md form-malachite"
+                        value={model.bucket_interval}
+                        onChange={onInputChange}
+                        placeholder="ex: 30s, 20m, 1h, 1d, ..."
+                        disabled={locked}
+                    />
+                </div>
+                <div className="form-group col-sm-offset-2 col-sm-4">
+                    <label htmlFor="modelWidth">Width</label>
+                    <input
+                        type="number"
+                        name="modelWidth"
+                        className="form-control input-md form-malachite"
+                        value={model.width}
+                        onChange={onInputChange}
+                        placeholder="ex: 100"
+                        disabled={locked}
+                        />
+                </div>
+                <div className="form-group col-sm-4">
                     <label htmlFor="modelKey">Key</label>
                     <Dropdown
                         name="modelKey"
@@ -46,19 +70,7 @@ const FingerprintsPanel: SFC<Props> = ({
                         disabled={locked}
                         />
                 </div>
-                <div className="form-group col-xs-offset-2 col-xs-4">
-                    <label htmlFor="modelWidth">Width</label>
-                    <input
-                        type="number"
-                        name="modelWidth"
-                        className="form-control input-md form-malachite"
-                        value={model.width}
-                        onChange={onInputChange}
-                        placeholder="ex: 100"
-                        disabled={locked}
-                        />
-                </div>
-                <div className="form-group col-xs-offset-6 col-xs-4">
+                <div className="form-group col-sm-offset-2 col-sm-4">
                     <label htmlFor="modelHeight">Height</label>
                     <input
                         type="number"
