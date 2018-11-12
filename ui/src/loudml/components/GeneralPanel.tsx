@@ -52,7 +52,7 @@ const GeneralPanel: SFC<Props> = ({
                             onChange={onSetActiveTypeTab}
                             shape={ButtonShape.StretchToFit}
                             size={ComponentSize.Small}
-                            disabled={true}
+                            disabled={false}
                             />
                     </div>
                 </div>
@@ -86,7 +86,6 @@ const GeneralPanel: SFC<Props> = ({
                         datasources={datasources}
                         onChoose={onDatasourceChoose}
                         buttonSize="btn-md"
-                        disabled={locked}
                         />
                 </div>
             </div>
