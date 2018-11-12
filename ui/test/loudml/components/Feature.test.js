@@ -9,6 +9,7 @@ import {mount} from 'enzyme'
 // automate shallow render and providing new props
 const setup = (override = {}) => {
     const props = {
+        timeseries: true,
         feature: {...DEFAULT_FEATURE},
         onDelete: () => {},
         onEdit: () => {},
