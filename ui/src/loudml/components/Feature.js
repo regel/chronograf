@@ -31,35 +31,12 @@ import {DEFAULT_ANOMALY_TYPE} from 'src/loudml/constants/anomaly'
 
 import 'src/loudml/styles/feature.scss'
 
-const IOComponent = ({
-    feature,
-    onChoose,
-    disabled,
-}) => {
-    const value = DEFAULT_IO.find(i => i.value === feature.io).text
-
-    const Value = (disabled
-        ?<DisabledValue value={value} />
-        :<Dropdown
-            name="io"
-            onChoose={onChoose}
-            items={DEFAULT_IO}
-            selected={value}
-            className="dropdown-stretch"
-            buttonSize="btn-sm"
-            />
-    )
-    
-    return (
-        <div className="feature-row">
-            <div className="form-group col-xs-4">
-                <label htmlFor="io">Input/Output</label>
-            </div>
-            <div className="form-group col-xs-8">
-                {Value}
-            </div>
-        </div>
-    )
+const safeValue = (collection, value) => {
+    const item = collection.find(c => c.value === value)
+    if (item) {
+        return item.text
+    }
+    return ''
 }
 
 const EnabledWatermarkValue = ({
@@ -391,7 +368,7 @@ class Feature extends Component {
                     name="anomaly_type"
                     onChoose={this.handleValueChoose('anomaly_type')}
                     items={DEFAULT_ANOMALY_TYPE}
-                    selected={DEFAULT_ANOMALY_TYPE.find(a => a.value === feature.anomaly_type).text}
+                    selected={safeValue(DEFAULT_ANOMALY_TYPE, feature.anomaly_type)}
                     className="dropdown-stretch"
                     buttonSize="btn-sm"
                     disabled={locked}
@@ -404,7 +381,7 @@ class Feature extends Component {
                     name="scores"
                     onChoose={this.handleValueChoose('scores')}
                     items={DEFAULT_SCORES}
-                    selected={DEFAULT_SCORES.find(i => i.value === feature.scores).text}
+                    selected={safeValue(DEFAULT_SCORES, feature.scores)}
                     className="dropdown-stretch"
                     buttonSize="btn-sm"
                     disabled={locked}
@@ -417,7 +394,7 @@ class Feature extends Component {
                     name="transform"
                     onChoose={this.handleValueChoose('transform')}
                     items={DEFAULT_TRANSFORM}
-                    selected={DEFAULT_TRANSFORM.find(a => a.value === feature.transform).text}
+                    selected={safeValue(DEFAULT_TRANSFORM, feature.transform)}
                     className="dropdown-stretch"
                     buttonSize="btn-sm"
                     disabled={locked}
@@ -435,7 +412,7 @@ class Feature extends Component {
                         name="io"
                         onChoose={this.handleValueChoose('io')}
                         items={DEFAULT_IO}
-                        selected={DEFAULT_IO.find(i => i.value === feature.io).text}
+                        selected={safeValue(DEFAULT_IO, feature.io)}
                         className="dropdown-stretch"
                         buttonSize="btn-sm"
                         disabled={locked}
@@ -472,12 +449,6 @@ class Feature extends Component {
 }
 
 const {func, shape, arrayOf, string, bool, number, oneOfType} = PropTypes
-
-IOComponent.propTypes = {
-    feature: shape({}).isRequired,
-    onChoose: func.isRequired,
-    disabled: bool.isRequired,
-}
 
 EnabledWatermarkValue.propTypes = {
     value: number,

@@ -24,6 +24,7 @@
 1.  [#28](https://github.com/regel/chronograf/pull/28): Trained status lost on server restart
 1.  [#29](https://github.com/regel/chronograf/pull/29): Datasink dropdown always enabled
 1.  [#31](https://github.com/regel/chronograf/pull/31): Unserialized Features in 1-Click model
+1.  [#33](https://github.com/regel/chronograf/pull/33): safe feature values from dropdown
 
 ## v1.4.3 [2018-03-27]
 
