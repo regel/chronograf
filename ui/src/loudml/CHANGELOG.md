@@ -9,6 +9,7 @@
 
 1.  [#6](https://github.com/regel/chronograf/pull/6): resize loud ML notification icon
 1.  [#8](https://github.com/regel/chronograf/pull/8): visit loudml.io question mark
+1.  [#32](https://github.com/regel/chronograf/pull/32): Error graph picto
 
 ### Bug Fixes
 
