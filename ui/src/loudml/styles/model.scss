@@ -14,3 +14,20 @@
 .model-panel .panel-body {
     background-color: transparent;
 }
+
+.opt-in--label.on--off {
+    min-width: 3em;
+}
+
+.opt-in--container.on--off {
+    border: 2px solid #383846;
+    border-radius: 4px;
+}
+
+.opt-in.right-toggled .opt-in--container.on--off .opt-in--groove-knob:after {
+    background-color: #676978;
+}
+.model--name {
+    display: flex;
+    flex: 1 0 0;
+}

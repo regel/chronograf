@@ -21,7 +21,7 @@ const AboutPanel = ({
             </div>
             <div className="panel-body">
                 <p style={AboutTextStyle}>
-                    You're using Loud ML {version} — an independent machine learning add-on designed here for InfluxData’s TICK stack.
+                    You're using Loud ML {version} — an independent machine learning add-on designed here for InfluxData’s TICK-L stack.
                 </p>
                 <p style={AboutTextStyle}>
                     It's plug-and-play, so you can use it for other projects too.

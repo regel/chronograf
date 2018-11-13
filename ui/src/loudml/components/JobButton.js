@@ -27,6 +27,7 @@ class JobButton extends Component {
             return (
                 <ConfirmButton
                     text={stopLabel}
+                    icon="pause"
                     confirmText={confirmText}
                     confirmAction={this.handleConfirm}
                     size="btn-xs"
@@ -40,7 +41,7 @@ class JobButton extends Component {
                 onClick={onStart}
                 disabled={disabled}
             >
-                {startLabel}
+                <span className="icon play" /> {startLabel}
             </button>)
     }
 }

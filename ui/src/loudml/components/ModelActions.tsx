@@ -2,12 +2,18 @@ import React, { PureComponent } from 'react'
 
 import ConfirmButton from 'src/shared/components/ConfirmButton'
 
-import {Model, TimeRange, Job} from 'src/loudml/types/model'
+import {Model, Job} from 'src/loudml/types/model'
+import {TimeRange} from 'src/types'
 import JobButton from 'src/loudml/components/JobButton'
 import TrainTimeJobButton from 'src/loudml/components/TrainTimeJobButton'
 import ForecastTimeJobButton from 'src/loudml/components/ForecastTimeJobButton'
 
 import 'src/loudml/styles/loudml.scss'
+
+const defaultTimeRange = {
+    lower: null,
+    upper: null,
+}
 
 interface Props {
     model: Model
@@ -86,6 +92,7 @@ class ModelActions extends PureComponent<Props, {}> {
                                 && job.type === 'forecast'
                         ).length !== 0
                     }
+                    timeRange={defaultTimeRange}
                 />
                 <TrainTimeJobButton
                     startLabel='Train'
@@ -100,6 +107,7 @@ class ModelActions extends PureComponent<Props, {}> {
                                 && job.type === 'training'
                             ).length !== 0
                     }
+                    timeRange={defaultTimeRange}
                 />
                 <ConfirmButton
                     confirmAction={this.handleDeleteModel}

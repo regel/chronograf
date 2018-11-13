@@ -8,7 +8,7 @@ export const DEFAULT_MODEL = {
     features: {},
     interval: '1m',
     max_evals: 100,
-    name: '',   // input value connot be null
+    name: '',   // input value cannot be null
     offset: '10s',
     seasonality: {
         daytime: false,
@@ -17,12 +17,12 @@ export const DEFAULT_MODEL = {
     span: 10,
     forecast: 5,
     type: 'timeseries',
-    min_threshold: 75,
-    max_threshold: 75,
+    min_threshold: 0,   // auto
+    max_threshold: 0,   // auto
 }
 
 export const DEFAULT_FEATURE = {
-    name: '',      // input value connot be null
+    name: '',      // input value cannot be null
     measurement: null,
     field: null,
     metric: 'mean',
@@ -30,6 +30,8 @@ export const DEFAULT_FEATURE = {
     io: 'io',
     anomaly_type: 'low_high',
     match_all: [],
+    scores: 'min_max',
+    transform: null,
 }
 
 export const DEFAULT_METRICS = [
@@ -44,9 +46,19 @@ export const DEFAULT_METRICS = [
 export const DEFAULT_IO  = [
     { text: 'in', value: 'i', },
     { text: 'out', value: 'o', },
-    { text: 'in/out', value: 'io', }
+    { text: 'in/out', value: 'io', },
 ]
                                     
+export const DEFAULT_SCORES  = [
+    { text: 'min/max', value: 'min_max', },
+    { text: 'normalize', value: 'normalize', },
+    { text: 'standardize', value: 'standardize', },
+]
+
+export const DEFAULT_TRANSFORM  = [
+    { text: 'diff', value: 'diff', },
+    { text: 'none', value: null, },
+]
 
 export const MODEL_CREATED = 'MODEL_CREATED';
 export const MODEL_UPDATED = 'MODEL_UPDATED';

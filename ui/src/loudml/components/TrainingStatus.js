@@ -5,10 +5,13 @@ import ProgressCode from 'src/loudml/components/ProgressCode'
 
 const TrainingStatus = ({
     training,
+    state,
 }) => {
+    const Trained = (<code>Trained.</code>)
+
     if (training) {
-        const {state, progress} = training
-        if (state==='running') {
+        const {progress} = training
+        if (training.state==='running') {
             return (
                 <ProgressCode
                     max={(progress && progress.max_evals)||1}
@@ -16,11 +19,17 @@ const TrainingStatus = ({
                     label='Training' />
             )
         }
-        return (
-            <code>
-                Training&nbsp;{state}.
-            </code>
-        )
+        if (training.state !== 'done') {
+            return (
+                <code>
+                    Training&nbsp;{training.state}.
+                </code>
+            )
+        }
+        return Trained
+    }
+    if (state&&state.trained) {
+        return Trained
     }
     return null
 }
@@ -29,6 +38,7 @@ const {shape} = PropTypes
 
 TrainingStatus.propTypes = {
     training: shape({}),
+    state: shape({}).isRequired,
 }
 
 export default TrainingStatus

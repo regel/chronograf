@@ -1,104 +1,97 @@
-import React from 'react'
+import React, { Component } from 'react'
 import {PropTypes} from 'prop-types'
 
 import moment from 'moment'
 
 import CustomTimeJobButton from 'src/loudml/components/CustomTimeJobButton'
 
-const forecastTimeRangeDefaults = [
-    {
-        id: 'thisWeek',
-        name: 'This Week',
-    },
-    {
-        id: 'thisMonth',
-        name: 'This Month',
-    },
-    {
-        id: 'thisYear',
-        name: 'This Year',
-    },
-    {
-        id: 'nextWeek',
-        name: 'Next Week',
-    },
-    {
-        id: 'nextMonth',
-        name: 'Next Month',
-    },
-    {
-        id: 'nextYear',
-        name: 'Next Year',
-    },
-]
+import {forecastTimeRangeDefaults} from 'src/loudml/constants/timeRange'
   
-const ForecastTimeJobButton = ({
-    startLabel,
-    stopLabel,
-    onStart,
-    onStop,
-    running,
-    disabled,
-}) => {
-    function handleTimeRangeShortcut(shortcut) {
-        const lower = moment()
-        let upper
-      
-        switch (shortcut) {
-            case 'nextWeek': {
-                upper = moment().add(1, 'week')
-                break
-            }
-            case 'nextMonth': {
-                upper = moment().add(1, 'month')
-                break
-            }
-            case 'nextYear': {
-                upper = moment().add(1, 'year')
-                break
-            }
-            case 'thisWeek': {
-                upper = moment().endOf('week')
-                break
-            }
-            case 'thisMonth': {
-                upper = moment().endOf('month')
-                break
-            }
-            case 'thisYear': {
-                upper = moment().endOf('year')
-                break
-            }
+function handleTimeRangeShortcut(shortcut) {
+    const lower = moment()
+    let upper
+  
+    switch (shortcut) {
+        case 'nextWeek': {
+            upper = moment().add(1, 'week')
+            break
         }
-      
-        return {
-          lower,
-          upper,
+        case 'nextMonth': {
+            upper = moment().add(1, 'month')
+            break
         }
-      }
-    
-    return (
-        <CustomTimeJobButton
-            startLabel={startLabel}
-            stopLabel={stopLabel}
-            onStart={onStart}
-            onStop={onStop}
-            running={running}
-            shortcuts={forecastTimeRangeDefaults}
-            handleTimeRangeShortcut={handleTimeRangeShortcut}
-            disabled={disabled}
-            now="lower"
-        />
-    );
-  }
+        case 'nextYear': {
+            upper = moment().add(1, 'year')
+            break
+        }
+        case 'thisWeek': {
+            upper = moment().endOf('week')
+            break
+        }
+        case 'thisMonth': {
+            upper = moment().endOf('month')
+            break
+        }
+        case 'thisYear': {
+            upper = moment().endOf('year')
+            break
+        }
+    }
 
+    return {
+        lower,
+        upper,
+    }
+}
+
+export class ForecastTimeJobButton extends Component {
+    constructor(props) {
+        super(props)
+        
+    }
+        
+    render() {
+        const {
+            startLabel,
+            stopLabel,
+            onStart,
+            onStop,
+            running,
+            disabled,
+            timeRange,
+        } = this.props
+    
+        return (
+            <CustomTimeJobButton
+                startLabel={startLabel}
+                stopLabel={stopLabel}
+                onStart={onStart}
+                onStop={onStop}
+                running={running}
+                shortcuts={forecastTimeRangeDefaults}
+                handleTimeRangeShortcut={handleTimeRangeShortcut}
+                disabled={disabled}
+                now="lower"
+                selected={timeRange}
+                />
+        )
+    }
+
+}
+
+const {string, func, bool, shape} = PropTypes
+    
 ForecastTimeJobButton.propTypes = {
-    startLabel: PropTypes.string,
-    stopLabel: PropTypes.string,
-    onStart: PropTypes.func,
-    onStop: PropTypes.func,
-    running: PropTypes.bool,
-    disabled: PropTypes.bool,
+    startLabel: string.isRequired,
+    stopLabel: string.isRequired,
+    onStart: func.isRequired,
+    onStop: func.isRequired,
+    running: bool,
+    disabled: bool,
+    timeRange: shape({
+        lower: string,
+        upper: string,
+        }),
 }
 
 export default ForecastTimeJobButton

@@ -5,10 +5,12 @@ import _ from 'lodash'
 
 import FancyScrollbar from 'shared/components/FancyScrollbar';
 import Dropdown from 'shared/components/Dropdown'
+import OptIn from 'src/shared/components/OptIn';
 
 import FeatureHeader from 'src/loudml/components/FeatureHeader'
 import FillFeature from 'src/loudml/components/FillFeature'
 import FeatureTags from 'src/loudml/components/FeatureTags'
+import DisabledValue from 'src/loudml/components/DisabledValue';
 
 import {showFieldKeys} from 'src/shared/apis/metaQuery'
 import showFieldKeysParser from 'shared/parsing/showFieldKeys'
@@ -18,10 +20,72 @@ import {
     denormalizeFeatureDefault,
 } from 'src/loudml/utils/model';
 
-import {DEFAULT_METRICS, DEFAULT_IO, DEFAULT_LOUDML_RP} from 'src/loudml/constants'
+import {
+    DEFAULT_METRICS,
+    DEFAULT_IO,
+    DEFAULT_SCORES,
+    DEFAULT_TRANSFORM,
+    DEFAULT_LOUDML_RP
+} from 'src/loudml/constants'
 import {DEFAULT_ANOMALY_TYPE} from 'src/loudml/constants/anomaly'
 
 import 'src/loudml/styles/feature.scss'
+
+const safeValue = (collection, value) => {
+    const item = collection.find(c => c.value === value)
+    if (item) {
+        return item.text
+    }
+    return ''
+}
+
+const EnabledWatermarkValue = ({
+    value,
+    // name,
+    onEdit
+}) => {
+    return (
+        <OptIn
+            type="number"
+            onSetValue={onEdit}
+            customPlaceholder="ex 0"
+            customValue={value}
+            fixedPlaceholder="none"
+            fixedValue=""
+            />
+    )
+}
+
+const WatermarkComponent = ({
+    // feature,
+    // name,
+    watermark,
+    onEdit,
+    disabled,
+}) => {
+    function formatWatermark(value) {
+        return (value?value:'none')
+    }
+
+    if (disabled) {
+        return (<DisabledValue value={formatWatermark(watermark)} />)
+    }
+
+    return (
+        <EnabledWatermarkValue
+            value={watermark}
+            // name={name}
+            onEdit={onEdit}
+            />
+    )
+}
+
+const FeatureDropdown = (props) => {
+    if (props.disabled) {
+        return (<DisabledValue value={props.selected} />)
+    }
+    return (<Dropdown {...props} />)
+}
 
 class Feature extends Component {
     constructor(props) {
@@ -84,6 +148,12 @@ class Feature extends Component {
         } catch (err) {
             console.error(err)
         }
+    }
+        
+    handleWatermarkValue = field => value => {
+        const {feature, onEdit} = this.props
+        const formatted = (value===''?null:value)
+        onEdit(feature, {[field]: formatted})
     }
 
     handleTextChoose = key => item => {
@@ -169,16 +239,11 @@ class Feature extends Component {
             onDelete,
             onKeyDown,
             onConfirm,
-            measurements,
             feature,
             database,
             source,
             locked,
         } = this.props
-
-        const {
-            fields,
-        } = this.state
 
         return(
             <div className="db-manager">
@@ -194,99 +259,17 @@ class Feature extends Component {
                 <div className="feature-body">
                     <div className="feature-row">
                         <div className="feature-column">
-                            <div className="feature-row">
-                                <div className="form-group col-xs-4">
-                                    <label htmlFor="measurement">Measurement</label>
+                            <div>
+                            {this.featureFields.map(c => (
+                                <div
+                                    className={`form-group ${c.customClass}`}
+                                    key={c.label}>
+                                    <label htmlFor={c.label}>
+                                        {c.label}
+                                        {c.component}
+                                    </label>
                                 </div>
-                                <div className="form-group col-xs-8">
-                                    <Dropdown
-                                        name="measurement"
-                                        onChoose={this.handleMeasurementChoose}
-                                        items={measurements.map(m => ({text: m}))}
-                                        selected={measurements.find(m => m === feature.measurement)||''}
-                                        className="dropdown-stretch"
-                                        buttonSize="btn-sm"
-                                        disabled={locked}
-                                        />
-                                </div>
-                            </div>
-                            <div className="feature-row">
-                                <div className="form-group col-xs-4">
-                                    <label htmlFor="field">Field</label>
-                                </div>
-                                <div className="form-group col-xs-8">
-                                    <Dropdown
-                                        name="field"
-                                        onChoose={this.handleTextChoose('field')}
-                                        items={fields.map(f => ({text: f}))}
-                                        selected={fields.find(f => f === feature.field)||''}
-                                        className="dropdown-stretch"
-                                        buttonSize="btn-sm"
-                                        disabled={locked}
-                                        />
-                                </div>
-                            </div>
-                            <div className="feature-row">
-                                <div className="form-group col-xs-4">
-                                    <label htmlFor="metric">Metric</label>
-                                </div>
-                                <div className="form-group col-xs-8">
-                                    <Dropdown
-                                        name="metric"
-                                        onChoose={this.handleTextChoose('metric')}
-                                        items={DEFAULT_METRICS.map(m => ({text: m}))}
-                                        selected={feature.metric}
-                                        className="dropdown-stretch"
-                                        buttonSize="btn-sm"
-                                        disabled={locked}
-                                        />
-                                </div>
-                            </div>
-                            <div className="feature-row">
-                                    <div className="form-group col-xs-4">
-                                        <label>Default</label>
-                                    </div>
-                                    <div className="form-group col-xs-8">
-                                        <FillFeature
-                                            value={denormalizeFeatureDefault(feature.default)}
-                                            onChooseFill={this.handleFillChoose}
-                                            theme="GREEN"
-                                            size="sm"
-                                            disabled={locked}
-                                            />
-                                    </div>
-                            </div>
-                            <div className="feature-row">
-                                <div className="form-group col-xs-4">
-                                    <label htmlFor="io">Input/Output</label>
-                                </div>
-                                <div className="form-group col-xs-8">
-                                    <Dropdown
-                                        name="io"
-                                        onChoose={this.handleValueChoose('io')}
-                                        items={DEFAULT_IO}
-                                        selected={DEFAULT_IO.find(i => i.value === feature.io).text}
-                                        className="dropdown-stretch"
-                                        buttonSize="btn-sm"
-                                        disabled={locked}
-                                        />
-                                </div>
-                            </div>
-                            <div className="feature-row">
-                                <div className="form-group col-xs-4">
-                                    <label htmlFor="anomaly_type">Anomaly type</label>
-                                </div>
-                                <div className="form-group col-xs-8">
-                                    <Dropdown
-                                        name="anomaly_type"
-                                        onChoose={this.handleValueChoose('anomaly_type')}
-                                        items={DEFAULT_ANOMALY_TYPE}
-                                        selected={DEFAULT_ANOMALY_TYPE.find(a => a.value === feature.anomaly_type).text}
-                                        className="dropdown-stretch"
-                                        buttonSize="btn-sm"
-                                        disabled={locked}
-                                        />
-                                </div>
+                            ))}
                             </div>
                         </div>
                         <div className="feature-column feature-column-tags">
@@ -312,12 +295,182 @@ class Feature extends Component {
             </div>
         )
     }
+
+    get featureFields() {
+        const {
+            feature,
+            measurements,
+            timeseries,
+            locked,
+        } = this.props
+
+        const {
+            fields,
+        } = this.state
+
+        const base = [
+            {
+                label: 'Measurement',
+                customClass: "col-xs-5",
+                component: (<FeatureDropdown
+                    name="measurement"
+                    onChoose={this.handleMeasurementChoose}
+                    items={measurements.map(m => ({text: m}))}
+                    selected={measurements.find(m => m === feature.measurement)||''}
+                    className="dropdown-stretch"
+                    buttonSize="btn-sm"
+                    disabled={locked}
+                    />),
+            },
+            {
+                label: 'Field',
+                customClass: "col-xs-offset-1 col-xs-5",
+                component: (<FeatureDropdown
+                    name="field"
+                    onChoose={this.handleTextChoose('field')}
+                    items={fields.map(f => ({text: f}))}
+                    selected={fields.find(f => f === feature.field)||''}
+                    className="dropdown-stretch"
+                    buttonSize="btn-sm"
+                    disabled={locked}
+                    />),
+            },
+            {
+                label: 'Metric',
+                customClass: "col-xs-4",
+                component: (<FeatureDropdown
+                    name="metric"
+                    onChoose={this.handleTextChoose('metric')}
+                    items={DEFAULT_METRICS.map(m => ({text: m}))}
+                    selected={feature.metric}
+                    className="dropdown-stretch"
+                    buttonSize="btn-sm"
+                    disabled={locked}
+                    />),
+            },
+            {
+                label: 'Default',
+                customClass: "col-xs-offset-2 col-xs-5",
+                component: (locked
+                    ?<DisabledValue value={denormalizeFeatureDefault(feature.default)} />
+                    :<FillFeature
+                        value={denormalizeFeatureDefault(feature.default)}
+                        onChooseFill={this.handleFillChoose}
+                        theme="GREEN"
+                        size="sm"
+                        disabled={locked}
+                />)
+            },
+            {
+                label: 'Anomaly type',
+                customClass: "col-xs-4",
+                component: (<FeatureDropdown
+                    name="anomaly_type"
+                    onChoose={this.handleValueChoose('anomaly_type')}
+                    items={DEFAULT_ANOMALY_TYPE}
+                    selected={safeValue(DEFAULT_ANOMALY_TYPE, feature.anomaly_type)}
+                    className="dropdown-stretch"
+                    buttonSize="btn-sm"
+                    disabled={locked}
+                />)
+            },
+            {
+                label: 'Scores',
+                customClass: "col-xs-4",
+                component: (<FeatureDropdown
+                    name="scores"
+                    onChoose={this.handleValueChoose('scores')}
+                    items={DEFAULT_SCORES}
+                    selected={safeValue(DEFAULT_SCORES, feature.scores)}
+                    className="dropdown-stretch"
+                    buttonSize="btn-sm"
+                    disabled={locked}
+                />)
+            },
+            {
+                label: 'Transform',
+                customClass: "col-xs-3",
+                component: (<FeatureDropdown
+                    name="transform"
+                    onChoose={this.handleValueChoose('transform')}
+                    items={DEFAULT_TRANSFORM}
+                    selected={safeValue(DEFAULT_TRANSFORM, feature.transform)}
+                    className="dropdown-stretch"
+                    buttonSize="btn-sm"
+                    disabled={locked}
+                />)
+            }
+        ]
+
+        if (timeseries) {
+            return [
+                ...base,
+                {
+                    label: 'Input/Output',
+                    customClass: "col-xs-4",
+                    component: (<FeatureDropdown
+                        name="io"
+                        onChoose={this.handleValueChoose('io')}
+                        items={DEFAULT_IO}
+                        selected={safeValue(DEFAULT_IO, feature.io)}
+                        className="dropdown-stretch"
+                        buttonSize="btn-sm"
+                        disabled={locked}
+                    />)
+                }
+            ]
+        }
+
+        return [
+            ...base,
+            {
+                label: 'Low watermark',
+                customClass: "col-md-5",
+                component: (<WatermarkComponent
+                    // feature={feature}
+                    watermark={feature.low_watermark}
+                    onEdit={this.handleWatermarkValue('low_watermark')}
+                    disabled={locked}
+                    />)
+            },
+            {
+                label: 'High watermark',
+                customClass: "col-xs-offset-1 col-xs-5",
+                component: (<WatermarkComponent
+                    // feature={feature}
+                    watermark={feature.high_watermark}
+                    onEdit={this.handleWatermarkValue('high_watermark')}
+                    disabled={locked}
+                    />)
+            }
+        ]
+
+    }
 }
 
-const {func, shape, arrayOf, string, bool} = PropTypes
+const {func, shape, arrayOf, string, bool, number, oneOfType} = PropTypes
+
+EnabledWatermarkValue.propTypes = {
+    value: number,
+    // name: string.isRequired,
+    onEdit: func.isRequired,
+}
+
+WatermarkComponent.propTypes = {
+    // feature: shape({}).isRequired,
+    watermark: number,
+    onEdit: func.isRequired,
+    disabled: bool.isRequired,
+}
+
+FeatureDropdown.propTypes = {
+    selected: oneOfType([string, number]),
+    disabled: bool.isRequired,
+}
 
 Feature.propTypes = {
     feature: shape({}).isRequired,
+    timeseries: bool.isRequired,
     onDelete: func.isRequired,
     onEdit: func.isRequired,
     onKeyDown: func.isRequired,

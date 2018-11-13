@@ -13,7 +13,7 @@
 
 .feature-column:first-child {
     /*flex: 1 0 0%;*/
-    flex: 3;
+    flex: 5;
 }
 
 .feature-column-tags {
@@ -85,4 +85,10 @@
 .input-group > .input-group-prepend .dropdown-toggle {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
+}
+
+span.empty-string {
+    font-weight: 500;
+    color: #676978;
+    font-style: italic;
 }

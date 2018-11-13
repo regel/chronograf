@@ -1,71 +1,66 @@
 import React from 'react'
 import {PropTypes} from 'prop-types'
 
+import OptIn from 'src/shared/components/OptIn';
+import OnOff from 'src/loudml/components/OnOff';
+
 const AnomalyPanel = ({
     model,
     annotation,
-    onInputChange,
     onAnnotationChange,
+    onThresholdChange,
 }) => {
-    /*
-    function handleAnomaly(e) {
-        const {name, id, checked} = e.target
-    
-        onInputChange({
-            target: {
-                name,
-                type: 'custom',
-                value : {
-                    ...model.seasonality,
-                    [id]: checked,
-                }
-            }
-        })
+    function onSetThreshold(field) {
+        
+        return (value) => {
+            onThresholdChange(field, value)
+        }
     }
-    */
 
     return (
+
         <div className="panel panel-solid">
             <div className="panel-heading">
                 <h2 className="panel-title"></h2>
             </div>
             <div className="panel-body">
-                <div className="form-group col-xs-12 col-sm-6">
-                    <label htmlFor="min_threshold">Min threshold</label>
-                    <input
-                        type="number"
-                        name="min_threshold"
-                        className="form-control input-md form-malachite"
-                        value={model.min_threshold}
-                        onChange={onInputChange}
-                        placeholder="ex: 100"
-                        step='0.1'
-                    />
+                <div className="row">
+                    <div className="form-group col-sm-4 col-md-4">
+                        <label>Min threshold</label>
+                        <OptIn
+                            name="min_threshold"
+                            min="0.1"
+                            type="number"
+                            max="100"
+                            customValue={(model.min_threshold===0?'':model.min_threshold)}
+                            customPlaceholder="ex: 100"
+                            fixedValue="0"
+                            onSetValue={onSetThreshold('min_threshold')}
+                            />
+                    </div>
                 </div>
-                <div className="form-group col-xs-12 col-sm-6">
-                    <label htmlFor="max_threshold">Max threshold</label>
-                    <input
-                        type="number"
-                        name="max_threshold"
-                        className="form-control input-md form-malachite"
-                        value={model.max_threshold}
-                        onChange={onInputChange}
-                        placeholder="ex: 100"
-                        step='0.1'
-                    />
+                <div className="row">
+                    <div className="form-group col-sm-4 col-md-4">
+                        <label>Max threshold</label>
+                        <OptIn
+                            name="max_threshold"
+                            min="0.1"
+                            type="number"
+                            max="100"
+                            customValue={(model.max_threshold===0?'':model.max_threshold)}
+                            customPlaceholder="ex: 100"
+                            fixedValue="0"
+                            onSetValue={onSetThreshold('max_threshold')}
+                            />
+                    </div>
                 </div>
-                <div className="form-group col-xs-12 col-sm-6">
-                    <div className="form-control-static">
-                        <div className="col-xs-12">
-                            <input
-                            type="checkbox"
-                            id="add_annotation"
-                            name="annotation"
-                            checked={annotation}
-                            onChange={onAnnotationChange}
-                                />
-                            <label htmlFor="add_annotation">Add annotations</label>
-                        </div>
+                <div className="row">
+                    <div className="form-group col-md-4">
+                        <label htmlFor="add_annotation">Annotations</label>
+                        <OnOff
+                            value={annotation}
+                            onSetValue={onAnnotationChange}
+                            />
                     </div>
                 </div>
             </div>
@@ -76,9 +71,9 @@ const AnomalyPanel = ({
 const {func, shape, bool} = PropTypes
 
 AnomalyPanel.propTypes = {
-    model: shape({}),
+    model: shape({}).isRequired,
     annotation: bool.isRequired,
-    onInputChange: func.isRequired,
+    onThresholdChange: func.isRequired,
     onAnnotationChange: func.isRequired,
 }
 

@@ -1,34 +1,43 @@
-import React from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import Dropdown from 'shared/components/Dropdown'
 
-const DatasourceSection = ({
-    datasource,
-    datasources,
-    onChoose,
-    buttonSize,
-    disabled,
-}) => {
-    function handleOnChoose(e) {
-        onChoose(e.text)
+class DatasourceSection extends Component {
+    constructor(props) {
+        super(props)
+
     }
 
-    if (!datasources) {
-        return <p>No datasources</p>
+    handleOnChoose = item => {
+        this.props.onChoose(this.props.name, item.text)
     }
 
-    return (
-        <Dropdown
-            name="default_datasource"
-            items={datasources.map(ds => ({text: ds.name}))}
-            onChoose={handleOnChoose}
-            selected={datasource || ''}
-            className="dropdown-stretch"
-            buttonSize={buttonSize}
-            disabled={disabled}
-        />
-    )
+    render() {
+        const {
+            datasource,
+            datasources,
+            buttonSize,
+            disabled,
+            name,        
+        } = this.props
+
+        if (!datasources) {
+            return <p>No datasources</p>
+        }
+
+        return (
+            <Dropdown
+                name={name}
+                items={datasources.map(ds => ({text: ds.name}))}
+                onChoose={this.handleOnChoose}
+                selected={datasource || ''}
+                className="dropdown-stretch"
+                buttonSize={buttonSize}
+                disabled={disabled}
+            />
+        )
+    }
 }
 
 DatasourceSection.defaultProps = {
@@ -38,11 +47,12 @@ DatasourceSection.defaultProps = {
 const {func, string, arrayOf, shape, bool} = PropTypes
 
 DatasourceSection.propTypes = {
+    name: string.isRequired,
     datasource: string,
-    datasources: arrayOf(shape()).isRequired,
-    onChoose: func,
+    datasources: arrayOf(shape()),
+    onChoose: func.isRequired,
     buttonSize: string,
-    disabled: bool.isRequired,
+    disabled: bool,
 }
 
 export default DatasourceSection
