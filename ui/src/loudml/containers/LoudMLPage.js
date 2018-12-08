@@ -486,6 +486,12 @@ class LoudMLPage extends Component {
         return (
             <div className="panel-heading">
                 <h2 className="panel-title">{this.panelTitle}</h2>
+                <Link
+                    to={`/sources/${id}/loudml/job-analyze`}
+                    className="btn btn-sm btn-primary btn-sm"
+                    >
+                    Job analyze
+                </Link>
                 <div className="panel-controls">
                     <SearchBar
                         placeholder="Filter by Name..."

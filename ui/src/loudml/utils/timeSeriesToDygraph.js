@@ -193,19 +193,7 @@ export const errorBars = series => {
         labels: errorLabels,
         timeSeries: timeSeries.map(t => [
             t[0],           // time
-            // convert { 0: [0..2], n/3: [0..2] } object to [[0]..[n/3]] array
-            ...Object.values(t.slice(1).reduce(
-                // convert t[1..n] array to { 0: [0..2], n/3: [0..2] } object
-                (a, v, i) => {
-                    const key = Math.floor(i/3) // lower, mid, upper group
-                    const s = a[key]||[]
-                    s.push(v)
-                    return {
-                        ...a,
-                        [key]: s
-                    }
-                },
-                {}))
+            ..._.chunk(t.slice(1), 3)
         ]),
         dygraphSeries: errorDygraphSeries,
     }
