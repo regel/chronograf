@@ -1,9 +1,12 @@
 /** @flow */
 import PropTypes from 'prop-types';
 import * as React from 'react';
-import AnomalySwimlanes from 'src/loudml/components/AnomalySwimlanes';
-import uuid from 'uuid'
 import moment from 'moment'
+import _ from 'lodash'
+
+import AnomalySwimlanes from 'src/loudml/components/AnomalySwimlanes';
+import InvalidData from 'src/shared/components/InvalidData'
+
 // import styles from './MultiGrid.example.css';
 
 // const STYLE = {
@@ -23,7 +26,50 @@ import moment from 'moment'
 //   fontWeight: 'bold',
 // };
 
+const validateTimeSeries = ts => {
+  return _.every(ts, r =>
+    _.every(
+      r,
+      // @ts-ignore
+      (v, i) =>
+        (i === 0 && Date.parse(v)) || _.isNumber(v) || _.isNull(v)
+    )
+  )
+}
+
+const transformData = (data) => {
+  // get timeseries
+  const size = data.length
+  const dates = data.reduce((d, item) => {
+    const anomalies = item.anomalies.reduce((r, a) => {
+      const start = moment(a.start_date).valueOf()
+      const end = moment(a.end_date).valueOf()
+      return [...r, start, end]
+    }, [])
+    return [...d, ...anomalies]
+  }, [])
+  const serie = _.uniq(dates).sort((a, b) => (a-b))
+  const series = serie.map(t => {
+    const time = moment(t)
+    const values = data.reduce((r, d, i) => {
+      const between = d.anomalies.some(a => (time.isBetween(a.start_date, a.end_date, null, '[]')))
+      const value = (between?size-i:null)
+      // const anomalie = d.anomalies.find(a => (time.isBetween(a.start_date, a.end_date, null, '[]')))
+      // const value = (anomalie?anomalie.score:null)
+      return [...r, value]
+    }, [])
+    return [time.toDate(), ...values]
+  })
+  return {
+    timeSeries: series,
+    labels: ['time', ...data.reduce((r, d) => ([...r, d.key]), [])],
+    anomalies: data,
+  }
+}
+
 export default class AnomalyExplorer extends React.PureComponent {
+   timeSeries
+   isValidData = false
 
   constructor(props, context) {
     super(props, context);
@@ -49,83 +95,64 @@ export default class AnomalyExplorer extends React.PureComponent {
     // this._onScrollToRowChange = this._createEventHandler('scrollToRow');
   }
 
+  componentWillMount() {
+      const {anomalies} = this.props
+      this.parseTimeSeries(anomalies)
+  }
+
+  parseTimeSeries(anomalies) {
+    this.timeSeries = transformData(anomalies)
+    this.isValidData = validateTimeSeries(
+      _.get(this.timeSeries, 'timeSeries', [])
+    )
+  }
+  
+  componentWillUpdate(nextProps) {
+    const {anomalies} = this.props
+    if (
+      anomalies !== nextProps.anomalies
+    ) {
+      this.parseTimeSeries(nextProps.anomalies)
+    }
+  }
+
   render() {
     const {
       timeRange,
       groupBy,
     } = this.state
     const {colors} = this.props
-
-    const data = this.data
+    const {labels, timeSeries, anomalies} = this.timeSeries
+    
+    if (!this.isValidData) {
+      return <InvalidData />
+    }
 
     return (
       <div>
-        <AnomalySwimlanes
-          data={data}
-          timeRange={timeRange}
-          groupBy={groupBy}
-          setResolution={this.handleSetResolution}
-          colors={colors}
-          />
-        {data.length}
-        {JSON.stringify(data)}
+        {timeSeries.length
+          ?(<AnomalySwimlanes
+            timeSeries={timeSeries}
+            labels={labels}
+            anomalies={anomalies}
+            timeRange={timeRange}
+            groupBy={groupBy}
+            setResolution={this.handleSetResolution}
+            colors={colors}
+            />)
+          :(<GraphSpinner />)
+        }
+        <div id="legend" style={{paddingTop: '2em'}}/>
+        {/* <div>
+          {timeSeries.length}
+          {JSON.stringify(timeSeries)}
+        </div> */}
       </div>
     );
   }
 
   handleSetResolution = resolution => {
     this.setState({resolution})
-  }
-
-  get data() {
-    // const {timeRange: {
-    //   lower,
-    //   upper,
-    // }} = this.state
-    const rowFactor = 10;  // TODO replace with dropdown or input
-    const rows = Math.floor(Math.random()*rowFactor)+1;
-
-    const lower = moment().subtract(7, 'days')
-
-    function randomDate(from, to) {
-      // const range = to - from
-      const start = moment(from + Math.random() * (to - from))
-      const end = moment(start + Math.random() * (to - start))
-      return {start, end}
-    }
-
-
-    const START_DATE = moment(lower)
-
-    return new Array(rows).fill(null).map(_ => {
-      const anomalies = Math.floor(Math.random()*3)+1
-      const range = Math.floor((moment().valueOf() - START_DATE.valueOf())/anomalies)
-      return {
-        key: uuid.v4(),
-        'anomalies': new Array(anomalies).fill(null).map((_, i) => {
-          const {start, end} = randomDate(START_DATE.valueOf()+i*range, START_DATE.valueOf()+(i+1)*range)
-          return {
-            start_date: start.toISOString(),
-            end_date: end.toISOString(),
-            score: Math.random()*100,
-          }
-        }),
-      }
-    })
-      // {
-      //   "key": "key1",
-      //   "anomalies": [
-      //     {
-      //       "start_date": "2018-11-20T00:00:00Z",
-      //       "end_date": "2018-11-21T00:00:00Z",
-      //       "score": 25,
-      //     },
-      //   ],
-      // },
-      // {
-      //   "key": "key10",
-      //   "anomalies": []
-      // },
   }
 
   // _cellRenderer({columnIndex, key, rowIndex, style}) {
@@ -163,5 +190,12 @@ export default class AnomalyExplorer extends React.PureComponent {
 const {arrayOf, shape} = PropTypes
 
 AnomalyExplorer.propTypes = {
+    anomalies: arrayOf(shape({})),
     colors: arrayOf(shape({})),
 }
+
+const GraphSpinner = () => (
+  <div className="graph-fetching">
+    <div className="graph-spinner" />
+  </div>
+)

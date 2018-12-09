@@ -12,6 +12,8 @@ import FancyScrollbar from 'shared/components/FancyScrollbar'
 import {ErrorHandling} from 'src/shared/decorators/errors'
 
 import QuestionMark from 'src/loudml/components/QuestionMark'
+import uuid from 'uuid'
+import moment from 'moment'
 
 import {parseError} from 'src/loudml/utils/error'
 import * as api from 'src/loudml/apis'
@@ -32,6 +34,7 @@ class JobAnalyzePage extends Component {
         super(props)
 
         this.state = {
+            data: [],
             colors: LINE_COLOR_SCALES[0],
         }      
     }
@@ -43,6 +46,8 @@ class JobAnalyzePage extends Component {
             () => this._loadModels(),
             10000
         )
+
+        this.setState({data: this.getData()})
     }
 
     componentWillUnmount() {
@@ -76,7 +81,7 @@ class JobAnalyzePage extends Component {
 
     render() {
         const {isFetching} = this.props
-        const {colors} = this.state
+        const {colors, data} = this.state
 
         if (isFetching) {
             return <div className="page-spinner" />
@@ -107,7 +112,10 @@ class JobAnalyzePage extends Component {
                             {this.renderPanelHeading}
                             <div className="panel-body">
                             Here is my body
-                                <AnomalyExplorer colors={colors.colors} />
+                                <AnomalyExplorer
+                                    anomalies={data}
+                                    colors={colors.colors}
+                                    />
                             </div>
                         </div>
                         </div>
@@ -126,11 +134,16 @@ class JobAnalyzePage extends Component {
             <div className="panel-heading">
                 <h2 className="panel-title">Here is my heading</h2>
                 <div className="panel-controls">
-                    <div className="form-group col-xs-12">
-                        <label>Line Colors</label>
+                    <div
+                        className="btn btn-sm btn-default btn-square"
+                        onClick={this.onManualRefresh}
+                        >
+                        <span className="icon refresh" />
+                    </div>
+                    <div className="form-group" style={{width: '300px'}}>
                         <ColorScaleDropdown
                             onChoose={this.handleUpdateLineColors}
-                            stretchToFit={false}
+                            stretchToFit={true}
                             selected={colors.colors}
                         />
                     </div>
@@ -152,6 +165,61 @@ class JobAnalyzePage extends Component {
         this.setState({colors})
     }
         
+    onManualRefresh = _ => {
+        this.setState({data: this.getData()})
+    }
+
+    getData = () => {
+        // const {timeRange: {
+        //   lower,
+        //   upper,
+        // }} = this.state
+        const rowFactor = 10;  // TODO replace with dropdown or input
+        const rows = Math.floor(Math.random()*rowFactor)+1;
+    
+        const lower = moment().subtract(7, 'days')
+    
+        function randomDate(from, to) {
+          // const range = to - from
+          const start = moment(from + Math.random() * (to - from))
+          const end = moment(start + Math.random() * (to - start))
+          return {start, end}
+        }
+    
+    
+        const START_DATE = moment(lower)
+    
+        return new Array(rows).fill(null).map(_ => {
+          const anomalies = Math.floor(Math.random()*3)+1
+          const range = Math.floor((moment().valueOf() - START_DATE.valueOf())/anomalies)
+          return {
+            key: uuid.v4(),
+            'anomalies': new Array(anomalies).fill(null).map((_, i) => {
+              const {start, end} = randomDate(START_DATE.valueOf()+i*range, START_DATE.valueOf()+(i+1)*range)
+              return {
+                start_date: start.toISOString(),
+                end_date: end.toISOString(),
+                score: Math.random()*100,
+              }
+            }),
+          }
+        })
+          // {
+          //   "key": "key1",
+          //   "anomalies": [
+          //     {
+          //       "start_date": "2018-11-20T00:00:00Z",
+          //       "end_date": "2018-11-21T00:00:00Z",
+          //       "score": 25,
+          //     },
+          //   ],
+          // },
+          // {
+          //   "key": "key10",
+          //   "anomalies": []
+          // },
+      }
+    
 }
 
 const {arrayOf, func, shape, bool} = PropTypes
