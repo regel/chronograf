@@ -108,6 +108,13 @@ class ModelsTable extends PureComponent<Props, {}> {
                         <span className="icon plus" />
                         Create a model
                     </Link>
+                    <Link
+                        style={{marginLeft: '10px'}}
+                        to={`/sources/${id}/loudml/models/template`}
+                        className="btn btn-primary btn-sm"
+                    >
+                        ...from template
+                    </Link>
                 </h6>
             </div>
         )

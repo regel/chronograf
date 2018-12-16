@@ -498,6 +498,12 @@ class LoudMLPage extends Component {
                         <span className="icon plus" />
                         Create a model
                     </Link>
+                    <Link
+                        to={`/sources/${id}/loudml/models/template`}
+                        className="btn btn-sm btn-primary btn-sm"
+                        >
+                        ...from template
+                    </Link>
                 </div>
             </div>
         )

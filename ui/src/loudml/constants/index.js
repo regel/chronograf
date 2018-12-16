@@ -5,7 +5,7 @@ export const DEFAULT_LOUDML_RP = 'autogen'
 export const DEFAULT_MODEL = {
     bucket_interval: '20m',
     default_datasource: null,
-    features: {},
+    features: [],
     interval: '1m',
     max_evals: 100,
     name: '',   // input value cannot be null

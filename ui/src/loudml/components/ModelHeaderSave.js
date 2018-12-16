@@ -6,7 +6,8 @@ import classnames from 'classnames'
 
 const ModelHeaderSave = ({
     onSave,
-    validationError
+    label='Save model',
+    validationError=''
 }) => {
     return (
         <div className="page-header__right">
@@ -16,7 +17,7 @@ const ModelHeaderSave = ({
                 onClick={onSave}
                 data-for="save-model-tooltip"
                 data-tip={validationError}>
-                Save model
+                {label}
                 <ReactTooltip
                     id="save-model-tooltip"
                     effect="solid"
@@ -34,6 +35,7 @@ const {func, string} = PropTypes
 ModelHeaderSave.propTypes = {
     onSave: func.isRequired,
     validationError: string,
+    label: string,
 }
 
 export default ModelHeaderSave

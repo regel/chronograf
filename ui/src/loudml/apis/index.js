@@ -54,6 +54,15 @@ export const createModel = model => {
     })
 }
 
+export const createModelFromTemplate = (template, params) => {
+    return AJAX({
+        url: `/loudml/api/models?template=${template}`,
+        excludeBasepath: true,
+        method: 'PUT',
+        data: params,
+    })
+}
+
 export const updateModel = model => {
     return AJAX({
         url: `/loudml/api/models/${model.name}`,
