@@ -193,28 +193,22 @@ class ModelTemplatePage extends Component<Props, State> {
 
   private handleSave = () => {
     const {source: {id}, router} = this.props
-    const {template} = this.state
-
-    // template.hosts.forEach(host => new Promise(
-    //   this.createAndTrainModel(template.trigger, template.name, host)
-    // })
+    const {template, db} = this.state
 
     Promise.all(
       template.hosts.map(
           host => {
-            const name = `${template.name}_5m_${host.replace(/\./g, '_')}`
-            return this.createAndTrainModel(template.trigger, name, host)
+            const name = `${template.name}_5m_${host.replace(/[\.-]/g, '_')}`
+            return this.createAndTrainModel(`${db}_${template.trigger}`, name, host)
           }
       )
     )
-      .then(_ => {
-          router.push(`/sources/${id}/loudml`)
-      })
-      .catch(error => {
-          errorThrown(error)
-      })
-
-    
+    .then(_ => {
+        router.push(`/sources/${id}/loudml`)
+    })
+    .catch(error => {
+        errorThrown(error)
+    })    
   }
 }
 
