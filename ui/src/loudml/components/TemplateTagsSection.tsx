@@ -55,7 +55,7 @@ class TemplateTagsSection extends PureComponent<Props, State> {
   public render() {
     return (
       <div className="rule-section">
-        <h3 className="rule-section--heading">Hosts</h3>
+        <h3 className="rule-section--heading">Select one or more hosts</h3>
         <div className="rule-section--body">
           <div className="rule-section--row rule-section--row-first rule-section--row-last">
             {this.renderTagValues}

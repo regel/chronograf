@@ -73,7 +73,7 @@ class TemplateNameSection extends Component<Props, State> {
   }
 
   private get header() {
-    return 'Prefix your Model Name'
+    return 'Define a prefix'
   }
 }
 

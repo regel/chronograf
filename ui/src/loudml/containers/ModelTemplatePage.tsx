@@ -47,7 +47,7 @@ interface State {
 }
 
 const DEFAULT_TEMPLATE: TemplateModel = {
-  name: 'Untitled_Model',
+  name: 'AutoML',
   trigger: 'syslog',
   hosts: [],
 }

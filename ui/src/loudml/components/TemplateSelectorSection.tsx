@@ -19,7 +19,7 @@ const TemplateSelectorSection: SFC<Props> = ({
   onChooseTrigger,
 }) => (
     <div className="rule-section">
-      <h3 className="rule-section--heading">Template Type</h3>
+      <h3 className="rule-section--heading">Choose a template</h3>
       <div className="rule-section--body">
         <div className="rule-section--row rule-section--row-first rule-section--row-last">
           <RadioButtons
