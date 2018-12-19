@@ -179,3 +179,15 @@ export const deleteModelHook = (name, hookName) => {
         excludeBasepath: true,
     })
 }
+
+export const getTemplates = async () => {
+    try {
+        return await AJAX({
+            url: '/loudml/api/templates',
+            excludeBasepath: true,
+        })
+    } catch (error) {
+        console.error(error)
+        throw error
+    }
+}

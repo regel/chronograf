@@ -47,8 +47,8 @@ interface State {
 }
 
 const DEFAULT_TEMPLATE: TemplateModel = {
-  name: 'AutoML',
-  trigger: 'syslog',
+  modelPrefix: 'AutoML',
+  name: 'template_syslog',
   hosts: [],
 }
 
@@ -86,7 +86,7 @@ class ModelTemplatePage extends Component<Props, State> {
         tagKey={tagKey}
         template={template}
         updateModelName={this.updateModelName}
-        onChooseTrigger={this.chooseTrigger}
+        onChooseName={this.chooseName}
         updateTagsValues={this.updateTagsValues}
         handleSave={this.handleSave}
       />
@@ -158,18 +158,18 @@ class ModelTemplatePage extends Component<Props, State> {
   }
 
 
-  private updateModelName = (name: string) => {
+  private updateModelName = (modelPrefix: string) => {
     const {template} = this.state
 
     this.setState({
       template: {
         ...template,
-        name,
+        modelPrefix,
       }
     })
   }
 
-  private chooseTrigger = (name: string) => {
+  private chooseName = (name: string) => {
     const {template} = this.state
 
     this.setState({
@@ -193,13 +193,13 @@ class ModelTemplatePage extends Component<Props, State> {
 
   private handleSave = () => {
     const {source: {id}, router} = this.props
-    const {template, db} = this.state
+    const {template} = this.state
 
     Promise.all(
       template.hosts.map(
           host => {
-            const name = `${template.name}_5m_${host.replace(/[\.-]/g, '_')}`
-            return this.createAndTrainModel(`${db}_${template.trigger}`, name, host)
+            const name = `${template.modelPrefix}_5m_${host.replace(/[\.-]/g, '_')}`
+            return this.createAndTrainModel(`${template.name}`, name, host)
           }
       )
     )

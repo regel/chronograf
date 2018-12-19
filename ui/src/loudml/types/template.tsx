@@ -1,6 +1,6 @@
 export interface TemplateModel {
+    modelPrefix: string
     name: string
-    trigger: string
     hosts: string[]
   }
   
