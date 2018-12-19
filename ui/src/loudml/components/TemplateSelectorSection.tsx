@@ -115,18 +115,18 @@ class TemplateSelectorSection extends Component<Props, State> {
     }
 
     return (
-      <div className="viz-type-selector">
+      <div className="template-type-selector">
       {templates.map(template => (
         <div
           key={template.name}
-          className={classnames('viz-type-selector--option', {
+          className={classnames('template-type-selector--option', {
             active: template.name === name,
           })}
         >
           <div onClick={this.onChangeCellName(template.name)}>
             {TEMPLATE_GRAPHIC}
-            <h3>{template.short_desc}</h3>
-            <p>{template.long_desc}</p>
+            <p className="template--short-desc">{template.short_desc}</p>
+            <p className="template--long-desc">{template.long_desc}</p>
           </div>
         </div>
       ))}
