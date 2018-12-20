@@ -37,7 +37,7 @@ class TemplateTagsSection extends PureComponent<Props, State> {
     await this.loadTagValues()
   }
   
-  public componentDidUpdate(prevProps) {
+  public async componentDidUpdate(prevProps) {
     const {source, db, measurement, tagKey} = this.props
 
     if (
@@ -49,13 +49,15 @@ class TemplateTagsSection extends PureComponent<Props, State> {
       return
     }
 
-    this.loadTagValues()
+    await this.loadTagValues()
   }
 
   public render() {
+    const {tagKey} = this.props
+    
     return (
       <div className="rule-section">
-        <h3 className="rule-section--heading">Select one or more hosts</h3>
+        <h3 className="rule-section--heading">Select one or more values for {tagKey}</h3>
         <div className="rule-section--body">
           <div className="rule-section--row rule-section--row-first rule-section--row-last">
             {this.renderTagValues}

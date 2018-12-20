@@ -21,7 +21,7 @@ interface Props {
   measurement: string
   tagKey: string
   updateModelName: (name: string) => void
-  onChooseName: (trigger: string) => void
+  onChooseTemplate: (name: string, params: string[]) => void
   updateTagsValues: (tags: string[]) => void
   handleSave: () => void
   validationError?: string
@@ -40,7 +40,7 @@ class ModelTemplate extends Component<Props, null> {
       measurement,
       tagKey,
       updateModelName,
-      onChooseName,
+      onChooseTemplate,
       template,
       updateTagsValues,
     } = this.props
@@ -63,7 +63,7 @@ class ModelTemplate extends Component<Props, null> {
                   />
                   <TemplateSelectorSection
                     name={template.name}
-                    onChooseName={onChooseName}
+                    onChooseTemplate={onChooseTemplate}
                   />
                   <TemplateTagsSection
                     template={template}

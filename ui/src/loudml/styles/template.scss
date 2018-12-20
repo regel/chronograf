@@ -26,18 +26,15 @@ $graph-type--gutter: 4px;
   }
   .template-type-selector--option {
     float: left;
-    width: 33.3333%;
-    padding-bottom: 33.3333%;
+    width: 100%;
+    padding-bottom: 40%;
     position: relative;
   
     > div > p {
-      margin: 0;
-      font-size: 14px;
-      font-weight: 900;
-      position: absolute;
-      bottom: 18px;
-      left: 10px;
-      width: calc(100% - 168px);
+        margin: 0;
+        position: absolute;
+        bottom: 18px;
+        left: 18px;
     //   text-align: center;
     //   display: inline-block;
     //   white-space: nowrap;
@@ -46,13 +43,17 @@ $graph-type--gutter: 4px;
     }
     .template--short-desc {
         font-size: 16px;
-        left: 150px;
+        font-weight: 600;
+        // left: 150px;
         top: 18px;
+        width: calc(100% - 36px);
     }
     .template--long-desc {
         font-size: 14px;
-        left: 150px;
-        top: 50px;
+        font-weight: 400;
+        left: 118px;
+        top: 80px;
+        width: calc(100% - 136px);
     }
   
     // Actual "card"
@@ -82,6 +83,14 @@ $graph-type--gutter: 4px;
       width: 50%;
       /*padding-bottom: 25%;*/
       padding-bottom: 50%;
+    }
+  }
+  @media only screen and (min-width: 992px) {
+    .template-type-selector--option {
+      /*width: 25%;*/
+      width: 50%;
+      /*padding-bottom: 25%;*/
+      padding-bottom: 33%;
     }
   }
   @media only screen and (min-width: 1270px) {
@@ -117,12 +126,12 @@ $graph-type--gutter: 4px;
   }
   
   .template-type-selector--graphic {
-    width: calc(100% - 54px);
-    height: calc(100% - 54px);
+    width: 100px;
+    height: 100px;
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 80px;
+    left: 18px;
+    // transform: translate(-50%, -50%);
   
     > svg,
     > svg * {
@@ -158,7 +167,7 @@ $graph-type--gutter: 4px;
     // transition: opacity 0.5s ease;
   
     &.graphic-fill-a {
-      fill: $g11-sidewalk;
+      fill: $g7-graphite;
     }
     &.graphic-fill-b {
       fill: $g9-mountain;
@@ -170,6 +179,9 @@ $graph-type--gutter: 4px;
       fill: $g13-mist;
       opacity: 1;
     }
+    &.graphic-fill-bottle {
+        fill: $g9-mountain;
+      }  
   }
   .template-type-selector--option.active .template-type-selector--graphic {
     .template-type-selector--graphic-line.graphic-line-a {
@@ -193,9 +205,13 @@ $graph-type--gutter: 4px;
     .template-type-selector--graphic-fill.graphic-fill-c {
       fill: $c-rainforest;
     }
+    .template-type-selector--graphic-fill.graphic-fill-c {
+        fill: $c-rainforest;
+    }
     .template-type-selector--graphic-fill.graphic-fill-a,
     .template-type-selector--graphic-fill.graphic-fill-b,
-    .template-type-selector--graphic-fill.graphic-fill-c {
+    .template-type-selector--graphic-fill.graphic-fill-c,
+    .template-type-selector--graphic-fill.graphic-fill-bottle {
       opacity: 0.22;
     }
     .template-type-selector--graphic-fill.graphic-fill-d {

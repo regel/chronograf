@@ -48,7 +48,7 @@ interface State {
 
 const DEFAULT_TEMPLATE: TemplateModel = {
   modelPrefix: 'AutoML',
-  name: 'template_syslog',
+  name: null,
   hosts: [],
 }
 
@@ -59,9 +59,9 @@ class ModelTemplatePage extends Component<Props, State> {
 
     this.state = {
       datasource: null,
-      db: 'telegraf',
-      measurement: 'syslog',
-      tagKey: 'host',
+      db: null,
+      measurement: null,
+      tagKey: null,
       // timeRange: timeRanges.find(tr => tr.lower === 'now() - 15m'),
       template: {...DEFAULT_TEMPLATE},
     }
@@ -86,7 +86,7 @@ class ModelTemplatePage extends Component<Props, State> {
         tagKey={tagKey}
         template={template}
         updateModelName={this.updateModelName}
-        onChooseName={this.chooseName}
+        onChooseTemplate={this.chooseTemplate}
         updateTagsValues={this.updateTagsValues}
         handleSave={this.handleSave}
       />
@@ -169,10 +169,16 @@ class ModelTemplatePage extends Component<Props, State> {
     })
   }
 
-  private chooseName = (name: string) => {
+  private chooseTemplate = (name: string, params: string[]) => {
     const {template} = this.state
 
+    const tag = params.find(p => (p!=='name'))
+    const dbMeasurement = name.split('_')
+
     this.setState({
+      db: dbMeasurement[0],
+      measurement: dbMeasurement[1],
+      tagKey: tag,
       template: {
         ...template,
         name,
@@ -199,7 +205,7 @@ class ModelTemplatePage extends Component<Props, State> {
       template.hosts.map(
           host => {
             const name = `${template.modelPrefix}_5m_${host.replace(/[\.-]/g, '_')}`
-            return this.createAndTrainModel(`${template.name}`, name, host)
+            return this.createAndTrainModel(template.name, name, host)
           }
       )
     )
