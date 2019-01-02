@@ -48,7 +48,7 @@ class ModelTemplate extends Component<Props, null> {
     return (
       <div className="page">
         <PageHeader
-          titleText="Template Model Builder"
+          titleText="Model Builder"
           optionsComponents={this.optionsComponents}
           sourceIndicator={true}
         />

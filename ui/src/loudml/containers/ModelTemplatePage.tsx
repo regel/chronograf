@@ -136,8 +136,8 @@ class ModelTemplatePage extends Component<Props, State> {
         lower,
         upper
     } = convertTimeRange({
-      lower: 'now() - 7d',
-      upper: null,
+      lower: 'now() - 11d',
+      upper: 'now() - 4d',
     })
     
     try {

@@ -97,7 +97,10 @@ class ModelsTable extends PureComponent<Props, {}> {
         const {source: {id}} = this.props
         return (
             <div className="generic-empty-state">
-                <h4 className="no-user-select">Looks like you don't have any models</h4>
+                <h4 className="no-user-select">
+                    Looks like you don't have any models<br /><br />
+                    Create your own model, or use the model builder to create a model from an existing data schema template
+                </h4>
                 <br />
                 <h6 className="no-user-select">
                     <Link
@@ -106,14 +109,14 @@ class ModelsTable extends PureComponent<Props, {}> {
                         className="btn btn-primary btn-sm"
                     >
                         <span className="icon plus" />
-                        Create a model
+                        Create model manually
                     </Link>
                     <Link
                         style={{marginLeft: '10px'}}
                         to={`/sources/${id}/loudml/models/template`}
                         className="btn btn-primary btn-sm"
                     >
-                        ...from template
+                        Use model builder
                     </Link>
                 </h6>
             </div>
