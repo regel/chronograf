@@ -15,7 +15,7 @@ import {
   QueryConfig,
 } from 'src/types'
 import ModelTemplate from 'src/loudml/components/ModelTemplate';
-import { getDatasources, createModelFromTemplate, trainAndStartModel } from 'src/loudml/apis';
+import { createModelFromTemplate, trainAndStartModel } from 'src/loudml/apis';
 import { notifyModelCreationFailed, notifyModelCreated, notifyModelTraining, notifyModelTrainingFailed } from 'src/loudml/actions/notifications';
 import { parseError } from 'src/loudml/utils/error';
 import { convertTimeRange } from 'src/loudml/utils/timerange';
@@ -38,7 +38,6 @@ interface Props {
 }
 
 interface State {
-  datasource: string
   db: string
   measurement: string
   tagKey: string
@@ -58,7 +57,6 @@ class ModelTemplatePage extends Component<Props, State> {
     super(props)
 
     this.state = {
-      datasource: null,
       db: null,
       measurement: null,
       tagKey: null,
@@ -89,25 +87,9 @@ class ModelTemplatePage extends Component<Props, State> {
         onChooseTemplate={this.chooseTemplate}
         updateTagsValues={this.updateTagsValues}
         handleSave={this.handleSave}
+        validationError={this.validationError}
       />
     )
-  }
-
-  public componentDidMount() {
-    this.getDatasource()
-  }
-
-  public componentDidUpdate(prevProps) {
-    if (this.props.queryConfig.database !== prevProps.queryConfig.database) {
-        this.getDatasource();
-    }
-  }
-
-  private getDatasource = async () => {
-    const {db} = this.state
-    const {data} = await getDatasources()
-    const datasource = data.find(d => d.database === db)
-    this.setState({datasource: datasource&&datasource.name})
   }
 
   private createAndTrainModel = async (template, name, host) => {
@@ -197,7 +179,7 @@ class ModelTemplatePage extends Component<Props, State> {
     })
   }
 
-  private handleSave = () => {
+  private handleSave = async () => {
     const {source: {id}, router} = this.props
     const {template} = this.state
 
@@ -216,15 +198,19 @@ class ModelTemplatePage extends Component<Props, State> {
         errorThrown(error)
     })    
   }
-}
-
-const mapStateToProps = ({dataExplorerQueryConfigs, dataExplorer: {queryIDs}}) => {
-  const queryConfig = (queryIDs.length>0
-      ? dataExplorerQueryConfigs[queryIDs[0]]
-      : null)
-
-  return {
-      queryConfig,
+  
+  private get validationError() {
+    const {template, tagKey} = this.state
+  
+    if (!template.modelPrefix) {
+      return 'Prefix could not be empty'
+    }
+    if (!template.name) {
+      return 'No template selected'
+    }
+    if (!template.hosts.length) {
+      return `No ${tagKey} values selected`
+    }
   }
 }
 
@@ -236,4 +222,4 @@ const mapDispatchToProps = dispatch => ({
   notify: bindActionCreators(notifyAction, dispatch),
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(ModelTemplatePage)
+export default connect(null, mapDispatchToProps)(ModelTemplatePage)
