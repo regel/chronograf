@@ -7,6 +7,7 @@
 1.  [#23](https://github.com/regel/chronograf/pull/23): Scores and Transform settings in Feature panel
 1.  [#24](https://github.com/regel/chronograf/pull/24): Datasink
 1.  [#28](https://github.com/regel/chronograf/pull/28): Unserialized Features in model
+1.  [#35](https://github.com/regel/chronograf/pull/35): normalize span for 1-Click ML
 
 ### UI Improvements
 
