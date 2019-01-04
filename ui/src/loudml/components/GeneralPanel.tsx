@@ -8,7 +8,7 @@ import RadioButtons from 'src/reusable_ui/components/radio_buttons/RadioButtons'
 import { ButtonShape, ComponentSize } from 'src/reusable_ui/types';
 
 const enum ModelTypeTabs {
-    Timeseries = 'timeseries',
+    Timeseries = 'donut',
     Fingerprints = 'fingerprints',
 }
   

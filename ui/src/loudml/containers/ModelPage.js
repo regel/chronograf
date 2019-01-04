@@ -392,7 +392,7 @@ class ModelPage extends Component {
                 name: 'Parameters',
                 url: 'parameters',
                 enabled: true,
-                component: (model.type==='timeseries'
+                component: (model.type==='donut'
                     ?(
                     <TimeseriesPanel
                         model={model}

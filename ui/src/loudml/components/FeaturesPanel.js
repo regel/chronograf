@@ -180,7 +180,7 @@ class FeaturesPanel extends Component {
                             <Feature
                                 key={`${index}_${features.length}`}
                                 feature={feature}
-                                timeseries={type==='timeseries'}
+                                timeseries={type==='donut'}
                                 onDelete={this.deleteFeature}
                                 onCancel={this.deleteFeature}
                                 onEdit={this.editFeature}

@@ -13,6 +13,7 @@ import {parseError} from 'src/loudml/utils/error'
 import {createHook} from 'src/loudml/utils/hook'
 import {
     normalizeInterval,
+    normalizeSpan,
     normalizeFeatureDefault,
 } from 'src/loudml/utils/model'
 import {
@@ -204,6 +205,7 @@ class OneClickML extends Component {
             max_evals: 10,
             name: this.name,
             interval: normalizeInterval(time),
+            span: normalizeSpan(time),
             default_datasource: datasource,
             bucket_interval: time,
             features: fields.map(

@@ -14,9 +14,9 @@ export const DEFAULT_MODEL = {
         daytime: false,
         weekday: false,
     },
-    span: 10,
-    forecast: 5,
-    type: 'timeseries',
+    span: 50,
+    forecast: 1,
+    type: 'donut',
     min_threshold: 0,   // auto
     max_threshold: 0,   // auto
 }
