@@ -6,6 +6,7 @@ import {Source, RemoteDataState} from 'src/types'
 import { TemplateModel } from 'src/loudml/types/template';
 import {proxy} from 'src/utils/queryUrlGenerator'
 import parseShowTagValues from 'src/shared/parsing/showTagValues';
+import LoadingDots from 'src/shared/components/LoadingDots';
 
 interface Props {
   template: TemplateModel
@@ -103,7 +104,20 @@ class TemplateTagsSection extends PureComponent<Props, State> {
 
   private get renderTagValues() {
     const {template: {hosts}} = this.props
-    const {tagValues} = this.state
+    const {tagValuesStatus, tagValues} = this.state
+
+    if (tagValuesStatus === RemoteDataState.Loading) {
+      return (
+        <LoadingDots className="query-editor--loading" />
+      )
+    }
+
+    if (tagValuesStatus === RemoteDataState.Error) {
+      return (
+        <div><p>Fail to get tag values</p></div>
+      )
+    }
+
     if (!tagValues.length) {
         return (<div>no tag values</div>)
     }

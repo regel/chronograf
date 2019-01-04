@@ -163,61 +163,23 @@ $graph-type--gutter: 4px;
     }
   }
   .template-type-selector--graphic-fill {
-    // opacity: 0.045;
     opacity: 0.22;
     transition: opacity 0.5s ease;
   
-    &.graphic-fill-a {
+    &.graphic-fill-liquid {
       fill: $g7-graphite;
-    }
-    &.graphic-fill-b {
-      fill: $g9-mountain;
-    }
-    &.graphic-fill-c {
-      fill: $g7-graphite;
-    }
-    &.graphic-fill-d {
-      fill: $g13-mist;
-      opacity: 1;
     }
     &.graphic-fill-bottle {
         fill: $g9-mountain;
       }  
   }
   .template-type-selector--option.active .template-type-selector--graphic {
-    .template-type-selector--graphic-line.graphic-line-a {
-      stroke: $c-pool;
-    }
-    .template-type-selector--graphic-line.graphic-line-b {
-      stroke: $c-dreamsicle;
-    }
-    .template-type-selector--graphic-line.graphic-line-c {
-      stroke: $c-rainforest;
-    }
-    .template-type-selector--graphic-line.graphic-line-d {
-      stroke: $g17-whisper;
-    }
-    .template-type-selector--graphic-fill.graphic-fill-a {
+    .template-type-selector--graphic-fill.graphic-fill-liquid {
       fill: $c-pool;
     }
-    .template-type-selector--graphic-fill.graphic-fill-b {
-      fill: $c-dreamsicle;
-    }
-    .template-type-selector--graphic-fill.graphic-fill-c {
-      fill: $c-rainforest;
-    }
-    .template-type-selector--graphic-fill.graphic-fill-c {
-        fill: $c-rainforest;
-    }
-    .template-type-selector--graphic-fill.graphic-fill-a,
-    .template-type-selector--graphic-fill.graphic-fill-b,
-    .template-type-selector--graphic-fill.graphic-fill-c,
+    .template-type-selector--graphic-fill.graphic-fill-liquid,
     .template-type-selector--graphic-fill.graphic-fill-bottle {
       opacity: 0.52;
-    }
-    .template-type-selector--graphic-fill.graphic-fill-d {
-      fill: $g17-whisper;
-      opacity: 1;
     }
   }
   
