@@ -1,55 +1,51 @@
 import moment from 'moment'
 
+const MIN_INTERVAL_SECOND = 5
+const MIN_INTERVAL_UNIT = `${MIN_INTERVAL_SECOND}s`
+const MIN_SPAN = 10
+
 export const normalizeInterval = bucketInterval => {
     // interval = max(5, min(bucketIntervak, 60))
     const regex = /(\d+)(.*)/
     const interval = regex.exec(bucketInterval)
-    if (!interval||!interval.length) {
-        return '5s'
+    if (!interval) {
+        return MIN_INTERVAL_UNIT
     }
 
-    try {
-        const duration = moment.duration(Number.parseInt(interval[1], 10), interval[2]).asSeconds()
-        const normalized = Math.max(
-            5,
-            moment.duration(
-                Math.min(
-                    duration,
-                    60
-                ),
-                's'
-            ).asSeconds()
-        )
-        return `${normalized}s`
-    } catch (e) {
-        console.error(`parsing interval ${bucketInterval} failed`, e)
-        return '5s'
+    const duration = moment.duration(Number.parseInt(interval[1], 10), interval[2]).asSeconds()
+    if (!duration) {
+        return MIN_INTERVAL_UNIT
     }
+
+    const normalized = Math.max(
+        MIN_INTERVAL_SECOND,
+        Math.min(
+            duration,
+            60
+        )
+    )
+    return `${normalized}s`
 }
 
 export const normalizeSpan = bucketInterval => {
     // span = min(10, (2h/bucketInterval))
     const regex = /(\d+)(.*)/
     const interval = regex.exec(bucketInterval)
-    if (!interval||!interval.length) {
-        return 10
+    if (!interval) {
+        return MIN_SPAN
     }
 
-    try {
-        const duration = moment.duration(Number.parseInt(interval[1], 10), interval[2]).asSeconds()
-        return Math.ceil(
-            Math.min(
-                10,
-                moment.duration(
-                    moment.duration(2, 'h').asSeconds()/duration,
-                    's'
-                ).asSeconds()
-            )
-        )
-    } catch (e) {
-        console.error(`parsing span ${bucketInterval} failed`, e)
-        return 10
+    const duration = moment.duration(Number.parseInt(interval[1], 10), interval[2]).asSeconds()
+    if (!duration) {
+        return MIN_SPAN
     }
+
+    return Math.ceil(
+        Math.max(
+            MIN_SPAN,
+            7200/duration
+        )
+    )
 }
 
 export const normalizeFeatureDefault = fill => {

@@ -1,5 +1,4 @@
 import {normalizeInterval, normalizeSpan} from 'src/loudml/utils/model'
-import moment from 'moment'
 
 describe('Loudml.Utils.Model', () => {
     describe('normalizeInterval', () => {
@@ -39,14 +38,13 @@ describe('Loudml.Utils.Model', () => {
             expect(normalizeSpan(interval)).toEqual(MIN_SPAN)
         })
         it(`returns ${MIN_SPAN} if interval less than ${SPAN_THRESHOLD}`, () => {
-            const interval = '11m'
+            const interval = '13m'
             expect(normalizeSpan(interval)).toEqual(MIN_SPAN)
         })
         it(`returns interval if interval greater than ${SPAN_THRESHOLD}`, () => {
-            const interval = '13m'
+            const interval = '11m'
             const normalized = normalizeSpan(interval)
-            const expected = moment.duration(Number.parseInt(normalized, 10), 's').asSeconds()    // Math.ceil(9.23076923076923)
-            expect(expected).toBeLessThanOrEqual(MIN_SPAN)
+            expect(normalized).toBeGreaterThan(MIN_SPAN)
         })
     })
 
