@@ -5,7 +5,6 @@ import FeaturesUtils from 'src/loudml/components/FeaturesUtils'
 import { DEFAULT_LOUDML_RP } from 'src/loudml/constants';
 
 const QUERY_CONFIG = {
-    retentionPolicy: DEFAULT_LOUDML_RP,
     areTagsAccepted: true,
     rawText: null,
     range: {
@@ -63,14 +62,15 @@ const getTags = feature => {
     }, {})
 }
 
-const createErrorQueryConfig = (prefix, model, database) => {
+const createErrorQueryConfig = (prefix, model, datasource) => {
     const {name, features} = model
     const feature = features[0]
 
     return {
         ...QUERY_CONFIG,
         fields: createErrorQueryFields(prefix, model),
-        database,
+        database: datasource.database,
+        retentionPolicy: datasource.retention_policy||DEFAULT_LOUDML_RP,
         measurement: `prediction_${name}`,
         tags: getTags(feature),
         fill: null,
@@ -81,7 +81,7 @@ const createErrorQueryConfig = (prefix, model, database) => {
     }
 }
 
-const createModelQueryConfig = (model, database) => {
+const createModelQueryConfig = (model, datasource) => {
     const {features} = model
     const feature = features[0]
     const measurement = feature.measurement
@@ -89,7 +89,8 @@ const createModelQueryConfig = (model, database) => {
     return {
         ...QUERY_CONFIG,
         fields: createModelQueryFields(model),
-        database,
+        database: datasource.database,
+        retentionPolicy: datasource.retention_policy||DEFAULT_LOUDML_RP,
         measurement,
         tags: getTags(feature),
         fill: feature.default,
@@ -100,7 +101,7 @@ const createModelQueryConfig = (model, database) => {
     }
 }
 
-export const createQueryFromModel = (model, source, database) => {
+export const createQueryFromModel = (model, source, datasource) => {
     const {settings} = model
     const {links: {self}} = source
     
@@ -116,16 +117,16 @@ export const createQueryFromModel = (model, source, database) => {
         { queryConfig: createErrorQueryConfig(
             'lower',
             m,
-            database),
+            datasource),
         },
         { queryConfig: createModelQueryConfig(
             m,
-            database),
+            datasource),
         },
         { queryConfig: createErrorQueryConfig(
             'upper',
             m,
-            database),
+            datasource),
         },
     ]
     return [{
