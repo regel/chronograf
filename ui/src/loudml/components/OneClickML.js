@@ -113,6 +113,12 @@ const checkTags = (tags) => {
     return Object.values(tags).some(v => v.length>1) === false
 }
 
+const tagsToName = (tags) => {
+    return Object.entries(tags)
+        .map(([k, v]) => (`${k}_${v.map(i => (i.replace(/[.-]/g, '_'))).join('_')}`))
+        .join('_')
+}
+
 class OneClickML extends Component {
     constructor(props) {
         super(props)
@@ -176,6 +182,7 @@ class OneClickML extends Component {
                 measurement,
                 fields,
                 groupBy: {time},
+                tags,
             }
         } = this.props
         return [
@@ -183,6 +190,7 @@ class OneClickML extends Component {
             measurement,
             fields[0].value,
             fields[0].args[0].value,
+            tagsToName(tags),
             time
         ].join('_')
     }
