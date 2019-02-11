@@ -139,6 +139,29 @@ class OneClickML extends Component {
         }
     }
 
+    render() {
+        const {uuidTooltip} = this.state
+        return (
+            <div className={classnames('btn', 'btn-sm', 'btn-default', {
+                'disabled': !this.isValid,
+                })}
+                onClick={this.oneClickModel}
+                data-for={uuidTooltip}
+                data-tip={this.sourceNameTooltip}
+            >
+                <span className="icon loudml-gradcap" />
+                Create baseline
+                <ReactTooltip
+                    id={uuidTooltip}
+                    effect="solid"
+                    html={true}
+                    place="bottom"
+                    class="influx-tooltip"
+                />
+            </div>
+        )
+    }
+
     _trainModel = async (name) => {
         const {
             timeRange,
@@ -259,6 +282,8 @@ class OneClickML extends Component {
     }
 
     get sourceNameTooltip() {
+        const formatStaticTip = text => (`<div><span>${text}</span></div>`)
+
         const {
             settings: {
                 fields,
@@ -269,13 +294,17 @@ class OneClickML extends Component {
             }
         } = this.props
         const {datasource} = this.state
-
+        
         const isCheckTags = checkTags(tags)
         const checkTagsAccepted = (Object.keys(tags).length>0 && isCheckTags
-            ? areTagsAccepted
-            : true)  // don't care
-
+        ? areTagsAccepted
+        : true)  // don't care
+        
         return [
+            formatStaticTip('Use your current data selection to baseline normal metric behavior using a machine learning task.'),
+            formatStaticTip('This will create a new model, and run training to fit the baseline to your data.'),
+            formatStaticTip('You can visualise the baseline, and forecast future data using the Loud ML tab on the left panel once training is completed.'),
+            '<br/>',
             notifyDatasource(datasource),
             notifyFeature(fields),
             notifyInterval(time),
@@ -307,28 +336,6 @@ class OneClickML extends Component {
             && (checkTagsAccepted)
     }
 
-    render() {
-        const {uuidTooltip} = this.state
-        return (
-            <div className={classnames('btn', 'btn-sm', 'btn-default', {
-                'disabled': !this.isValid,
-                })}
-                onClick={this.oneClickModel}
-                data-for={uuidTooltip}
-                data-tip={this.sourceNameTooltip}
-            >
-                <span className="icon loudml-gradcap" />
-                1-Click ML
-                <ReactTooltip
-                    id={uuidTooltip}
-                    effect="solid"
-                    html={true}
-                    place="left"
-                    class="influx-tooltip"
-                />
-            </div>
-        )
-    }
 }
 
 const {shape, func} = PropTypes
