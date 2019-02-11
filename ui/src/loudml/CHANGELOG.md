@@ -18,6 +18,7 @@
 1.  [#28](https://github.com/regel/chronograf/pull/28): Model name input/display in Model Page
 1.  [#28](https://github.com/regel/chronograf/pull/28): Icons for Play/Stop
 1.  [#32](https://github.com/regel/chronograf/pull/32): Error graph picto
+1.  [#40](https://github.com/regel/chronograf/pull/40): 1-Click ML becomes Create baseline
 
 ### Bug Fixes
 
