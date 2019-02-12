@@ -1,8 +1,11 @@
 import moment from 'moment'
 
 const MIN_INTERVAL_SECOND = 5
-const MIN_INTERVAL_UNIT = `${MIN_INTERVAL_SECOND}s`
-const MIN_SPAN = 10
+export const MIN_INTERVAL_UNIT = `${MIN_INTERVAL_SECOND}s`
+const MAX_INTERVAL_SECOND = 60
+export const MAX_INTERVAL_UNIT = `${MAX_INTERVAL_SECOND}s`
+export const MIN_SPAN = 10
+export const MAX_SPAN = 100
 
 export const normalizeInterval = bucketInterval => {
     // interval = max(5, min(bucketIntervak, 60))
@@ -21,14 +24,14 @@ export const normalizeInterval = bucketInterval => {
         MIN_INTERVAL_SECOND,
         Math.min(
             duration,
-            60
+            MAX_INTERVAL_SECOND
         )
     )
     return `${normalized}s`
 }
 
 export const normalizeSpan = bucketInterval => {
-    // span = min(10, (2h/bucketInterval))
+    // span = max(10, min(24h/bucketInterval, 100))
     const regex = /(\d+)(.*)/
     const interval = regex.exec(bucketInterval)
     if (!interval) {
@@ -40,12 +43,7 @@ export const normalizeSpan = bucketInterval => {
         return MIN_SPAN
     }
 
-    return Math.ceil(
-        Math.max(
-            MIN_SPAN,
-            7200/duration
-        )
-    )
+    return Math.max(MIN_SPAN, Math.min(Math.ceil(86400/duration), MAX_SPAN))
 }
 
 export const normalizeFeatureDefault = fill => {
