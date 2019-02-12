@@ -25,7 +25,6 @@ import {
     DEFAULT_IO,
     DEFAULT_SCORES,
     DEFAULT_TRANSFORM,
-    DEFAULT_LOUDML_RP
 } from 'src/loudml/constants'
 import {DEFAULT_ANOMALY_TYPE} from 'src/loudml/constants/anomaly'
 
@@ -125,6 +124,7 @@ class Feature extends Component {
             database,
             feature: {measurement},
             measurements,
+            retentionPolicy,
         } = this.props
 
         if (
@@ -136,7 +136,7 @@ class Feature extends Component {
         }
 
         try {
-            const {data} = await showFieldKeys(source.links.proxy, database, measurement, DEFAULT_LOUDML_RP)
+            const {data} = await showFieldKeys(source.links.proxy, database, measurement, retentionPolicy)
             const {errors, fieldSets} = showFieldKeysParser(data)
             if (errors.length) {
                 console.error('Error parsing fields keys: ', errors)
@@ -241,6 +241,7 @@ class Feature extends Component {
             onConfirm,
             feature,
             database,
+            retentionPolicy,
             source,
             locked,
         } = this.props
@@ -282,7 +283,7 @@ class Feature extends Component {
                                         tags={feature.match_all}
                                         database={database}
                                         measurement={feature.measurement}
-                                        retentionPolicy={DEFAULT_LOUDML_RP}
+                                        retentionPolicy={retentionPolicy}
                                         source={source}
                                         onChooseTag={this.onChooseTag}
                                         disabled={locked}
@@ -478,6 +479,7 @@ Feature.propTypes = {
     measurements: arrayOf(string),
     source: shape(),
     database: string,
+    retentionPolicy: string.isRequired,
     locked: bool.isRequired,
 }
 

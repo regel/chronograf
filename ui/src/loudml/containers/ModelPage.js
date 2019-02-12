@@ -47,7 +47,7 @@ import {
 import {parseError} from 'src/loudml/utils/error'
 import {createHook} from 'src/loudml/utils/hook'
 
-import {DEFAULT_MODEL} from 'src/loudml/constants'
+import {DEFAULT_MODEL, MODEL_TYPE_LIST} from 'src/loudml/constants'
 import {ANOMALY_HOOK_NAME, ANOMALY_HOOK} from 'src/loudml/constants/anomaly'
 
 import 'src/loudml/styles/model.scss'
@@ -256,7 +256,7 @@ class ModelPage extends Component {
         this.handleEdit(name, type === 'number' ? Number(value) : value)
     }
 
-    onDatasourceChoose = (field, value) => {
+    onDropdownChoose = (field, value) => {
         this.handleEdit(field, value)
     }
 
@@ -381,9 +381,10 @@ class ModelPage extends Component {
                 component: (
                     <GeneralPanel
                         model={model}
-                        onDatasourceChoose={this.onDatasourceChoose}
+                        onDropdownChoose={this.onDropdownChoose}
                         onEdit={this.handleEdit}
                         datasources={datasources}
+                        modelTypes={MODEL_TYPE_LIST}
                         locked={locked}
                         />
                 ),
