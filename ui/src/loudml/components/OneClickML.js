@@ -34,7 +34,7 @@ import {
     notifyModelTrainingFailed,
 } from 'src/loudml/actions/notifications'
 
-import {DEFAULT_MODEL} from 'src/loudml/constants'
+import {DEFAULT_MODEL, DEFAULT_LOUDML_RP} from 'src/loudml/constants'
 import {ANOMALY_HOOK} from 'src/loudml/constants/anomaly'
 
 const UNDEFINED_DATASOURCE = 'Unable to find LoudML datasource for selected database. Check configuration'
@@ -134,7 +134,8 @@ class OneClickML extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (this.props.settings.database !== prevProps.settings.database) {
+        if (this.props.settings.database !== prevProps.settings.database
+            ||this.props.settings.retentionPolicy !== prevProps.settings.retentionPolicy) {
             this._getDatasource();
         }
     }
@@ -168,9 +169,9 @@ class OneClickML extends Component {
     }
 
     _getDatasource = async () => {
-        const {settings: {database}} = this.props
+        const {settings: {database, retentionPolicy}} = this.props
         const {data} = await getDatasources()
-        const datasource = data.find(d => d.database === database)
+        const datasource = data.find(d => d.database === database && (d.retention_policy||DEFAULT_LOUDML_RP) === retentionPolicy)
         this.setState({datasource: datasource&&datasource.name})
     }
 
