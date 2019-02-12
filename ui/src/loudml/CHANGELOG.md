@@ -9,6 +9,7 @@
 1.  [#28](https://github.com/regel/chronograf/pull/28): Unserialized Features in model
 1.  [#38](https://github.com/regel/chronograf/pull/38): tags (key/values) in 1-Click model name
 1.  [#39](https://github.com/regel/chronograf/pull/39): retention policy value from Loud ML datasource
+1.  [#42](https://github.com/regel/chronograf/pull/41): Donut model type
 
 ### UI Improvements
 
