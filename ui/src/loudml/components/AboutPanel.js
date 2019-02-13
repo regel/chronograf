@@ -8,6 +8,7 @@ const AboutTextStyle = {
     textAlign: 'center',
     whiteSpace: 'pre-wrap',
     color: '#eeeff2',
+    marginBottom: '2em',
 }
 
 const AboutPanel = ({
@@ -27,7 +28,10 @@ const AboutPanel = ({
                     It's plug-and-play, so you can use it for other projects too.
                 </p>
                 <p style={AboutTextStyle}>
-                    Visit <a href='http://loudml.io' target='_loudml'>loudml.io</a> to download the free Community package and reap the benefits of ML within days.
+                    Contribute to the open source software development on <a href="https://github.com/regel" target="_github">GitHub</a>.
+                </p>
+                <p style={AboutTextStyle}>
+                    Or if you're not sure about machine learning, <a href="https://loudml.io/contact-us/" target="_loudml">contact us</a> to find out how we can help find the best solution to your problem.
                 </p>
             </div>
         </div>
