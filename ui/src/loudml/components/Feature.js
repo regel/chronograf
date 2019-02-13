@@ -22,7 +22,6 @@ import {
 
 import {
     DEFAULT_METRICS,
-    DEFAULT_LOUDML_RP
 } from 'src/loudml/constants'
 import {DEFAULT_ANOMALY_TYPE} from 'src/loudml/constants/anomaly'
 
@@ -302,7 +301,7 @@ class Feature extends Component {
             fields,
         } = this.state
 
-        const base = [
+        return [
             {
                 label: 'Measurement',
                 customClass: "col-xs-5",
@@ -356,23 +355,6 @@ class Feature extends Component {
                 />)
             },
             {
-                label: 'Anomaly type',
-                customClass: "col-xs-4",
-                component: (<FeatureDropdown
-                    name="anomaly_type"
-                    onChoose={this.handleValueChoose('anomaly_type')}
-                    items={DEFAULT_ANOMALY_TYPE}
-                    selected={safeValue(DEFAULT_ANOMALY_TYPE, feature.anomaly_type)}
-                    className="dropdown-stretch"
-                    buttonSize="btn-sm"
-                    disabled={locked}
-                />)
-            },
-        ]
-
-        return [
-            ...base,
-            {
                 label: 'Low watermark',
                 customClass: "col-md-5",
                 component: (<WatermarkComponent
@@ -389,9 +371,21 @@ class Feature extends Component {
                     onEdit={this.handleWatermarkValue('high_watermark')}
                     disabled={locked}
                     />)
-            }
+            },
+            {
+                label: 'Anomaly type',
+                customClass: "col-xs-4",
+                component: (<FeatureDropdown
+                    name="anomaly_type"
+                    onChoose={this.handleValueChoose('anomaly_type')}
+                    items={DEFAULT_ANOMALY_TYPE}
+                    selected={safeValue(DEFAULT_ANOMALY_TYPE, feature.anomaly_type)}
+                    className="dropdown-stretch"
+                    buttonSize="btn-sm"
+                    disabled={locked}
+                />)
+            },
         ]
-
     }
 }
 
