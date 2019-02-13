@@ -22,9 +22,7 @@ import {
 
 import {
     DEFAULT_METRICS,
-    DEFAULT_IO,
-    DEFAULT_SCORES,
-    DEFAULT_TRANSFORM,
+    DEFAULT_LOUDML_RP
 } from 'src/loudml/constants'
 import {DEFAULT_ANOMALY_TYPE} from 'src/loudml/constants/anomaly'
 
@@ -40,7 +38,6 @@ const safeValue = (collection, value) => {
 
 const EnabledWatermarkValue = ({
     value,
-    // name,
     onEdit
 }) => {
     return (
@@ -56,8 +53,6 @@ const EnabledWatermarkValue = ({
 }
 
 const WatermarkComponent = ({
-    // feature,
-    // name,
     watermark,
     onEdit,
     disabled,
@@ -73,7 +68,6 @@ const WatermarkComponent = ({
     return (
         <EnabledWatermarkValue
             value={watermark}
-            // name={name}
             onEdit={onEdit}
             />
     )
@@ -301,7 +295,6 @@ class Feature extends Component {
         const {
             feature,
             measurements,
-            timeseries,
             locked,
         } = this.props
 
@@ -375,52 +368,7 @@ class Feature extends Component {
                     disabled={locked}
                 />)
             },
-            {
-                label: 'Scores',
-                customClass: "col-xs-4",
-                component: (<FeatureDropdown
-                    name="scores"
-                    onChoose={this.handleValueChoose('scores')}
-                    items={DEFAULT_SCORES}
-                    selected={safeValue(DEFAULT_SCORES, feature.scores)}
-                    className="dropdown-stretch"
-                    buttonSize="btn-sm"
-                    disabled={locked}
-                />)
-            },
-            {
-                label: 'Transform',
-                customClass: "col-xs-3",
-                component: (<FeatureDropdown
-                    name="transform"
-                    onChoose={this.handleValueChoose('transform')}
-                    items={DEFAULT_TRANSFORM}
-                    selected={safeValue(DEFAULT_TRANSFORM, feature.transform)}
-                    className="dropdown-stretch"
-                    buttonSize="btn-sm"
-                    disabled={locked}
-                />)
-            }
         ]
-
-        if (timeseries) {
-            return [
-                ...base,
-                {
-                    label: 'Input/Output',
-                    customClass: "col-xs-4",
-                    component: (<FeatureDropdown
-                        name="io"
-                        onChoose={this.handleValueChoose('io')}
-                        items={DEFAULT_IO}
-                        selected={safeValue(DEFAULT_IO, feature.io)}
-                        className="dropdown-stretch"
-                        buttonSize="btn-sm"
-                        disabled={locked}
-                    />)
-                }
-            ]
-        }
 
         return [
             ...base,
@@ -428,7 +376,6 @@ class Feature extends Component {
                 label: 'Low watermark',
                 customClass: "col-md-5",
                 component: (<WatermarkComponent
-                    // feature={feature}
                     watermark={feature.low_watermark}
                     onEdit={this.handleWatermarkValue('low_watermark')}
                     disabled={locked}
@@ -438,7 +385,6 @@ class Feature extends Component {
                 label: 'High watermark',
                 customClass: "col-xs-offset-1 col-xs-5",
                 component: (<WatermarkComponent
-                    // feature={feature}
                     watermark={feature.high_watermark}
                     onEdit={this.handleWatermarkValue('high_watermark')}
                     disabled={locked}
@@ -453,12 +399,10 @@ const {func, shape, arrayOf, string, bool, number, oneOfType} = PropTypes
 
 EnabledWatermarkValue.propTypes = {
     value: number,
-    // name: string.isRequired,
     onEdit: func.isRequired,
 }
 
 WatermarkComponent.propTypes = {
-    // feature: shape({}).isRequired,
     watermark: number,
     onEdit: func.isRequired,
     disabled: bool.isRequired,
@@ -471,7 +415,6 @@ FeatureDropdown.propTypes = {
 
 Feature.propTypes = {
     feature: shape({}).isRequired,
-    timeseries: bool.isRequired,
     onDelete: func.isRequired,
     onEdit: func.isRequired,
     onKeyDown: func.isRequired,
