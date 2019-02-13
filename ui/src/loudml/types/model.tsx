@@ -55,3 +55,9 @@ export interface Job {
     name: string
     type: string
 }
+
+export interface ModelType {
+    name: string
+    type: string
+    default: boolean
+}

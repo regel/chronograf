@@ -1,36 +1,28 @@
 import React, { SFC } from 'react'
 
 import DatasourceSection from 'src/loudml/components/DatasourceSection'
+import ModelTypeSection from 'src/loudml/components/ModelTypeSection';
 
 import { Datasource } from 'src/loudml/types/datasource';
-import { ModelSettings } from 'src/loudml/types/model';
-import RadioButtons from 'src/reusable_ui/components/radio_buttons/RadioButtons';
-import { ButtonShape, ComponentSize } from 'src/reusable_ui/types';
-
-const enum ModelTypeTabs {
-    Timeseries = 'timeseries',
-    Fingerprints = 'fingerprints',
-}
+import { ModelSettings, ModelType } from 'src/loudml/types/model';
   
 interface Props {
     model: ModelSettings
     onEdit: (field: string, value: string|number) => void
-    onDatasourceChoose: (e: any) => void
+    onDropdownChoose: (e: any) => void
     datasources: Datasource[]
+    modelTypes: ModelType[]
     locked: boolean
 }
 
 const GeneralPanel: SFC<Props> = ({
     model,
     onEdit,
-    onDatasourceChoose,
+    onDropdownChoose,
     datasources,
+    modelTypes,
     locked,
 }) => {
-    function onSetActiveTypeTab(name) {
-        onEdit('type', name)
-    }
-
     function onInputChange(e) {
         const {name, value} = e.target
 
@@ -46,13 +38,13 @@ const GeneralPanel: SFC<Props> = ({
                 <div className="form-group col-xs-4">
                     <label>Model type</label>
                     <div className="overlay-controls--tabs">
-                        <RadioButtons
-                            activeButton={model.type}
-                            buttons={[ModelTypeTabs.Timeseries, ModelTypeTabs.Fingerprints]}
-                            onChange={onSetActiveTypeTab}
-                            shape={ButtonShape.StretchToFit}
-                            size={ComponentSize.Small}
-                            disabled={true}
+                        <ModelTypeSection
+                            name="type"
+                            type={model.type}
+                            modelTypes={modelTypes}
+                            onChoose={onDropdownChoose}
+                            buttonSize="btn-md"
+                            disabled={locked}
                             />
                     </div>
                 </div>
@@ -62,7 +54,7 @@ const GeneralPanel: SFC<Props> = ({
                         name="default_datasource"
                         datasource={model.default_datasource}
                         datasources={datasources}
-                        onChoose={onDatasourceChoose}
+                        onChoose={onDropdownChoose}
                         buttonSize="btn-md"
                         disabled={locked}
                     />
@@ -84,7 +76,7 @@ const GeneralPanel: SFC<Props> = ({
                         name="default_datasink"
                         datasource={model.default_datasink}
                         datasources={datasources}
-                        onChoose={onDatasourceChoose}
+                        onChoose={onDropdownChoose}
                         buttonSize="btn-md"
                         />
                 </div>

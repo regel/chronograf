@@ -12,7 +12,7 @@ import showMeasurementsParser from 'src/shared/parsing/showMeasurements'
 import { findSource } from 'src/loudml/utils/datasource';
 
 import {TEN_SECONDS} from 'shared/constants/index'
-import {DEFAULT_FEATURE} from 'src/loudml/constants'
+import {DEFAULT_FEATURE, DEFAULT_LOUDML_RP} from 'src/loudml/constants'
 
 const defaultErrorNotification = {
     type: 'error',
@@ -151,6 +151,7 @@ class FeaturesPanel extends Component {
             features,
             type,
             locked,
+            datasource,
         } = this.props
         
         const {
@@ -168,7 +169,7 @@ class FeaturesPanel extends Component {
                     <button
                         className="btn btn-sm btn-primary"
                         disabled={!!features.some(f => f.isEditing)
-                            ||locked}
+                            ||locked||!datasource}
                         onClick={this.addFeature}
                         >
                         <span className="icon plus" /> Add feature
@@ -189,6 +190,7 @@ class FeaturesPanel extends Component {
                                 measurements={measurements}
                                 source={source}
                                 database={database}
+                                retentionPolicy={datasource.retention_policy||DEFAULT_LOUDML_RP}
                                 locked={locked}
                             />))
                         : <i>No feature</i>}

@@ -2,6 +2,12 @@ import {INFLUXQL_FUNCTIONS} from 'src/data_explorer/constants'
 
 export const DEFAULT_LOUDML_RP = 'autogen'
 
+export const MODEL_TYPE_LIST = [
+    { name: 'Donut', type: 'donut', default: true },
+    // { name: 'DiskUtil', type: 'donut-ns', default: false },
+    // { name: 'donut multivariate', type: 'donut-mv', default: false },
+]
+
 export const DEFAULT_MODEL = {
     bucket_interval: '20m',
     default_datasource: null,
@@ -16,7 +22,7 @@ export const DEFAULT_MODEL = {
     },
     span: 10,
     forecast: 5,
-    type: 'timeseries',
+    type: MODEL_TYPE_LIST[0].type,
     min_threshold: 0,   // auto
     max_threshold: 0,   // auto
 }
