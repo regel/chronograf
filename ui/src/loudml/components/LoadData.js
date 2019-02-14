@@ -13,12 +13,15 @@ import {
     nab,
 } from 'src/loudml/apis'
 
-// import {
-//     notifyDataLoading,
-// } from 'src/loudml/actions/notifications'
+import {
+    notifyNabLoading,
+    notifyNabLoadingFailed,
+    notifyNabLoaded,
+} from 'src/loudml/actions/notifications'
 
 import { findDatabases } from 'src/loudml/utils/datasource';
-import { getDatasources } from '../apis';
+import { getDatasources } from 'src/loudml/apis';
+import { parseError } from 'src/loudml/utils/error';
 
 class LoadData extends Component {
     constructor(props) {
@@ -69,7 +72,7 @@ class LoadData extends Component {
                     <ul className="dropdown-menu">
                         {databases.map(item => (
                         <li className="dropdown-item" key={item.name}>
-                            <a href="#" onClick={this.handleSelection(item.name)}>
+                            <a href="#" onClick={this.handleSelection(item)}>
                             {item.database}.{item.retention_policy}
                             </a>
                         </li>
@@ -100,10 +103,16 @@ class LoadData extends Component {
       }
     
     handleSelection = datasource => () => {
-        nab(datasource)
-        // if (this.isValid) {
-        //     this._nab()
-        // }
+        const {notify} = this.props
+        const database = `${datasource.database}.${datasource.retention_policy}`
+        nab(datasource.name)
+            .then(() => {
+                notify(notifyNabLoaded(database))
+            })
+            .catch(error => {
+                notify(notifyNabLoadingFailed(database, parseError(error)))
+            })
+        notify(notifyNabLoading(database))
         this.setState({isOpen: false})
     }
     

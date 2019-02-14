@@ -115,3 +115,12 @@ export const notifyErrorGettingModelHook = (model, hook, message) => notifyError
     TEN_SECONDS,
     `cannot get hook '${hook}' for model ${model}: ${message}`,
 )
+
+export const notifyNabLoading = database => notifySuccess(`loading nab dataset into database '${database}'...`)
+
+export const notifyNabLoadingFailed = (database, message) => notifyError(
+    INFINITE,
+    `cannot load nab dataset into database '${database}': ${message}`,
+)
+
+export const notifyNabLoaded = database => notifySuccess(`nab dataset loaded successfully into database '${database}'`)

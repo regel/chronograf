@@ -63,7 +63,7 @@ const getTags = feature => {
 }
 
 const createErrorQueryConfig = (prefix, model, datasource) => {
-    const {name, features} = model
+    const {features} = model
     const feature = features[0]
 
     return {
