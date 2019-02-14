@@ -11,6 +11,7 @@
 1.  [#38](https://github.com/regel/chronograf/pull/38): tags (key/values) in 1-Click model name
 1.  [#39](https://github.com/regel/chronograf/pull/39): retention policy value from Loud ML datasource
 1.  [#42](https://github.com/regel/chronograf/pull/41): Donut model type
+1.  [#44](https://github.com/regel/chronograf/pull/44): Load nab dataset
 
 ### UI Improvements
 
