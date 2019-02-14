@@ -115,9 +115,12 @@ const checkTags = (tags) => {
 }
 
 const tagsToName = (tags) => {
-    return Object.entries(tags)
+    const entries = Object.entries(tags)
         .map(([k, v]) => (`${k}_${v.map(i => (i.replace(/[.-]/g, '_'))).join('_')}`))
-        .join('_')
+    if (entries.length) {
+        return entries.join('_')
+    }
+    return null
 }
 
 class OneClickML extends Component {

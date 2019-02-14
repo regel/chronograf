@@ -170,3 +170,12 @@ export const deleteModelHook = (name, hookName) => {
         excludeBasepath: true,
     })
 }
+
+export const nab = datasource => {
+    return AJAX({
+        method: 'POST',
+        url: `/loudml/api/_nab`,
+        data: {datasource},
+        excludeBasepath: true,
+    })
+}

@@ -71,7 +71,7 @@ const createErrorQueryConfig = (prefix, model, datasource) => {
         fields: createErrorQueryFields(prefix, model),
         database: datasource.database,
         retentionPolicy: datasource.retention_policy||DEFAULT_LOUDML_RP,
-        measurement: `prediction_${name}`,
+        measurement: 'loudml',
         tags: getTags(feature),
         fill: null,
         groupBy: {

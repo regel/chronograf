@@ -6,6 +6,9 @@ const SOURCES = [
     {
         "url":"localhost:32768",
     },
+    {
+        "url": "1.23.456.7890:32768",
+    },
 ]
 
 const DATASOURCES_PARTIAL_MATCH = [
@@ -23,6 +26,9 @@ const DATASOURCES_FULL_MATCH = [
     },
     {
         addr: "localhost:32768",
+    },
+    {
+        addr: "1.23.456.7890:32768",
     },
 ]
 
@@ -49,7 +55,8 @@ describe('Loudml.Utils.Datasource', () => {
             const datasource = UNKNOWN_DATASOURCE_EXPLICIT_PROTOCOL
             const sources = SOURCES
 
-            expect(findSource(sources, datasource)).toBeUndefined()
+            const source = findSource(sources, datasource)
+            expect(source).toBeUndefined()
         })
 
         it('returns undefined if no implicit match', () => {
