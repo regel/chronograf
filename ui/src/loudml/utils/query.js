@@ -62,8 +62,14 @@ const getTags = feature => {
     }, {})
 }
 
+const getErrorTags = (feature, name) => {
+    return Object.assign(
+        getTags(feature),
+        {model: [name]})
+}
+
 const createErrorQueryConfig = (prefix, model, datasource) => {
-    const {name, features} = model
+    const {features, name} = model
     const feature = features[0]
 
     return {
@@ -71,8 +77,8 @@ const createErrorQueryConfig = (prefix, model, datasource) => {
         fields: createErrorQueryFields(prefix, model),
         database: datasource.database,
         retentionPolicy: datasource.retention_policy||DEFAULT_LOUDML_RP,
-        measurement: `prediction_${name}`,
-        tags: getTags(feature),
+        measurement: 'loudml',
+        tags: getErrorTags(feature, name),
         fill: null,
         groupBy: {
             time: model.bucket_interval,
