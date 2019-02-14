@@ -126,6 +126,7 @@ class LoudMLPage extends Component {
         })
         .catch(error => {
             notify(notifyErrorGettingModels(parseError(error)))
+            this._asyncRequest = null
         })
     }
 
