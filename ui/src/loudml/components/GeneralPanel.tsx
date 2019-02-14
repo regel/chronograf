@@ -60,17 +60,6 @@ const GeneralPanel: SFC<Props> = ({
                     />
                 </div>
                 <div className="form-group col-xs-offset-6 col-xs-6">
-                    <label htmlFor="max_evals">Max training iterations</label>
-                    <input
-                        type="number"
-                        name="max_evals"
-                        className="form-control input-md form-malachite"
-                        value={model.max_evals}
-                        onChange={onInputChange}
-                        placeholder="ex: 100"
-                    />
-                </div>
-                <div className="form-group col-xs-offset-6 col-xs-6">
                     <label>Data sink</label>
                     <DatasourceSection
                         name="default_datasink"
@@ -79,6 +68,17 @@ const GeneralPanel: SFC<Props> = ({
                         onChoose={onDropdownChoose}
                         buttonSize="btn-md"
                         />
+                </div>
+                <div className="form-group col-xs-offset-6 col-xs-6">
+                    <label htmlFor="max_evals">Max training hyper-parameters iterations</label>
+                    <input
+                        type="number"
+                        name="max_evals"
+                        className="form-control input-md form-malachite"
+                        value={model.max_evals}
+                        onChange={onInputChange}
+                        placeholder="ex: 20"
+                    />
                 </div>
             </div>
         </div>
