@@ -42,7 +42,6 @@ class ModelsRow extends PureComponent<Props, {}> {
             model,
             model: {
                 settings: {name},
-                state: {loss},
             },
             jobs,
             onDelete,
@@ -64,9 +63,6 @@ class ModelsRow extends PureComponent<Props, {}> {
                     <Link to={`/sources/${id}/loudml/models/${name}/edit`}>
                         {name}
                     </Link>
-                </td>
-                <td>
-                    {loss&&loss.toFixed(5)}
                 </td>
                 <td>
                     <ModelStatus

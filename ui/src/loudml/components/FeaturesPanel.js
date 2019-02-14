@@ -149,7 +149,6 @@ class FeaturesPanel extends Component {
     render() {
         const {
             features,
-            type,
             locked,
             datasource,
         } = this.props
@@ -181,7 +180,6 @@ class FeaturesPanel extends Component {
                             <Feature
                                 key={`${index}_${features.length}`}
                                 feature={feature}
-                                timeseries={type==='timeseries'}
                                 onDelete={this.deleteFeature}
                                 onCancel={this.deleteFeature}
                                 onEdit={this.editFeature}
@@ -201,14 +199,12 @@ class FeaturesPanel extends Component {
 
 }
 
-const {arrayOf, func, shape, bool, string} = PropTypes
+const {arrayOf, func, shape, bool} = PropTypes
 
 FeaturesPanel.propTypes = {
     features: arrayOf(shape({})),
-    type: string.isRequired,
     onInputChange: func.isRequired,
     notify: func.isRequired,
-//    source: shape(),
     datasource: shape(),
     sources: arrayOf(shape()),
     locked: bool.isRequired,

@@ -10,7 +10,8 @@
 1.  [#35](https://github.com/regel/chronograf/pull/35): normalize span for 1-Click ML
 1.  [#38](https://github.com/regel/chronograf/pull/38): tags (key/values) in 1-Click model name
 1.  [#39](https://github.com/regel/chronograf/pull/39): retention policy value from Loud ML datasource
-1.  [#42](https://github.com/regel/chronograf/pull/41): Donut model type
+1.  [#41](https://github.com/regel/chronograf/pull/41): Donut model type
+1.  [#42](https://github.com/regel/chronograf/pull/42): Donut settings
 1.  [#44](https://github.com/regel/chronograf/pull/44): Load nab dataset
 
 ### UI Improvements
