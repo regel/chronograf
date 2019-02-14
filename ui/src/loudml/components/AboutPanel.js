@@ -28,7 +28,7 @@ const AboutPanel = ({
                     It's plug-and-play, so you can use it for other projects too.
                 </p>
                 <p style={AboutTextStyle}>
-                    Contribute to the open source software development on <a href="https://github.com/regel" target="_github">GitHub</a>.
+                    Contribute to the open source software development on <a href="https://github.com/regel/loudml" target="_github">GitHub</a>.
                 </p>
                 <p style={AboutTextStyle}>
                     Or if you're not sure about machine learning, <a href="https://loudml.io/contact-us/" target="_loudml">contact us</a> to find out how we can help find the best solution to your problem.
