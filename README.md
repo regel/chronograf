@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/regel/chronograf/tree/loudml16.svg?style=svg)](https://circleci.com/gh/regel/chronograf/tree/loudml16)
+
 # Chronograf + LoudML extension
 
 This is a fork of Chronograf that embeds a LoudML extension.
