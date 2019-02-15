@@ -1,4 +1,13 @@
-# Chronograf
+[![CircleCI](https://circleci.com/gh/regel/chronograf/tree/loudml16.svg?style=svg)](https://circleci.com/gh/regel/chronograf/tree/loudml16)
+
+# Chronograf + LoudML extension
+
+This is a fork of Chronograf that embeds a LoudML extension.
+
+For further information about Chronograf and LoudML, see:
+* https://github.com/influxdata/chronograf
+* https://github.com/regel/loudml
+
 
 Chronograf is an open-source web application written in Go and React.js that
 provides the tools to visualize your monitoring data and easily create alerting
@@ -153,7 +162,7 @@ The Chronograf team has identified and is working on the following issues:
   [HOST LIST](https://github.com/influxdata/chronograf/blob/master/docs/GETTING_STARTED.md#host-list)
   page.
 
-## Installation
+## Installation (Chronograf only)
 
 Check out the
 [INSTALLATION](https://docs.influxdata.com/chronograf/v1.4/introduction/installation/)
@@ -173,12 +182,12 @@ Chronograf using:
 
 By default, chronograf runs on port `8888`.
 
-### With Docker
+### With Docker (Chronograf + LoudML extension)
 
 To get started right away with Docker, you can pull down our latest release:
 
 ```sh
-docker pull chronograf:1.7.3
+docker pull loudml/chronograf:1.7.3
 ```
 
 ### From Source
@@ -187,20 +196,46 @@ docker pull chronograf:1.7.3
 * Chronograf requires [Kapacitor](https://github.com/influxdata/kapacitor)
   1.2.x+ to create and store alerts.
 
+1. [install LoudML](http://loudml.io/guide/en/loudml/reference/current/setup.html)
 1. [Install Go](https://golang.org/doc/install)
 1. [Install Node and NPM](https://nodejs.org/en/download/)
 1. [Install yarn](https://yarnpkg.com/docs/install)
 1. [Setup your GOPATH](https://golang.org/doc/code.html#GOPATH)
-1. Build the Chronograf package:
+1. Get Chronograf sources
     ```bash
     go get github.com/influxdata/chronograf
-    cd $GOPATH/src/github.com/influxdata/chronograf
-    make
     ```
+1. Setup `github.com/regel/chronograf` as remote:
+    ```bash
+    cd src/github.com/influxdata/chronograf
+    git remote add regel git@github.com:regel/chronograf.git
+    ```
+1. Switch to `regel/loudml_1.7.3` branch:
+    ```bash
+    git fetch regel
+    git checkout -b loudml_1.7.3 regel/loudml_1.7.3
+    ```
+1. Then, you can build Chronograf with LoudML extension package:
+   ```bash
+   make
+   ```
 1. Install the newly built Chronograf package:
     ```bash
     go install github.com/influxdata/chronograf/cmd/chronograf
     ```
+
+To build the Docker image, execute:
+```bash
+make docker
+```
+
+To start Chronograf in development mode:
+```bash
+cd chronograf/ui
+yarn clean
+yarn install
+yarn start
+```
 
 ## Documentation
 
@@ -213,14 +248,6 @@ with Chronograf's main features.
 Documentation for Telegraf, InfluxDB, and Kapacitor are available at
 https://docs.influxdata.com/.
 
-Chronograf uses
-[swagger](https://swagger.io/specification://swagger.io/specification/) to
-document its REST interfaces. To reach the documentation, run the server and go
-to the `/docs` for example at http://localhost:8888/docs
-
-The swagger JSON document is in `server/swagger.json`
-
 ## Contributing
 
-Please see the [contributing guide](CONTRIBUTING.md) for details on contributing
-to Chronograf.
+TODO

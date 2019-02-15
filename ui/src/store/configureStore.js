@@ -17,6 +17,7 @@ import cellEditorOverlay from 'src/dashboards/reducers/cellEditorOverlay'
 import dashTimeV1 from 'src/dashboards/reducers/dashTimeV1'
 import persistStateEnhancer from './persistStateEnhancer'
 import servicesReducer from 'src/shared/reducers/services'
+import loudmlReducers from 'src/loudml/reducers'
 
 const rootReducer = combineReducers({
   ...statusReducers,
@@ -24,6 +25,7 @@ const rootReducer = combineReducers({
   ...dataExplorerReducers,
   ...kapacitorReducers,
   ...adminReducers,
+  ...loudmlReducers,
   dashboardUI,
   cellEditorOverlay,
   dashTimeV1,

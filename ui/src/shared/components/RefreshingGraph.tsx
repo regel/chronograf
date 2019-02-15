@@ -56,6 +56,7 @@ import {
 } from 'src/types/dashboards'
 import {GrabDataForDownloadHandler} from 'src/types/layout'
 import {TimeSeriesServerResponse} from 'src/types/series'
+import ErrorGraph from 'src/loudml/components/ErrorGraph';
 
 interface TypeAndData {
   dataType: DataType
@@ -249,6 +250,8 @@ class RefreshingGraph extends Component<Props> {
                         )
                       case CellType.Gauge:
                         return this.gauge(timeSeriesInfluxQL, timeSeriesFlux)
+                      case CellType.Error:
+                        return this.error(timeSeriesInfluxQL, timeSeriesFlux)
                       default:
                         return this.lineGraph(
                           timeSeriesInfluxQL,
@@ -440,6 +443,37 @@ class RefreshingGraph extends Component<Props> {
 
     return (
       <GaugeChart
+        data={data}
+        dataType={dataType}
+        cellID={cellID}
+        colors={colors}
+        prefix={this.prefix}
+        suffix={this.suffix}
+        key={manualRefresh}
+        cellHeight={cellHeight}
+        decimalPlaces={decimalPlaces}
+        resizerTopHeight={resizerTopHeight}
+      />
+    )
+  }
+
+  private error = (
+    influxQLData: TimeSeriesServerResponse[],
+    fluxData: FluxTable[]
+  ): JSX.Element => {
+    const {
+      colors,
+      cellID,
+      cellHeight,
+      decimalPlaces,
+      manualRefresh,
+      resizerTopHeight,
+    } = this.props
+
+    const {dataType, data} = this.getTypeAndData(influxQLData, fluxData)
+
+    return (
+      <ErrorGraph
         data={data}
         dataType={dataType}
         cellID={cellID}
