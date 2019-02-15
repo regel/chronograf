@@ -14,6 +14,7 @@ interface GraphSVGs {
   [CellType.Gauge]: Graphic
   [CellType.Table]: Graphic
   [CellType.Note]: Graphic
+  [CellType.Error]: Graphic
 }
 const GRAPH_SVGS: GraphSVGs = {
   line: (
@@ -566,6 +567,45 @@ const GRAPH_SVGS: GraphSVGs = {
       </svg>
     </div>
   ),
+  'error': (
+    <div className="graph-type-selector--graphic">
+      <svg
+        width="100%"
+        height="100%"
+        version="1.1"
+        id="Error"
+        x="0px"
+        y="0px"
+        viewBox="0 0 150 150"
+        preserveAspectRatio="none meet"
+        >
+        <polygon
+            className="graph-type-selector--graphic-fill graphic-fill-a"
+            points="148,24 111.5,38.2 75,11 38.5,74.8 2,90.8 2,125 38.5,116.5 75,35.7 111.5,59.3 148,46 148,125"
+        />
+        <polyline
+            className="graph-type-selector--graphic-line graphic-line-a"
+            points="2,111.8 38.5,90.8 75,25 111.5,47.2 148,40"
+        />
+        <polygon
+            className="graph-type-selector--graphic-fill graphic-fill-b"
+            points="148,78.2 111.5,85.5 75,51.7 38.5,39.3 2,80.8 2,100 38.5,59.3 75,71.7 111.5,105.5 148,98"
+        />
+        <polyline
+            className="graph-type-selector--graphic-line graphic-line-b"
+            points="2,90.8 38.5,49.3 75,61.7 111.5,95.5 148,88.2"
+        />
+        <polygon
+            className="graph-type-selector--graphic-fill graphic-fill-c"
+            points="148,76 111.5,101.3 75,75.7 38.5,106.5 2,105 2,125 38.5,120.5 75,105.7 111.5,111.3 148,125"
+        />
+        <polyline
+            className="graph-type-selector--graphic-line graphic-line-c"
+            points="2,115 38.5,116.5 75,85.7 111.5,106.3 148,96"
+        />
+      </svg>
+    </div>
+  ),
 }
 
 interface GraphType {
@@ -619,5 +659,10 @@ export const GRAPH_TYPES: GraphType[] = [
     type: CellType.Note,
     menuOption: 'Note',
     graphic: GRAPH_SVGS[CellType.Note],
+  },
+  {
+    type: CellType.Error,
+    menuOption: 'Error',
+    graphic: GRAPH_SVGS[CellType.Error],
   },
 ]

@@ -1,0 +1,28 @@
+{
+    "bucket_interval": "20m",
+    "default_datasource": null,
+    "features": [
+           {
+               "io": "io",
+               "field": "value",
+               "metric": "count",
+               "default": null,
+               "measurement": "metrics",
+               "match_all": [],
+               "name": "count_value"
+           }
+    ],
+    "interval": "1m",
+    "max_evals": 100,
+    "name": "model_143",
+    "offset": "10s",
+    "seasonality": {
+        "daytime": false,
+        "weekday": false
+    },
+    "span": 10,
+    "forecast": 5,
+    "type": "timeseries",
+    "min_threshold": 0,
+    "max_threshold": 0
+}

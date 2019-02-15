@@ -37,6 +37,7 @@ import {
 } from 'src/kapacitor'
 import {AdminChronografPage, AdminInfluxDBPage} from 'src/admin'
 import {ManageSources, OnboardingWizard} from 'src/sources'
+import {LoudMLPage, ModelPage} from 'src/loudml'
 
 import NotFound from 'src/shared/components/NotFound'
 import PageSpinner from 'src/shared/components/PageSpinner'
@@ -181,6 +182,9 @@ class Root extends PureComponent<{}, State> {
                   component={AdminInfluxDBPage}
                 />
                 <Route path="manage-sources" component={ManageSources} />
+                <Route path="loudml" component={LoudMLPage} />
+                <Route path="loudml/models/new" component={ModelPage} />
+                <Route path="loudml/models/:name/edit" component={ModelPage} />
               </Route>
             </Route>
             <Route path="*" component={NotFound} />

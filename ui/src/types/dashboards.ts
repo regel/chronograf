@@ -105,6 +105,7 @@ export enum CellType {
   News = 'news',
   Guide = 'guide',
   Note = 'note',
+  Error = 'error',
 }
 
 interface DashboardLinks {

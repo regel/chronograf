@@ -13,11 +13,31 @@ const handleProxyError = err => {
   }
 }
 
+const handleProxyLoudmlError = err => {
+  if (err.code === 'ECONNREFUSED') {
+    console.log(
+      'Cannot reach Loud ML server at localhost:8077. Is it running?'
+    )
+  } else {
+    console.log(`Error: ${err.code}`)
+  }
+}
+
 const proxyMiddleware = proxy('/chronograf/v1', {
   target: 'http://localhost:8888',
   logLevel: 'silent',
   changeOrigin: true,
   onError: handleProxyError,
+})
+
+const proxyLoudml = proxy('/loudml/api', {
+  target: 'http://localhost:8077',
+  logLevel: 'silent',
+  changeOrigin: true,
+  pathRewrite: {
+    '^/loudml/api': '',
+  },
+  onError: handleProxyLoudmlError,
 })
 
 const bundler = new Bundler('src/index.html', {outDir: './build/'})
@@ -27,5 +47,6 @@ const app = express()
 console.log(`Serving on http://localhost:${port}`)
 
 app.use(proxyMiddleware)
+app.use(proxyLoudml)
 app.use(bundler.middleware())
 app.listen(port)
