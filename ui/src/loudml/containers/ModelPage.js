@@ -9,11 +9,9 @@ import PageHeader from 'src/reusable_ui/components/page_layout/PageHeader'
 import QuestionMark from 'src/loudml/components/QuestionMark'
 
 import GeneralPanel from 'src/loudml/components/GeneralPanel'
-import TimeseriesPanel from 'src/loudml/components/TimeseriesPanel'
 import FeaturesPanel from 'src/loudml/components/FeaturesPanel'
 import PredictionPanel from 'src/loudml/components/PredictionPanel'
 import AnomalyPanel from 'src/loudml/components/AnomalyPanel'
-import FingerprintsPanel from 'src/loudml/components/FingerprintsPanel'
 import AboutPanel from 'src/loudml/components/AboutPanel';
 
 import {
@@ -47,11 +45,12 @@ import {
 import {parseError} from 'src/loudml/utils/error'
 import {createHook} from 'src/loudml/utils/hook'
 
-import {DEFAULT_MODEL} from 'src/loudml/constants'
+import {DEFAULT_MODEL, MODEL_TYPE_LIST} from 'src/loudml/constants'
 import {ANOMALY_HOOK_NAME, ANOMALY_HOOK} from 'src/loudml/constants/anomaly'
 
 import 'src/loudml/styles/model.scss'
 import 'src/loudml/styles/notification.scss'
+import ParametersPanel from '../components/ParametersPanel';
 
 class ModelPage extends Component {
     constructor(props) {
@@ -256,7 +255,7 @@ class ModelPage extends Component {
         this.handleEdit(name, type === 'number' ? Number(value) : value)
     }
 
-    onDatasourceChoose = (field, value) => {
+    onDropdownChoose = (field, value) => {
         this.handleEdit(field, value)
     }
 
@@ -381,9 +380,10 @@ class ModelPage extends Component {
                 component: (
                     <GeneralPanel
                         model={model}
-                        onDatasourceChoose={this.onDatasourceChoose}
+                        onDropdownChoose={this.onDropdownChoose}
                         onEdit={this.handleEdit}
                         datasources={datasources}
+                        modelTypes={MODEL_TYPE_LIST}
                         locked={locked}
                         />
                 ),
@@ -392,20 +392,12 @@ class ModelPage extends Component {
                 name: 'Parameters',
                 url: 'parameters',
                 enabled: true,
-                component: (model.type==='timeseries'
-                    ?(
-                    <TimeseriesPanel
+                component: (
+                    <ParametersPanel
                         model={model}
                         onInputChange={this.onInputChange}
                         locked={locked}
-                        />)
-                    :(
-                    <FingerprintsPanel
-                        model={model}
-                        onEdit={this.handleEdit}
-                        keys={[]}
-                        locked={locked}
-                    />)
+                        />
                 ),
             },
             {
@@ -415,7 +407,6 @@ class ModelPage extends Component {
                 component: (
                     <FeaturesPanel
                         features={model.features}
-                        type={model.type}
                         onInputChange={this.onInputChange}
                         datasource={datasource}
                         locked={locked}

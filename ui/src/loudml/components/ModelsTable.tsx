@@ -60,7 +60,6 @@ class ModelsTable extends PureComponent<Props, {}> {
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Loss</th>
                         <th>Status</th>
                         <th/>
                         <th/>

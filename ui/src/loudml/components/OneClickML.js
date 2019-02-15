@@ -14,6 +14,7 @@ import {createHook} from 'src/loudml/utils/hook'
 import {
     normalizeInterval,
     normalizeFeatureDefault,
+    normalizeSpan,
 } from 'src/loudml/utils/model'
 import {
     createModel,
@@ -34,7 +35,7 @@ import {
     notifyModelTrainingFailed,
 } from 'src/loudml/actions/notifications'
 
-import {DEFAULT_MODEL} from 'src/loudml/constants'
+import {DEFAULT_MODEL, DEFAULT_LOUDML_RP} from 'src/loudml/constants'
 import {ANOMALY_HOOK} from 'src/loudml/constants/anomaly'
 
 const UNDEFINED_DATASOURCE = 'Unable to find LoudML datasource for selected database. Check configuration'
@@ -114,9 +115,12 @@ const checkTags = (tags) => {
 }
 
 const tagsToName = (tags) => {
-    return Object.entries(tags)
+    const entries = Object.entries(tags)
         .map(([k, v]) => (`${k}_${v.map(i => (i.replace(/[.-]/g, '_'))).join('_')}`))
-        .join('_')
+    if (entries.length) {
+        return entries.join('_')
+    }
+    return null
 }
 
 class OneClickML extends Component {
@@ -134,9 +138,33 @@ class OneClickML extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (this.props.settings.database !== prevProps.settings.database) {
+        if (this.props.settings.database !== prevProps.settings.database
+            ||this.props.settings.retentionPolicy !== prevProps.settings.retentionPolicy) {
             this._getDatasource();
         }
+    }
+
+    render() {
+        const {uuidTooltip} = this.state
+        return (
+            <div className={classnames('btn', 'btn-sm', 'btn-default', {
+                'disabled': !this.isValid,
+                })}
+                onClick={this.oneClickModel}
+                data-for={uuidTooltip}
+                data-tip={this.sourceNameTooltip}
+            >
+                <span className="icon loudml-gradcap" />
+                Create baseline
+                <ReactTooltip
+                    id={uuidTooltip}
+                    effect="solid"
+                    html={true}
+                    place="bottom"
+                    class="influx-tooltip"
+                />
+            </div>
+        )
     }
 
     _trainModel = async (name) => {
@@ -168,9 +196,9 @@ class OneClickML extends Component {
     }
 
     _getDatasource = async () => {
-        const {settings: {database}} = this.props
+        const {settings: {database, retentionPolicy}} = this.props
         const {data} = await getDatasources()
-        const datasource = data.find(d => d.database === database)
+        const datasource = data.find(d => d.database === database && (d.retention_policy||DEFAULT_LOUDML_RP) === retentionPolicy)
         this.setState({datasource: datasource&&datasource.name})
     }
 
@@ -212,6 +240,7 @@ class OneClickML extends Component {
             max_evals: 10,
             name: this.name,
             interval: normalizeInterval(time),
+            span: normalizeSpan(time),
             default_datasource: datasource,
             bucket_interval: time,
             features: fields.map(
@@ -259,6 +288,8 @@ class OneClickML extends Component {
     }
 
     get sourceNameTooltip() {
+        const formatStaticTip = text => (`<div><span>${text}</span></div>`)
+
         const {
             settings: {
                 fields,
@@ -269,13 +300,17 @@ class OneClickML extends Component {
             }
         } = this.props
         const {datasource} = this.state
-
+        
         const isCheckTags = checkTags(tags)
         const checkTagsAccepted = (Object.keys(tags).length>0 && isCheckTags
-            ? areTagsAccepted
-            : true)  // don't care
-
+        ? areTagsAccepted
+        : true)  // don't care
+        
         return [
+            formatStaticTip('Use your current data selection to baseline normal metric behavior using a machine learning task.'),
+            formatStaticTip('This will create a new model, and run training to fit the baseline to your data.'),
+            formatStaticTip('You can visualise the baseline, and forecast future data using the Loud ML tab on the left panel once training is completed.'),
+            '<br/>',
             notifyDatasource(datasource),
             notifyFeature(fields),
             notifyInterval(time),
@@ -307,28 +342,6 @@ class OneClickML extends Component {
             && (checkTagsAccepted)
     }
 
-    render() {
-        const {uuidTooltip} = this.state
-        return (
-            <div className={classnames('btn', 'btn-sm', 'btn-default', {
-                'disabled': !this.isValid,
-                })}
-                onClick={this.oneClickModel}
-                data-for={uuidTooltip}
-                data-tip={this.sourceNameTooltip}
-            >
-                <span className="icon loudml-gradcap" />
-                1-Click ML
-                <ReactTooltip
-                    id={uuidTooltip}
-                    effect="solid"
-                    html={true}
-                    place="left"
-                    class="influx-tooltip"
-                />
-            </div>
-        )
-    }
 }
 
 const {shape, func} = PropTypes

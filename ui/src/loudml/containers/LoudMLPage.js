@@ -126,6 +126,7 @@ class LoudMLPage extends Component {
         })
         .catch(error => {
             notify(notifyErrorGettingModels(parseError(error)))
+            this._asyncRequest = null
         })
     }
 
@@ -339,10 +340,10 @@ class LoudMLPage extends Component {
         this.stopJob(name, id)
     }
 
-    createPredictionDashboard = (model, source, database) => {
+    createPredictionDashboard = (model, source, datasource) => {
         const {settings: {name}} = model
         const cellName = `${name} prediction`
-        const queries = createQueryFromModel(model, source, database)
+        const queries = createQueryFromModel(model, source, datasource)
 
         const dashboard = {
             ...DEFAULT_ERROR_DASHBOARD,
@@ -358,10 +359,10 @@ class LoudMLPage extends Component {
         return createDashboard(dashboard)
     }
 
-    updatePredictionDashboard = (dashboard, model, source, database) => {
+    updatePredictionDashboard = (dashboard, model, source, datasource) => {
         const {settings: {name}} = model
         const cellName = `${name} prediction`
-        const queries = createQueryFromModel(model, source, database)
+        const queries = createQueryFromModel(model, source, datasource)
 
         const cell = dashboard.cells.find(item => item.name === cellName)
         if (cell===undefined) {
@@ -405,7 +406,7 @@ class LoudMLPage extends Component {
             const datasource = data.find(d => d.name === settings.default_datasource)
             const {data: {sources}} = await getSources()
             const source = findSource(sources, datasource)
-            await this.createPredictionDashboard(model, source, datasource.database)
+            await this.createPredictionDashboard(model, source, datasource)
             notify(notifyDashboardCreated(settings.name))
             this.getDashboards()    // update for Dashboard dropdown
         } catch (error) {
@@ -423,7 +424,7 @@ class LoudMLPage extends Component {
             const datasource = data.find(d => d.name === settings.default_datasource)
             const {data: {sources}} = await getSources()
             const source = findSource(sources, datasource)
-            await this.updatePredictionDashboard(dashboard, model, source, datasource.database)
+            await this.updatePredictionDashboard(dashboard, model, source, datasource)
             notify(notifyDashboardCellCreated(settings.name))
         } catch (error) {
             console.error(error)

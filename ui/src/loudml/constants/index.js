@@ -2,21 +2,23 @@ import {INFLUXQL_FUNCTIONS} from 'src/data_explorer/constants'
 
 export const DEFAULT_LOUDML_RP = 'autogen'
 
+export const MODEL_TYPE_LIST = [
+    { name: 'Donut', type: 'donut', default: true },
+    // { name: 'DiskUtil', type: 'donut-ns', default: false },
+    // { name: 'donut multivariate', type: 'donut-mv', default: false },
+]
+
 export const DEFAULT_MODEL = {
     bucket_interval: '20m',
     default_datasource: null,
     features: [],
     interval: '1m',
-    max_evals: 100,
+    max_evals: 20,
     name: '',   // input value cannot be null
     offset: '10s',
-    seasonality: {
-        daytime: false,
-        weekday: false,
-    },
     span: 10,
     forecast: 5,
-    type: 'timeseries',
+    type: MODEL_TYPE_LIST[0].type,
     min_threshold: 0,   // auto
     max_threshold: 0,   // auto
 }
@@ -30,8 +32,6 @@ export const DEFAULT_FEATURE = {
     io: 'io',
     anomaly_type: 'low_high',
     match_all: [],
-    scores: 'min_max',
-    transform: null,
 }
 
 export const DEFAULT_METRICS = [
@@ -41,23 +41,6 @@ export const DEFAULT_METRICS = [
     '10percentile',
     '90percentile',
     '95percentile',
-]
-
-export const DEFAULT_IO  = [
-    { text: 'in', value: 'i', },
-    { text: 'out', value: 'o', },
-    { text: 'in/out', value: 'io', },
-]
-                                    
-export const DEFAULT_SCORES  = [
-    { text: 'min/max', value: 'min_max', },
-    { text: 'normalize', value: 'normalize', },
-    { text: 'standardize', value: 'standardize', },
-]
-
-export const DEFAULT_TRANSFORM  = [
-    { text: 'diff', value: 'diff', },
-    { text: 'none', value: null, },
 ]
 
 export const MODEL_CREATED = 'MODEL_CREATED';

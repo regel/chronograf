@@ -12,7 +12,7 @@ import showMeasurementsParser from 'src/shared/parsing/showMeasurements'
 import { findSource } from 'src/loudml/utils/datasource';
 
 import {TEN_SECONDS} from 'shared/constants/index'
-import {DEFAULT_FEATURE} from 'src/loudml/constants'
+import {DEFAULT_FEATURE, DEFAULT_LOUDML_RP} from 'src/loudml/constants'
 
 const defaultErrorNotification = {
     type: 'error',
@@ -149,8 +149,8 @@ class FeaturesPanel extends Component {
     render() {
         const {
             features,
-            type,
             locked,
+            datasource,
         } = this.props
         
         const {
@@ -168,7 +168,7 @@ class FeaturesPanel extends Component {
                     <button
                         className="btn btn-sm btn-primary"
                         disabled={!!features.some(f => f.isEditing)
-                            ||locked}
+                            ||locked||!datasource}
                         onClick={this.addFeature}
                         >
                         <span className="icon plus" /> Add feature
@@ -180,7 +180,6 @@ class FeaturesPanel extends Component {
                             <Feature
                                 key={`${index}_${features.length}`}
                                 feature={feature}
-                                timeseries={type==='timeseries'}
                                 onDelete={this.deleteFeature}
                                 onCancel={this.deleteFeature}
                                 onEdit={this.editFeature}
@@ -189,6 +188,7 @@ class FeaturesPanel extends Component {
                                 measurements={measurements}
                                 source={source}
                                 database={database}
+                                retentionPolicy={datasource.retention_policy||DEFAULT_LOUDML_RP}
                                 locked={locked}
                             />))
                         : <i>No feature</i>}
@@ -199,14 +199,12 @@ class FeaturesPanel extends Component {
 
 }
 
-const {arrayOf, func, shape, bool, string} = PropTypes
+const {arrayOf, func, shape, bool} = PropTypes
 
 FeaturesPanel.propTypes = {
     features: arrayOf(shape({})),
-    type: string.isRequired,
     onInputChange: func.isRequired,
     notify: func.isRequired,
-//    source: shape(),
     datasource: shape(),
     sources: arrayOf(shape()),
     locked: bool.isRequired,

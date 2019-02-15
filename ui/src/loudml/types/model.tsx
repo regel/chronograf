@@ -1,5 +1,7 @@
 interface Feature {
-
+    io?: string
+    scores?: string
+    transform?: string|null
 }
 
 interface Seasonality {
@@ -18,8 +20,8 @@ export interface ModelSettings {
     interval: string
     max_evals: number
     offset: string
-    seasonality: Seasonality
-    forecast: number
+    seasonality?: Seasonality
+    forecast?: number
     span: number
     grace_period?: number
     max_threshold: number
@@ -54,4 +56,10 @@ export interface Job {
     id: string
     name: string
     type: string
+}
+
+export interface ModelType {
+    name: string
+    type: string
+    default: boolean
 }
