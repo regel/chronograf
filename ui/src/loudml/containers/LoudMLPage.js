@@ -482,22 +482,29 @@ class LoudMLPage extends Component {
     }
 
     get renderPanelHeading() {
-        const {source: {id}} = this.props
+        const {models, source: {id}} = this.props
 
         return (
             <div className="panel-heading">
                 <h2 className="panel-title">{this.panelTitle}</h2>
                 <div className="panel-controls">
+                    {models.length?(
                     <SearchBar
                         placeholder="Filter by Name..."
                         onSearch={this.filterModels}
-                        />
+                        />):null}
                     <Link
                         to={`/sources/${id}/loudml/models/new`}
                         className="btn btn-sm btn-primary btn-sm"
                         >
                         <span className="icon plus" />
-                        Create a model
+                        Create model manually
+                    </Link>
+                    <Link
+                        to={`/sources/${id}/loudml/models/template`}
+                        className="btn btn-sm btn-primary btn-sm"
+                        >
+                        Use model builder
                     </Link>
                 </div>
             </div>

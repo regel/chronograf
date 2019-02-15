@@ -54,6 +54,15 @@ export const createModel = model => {
     })
 }
 
+export const createModelFromTemplate = (template, params) => {
+    return AJAX({
+        url: `/loudml/api/models?template=${template}`,
+        excludeBasepath: true,
+        method: 'PUT',
+        data: params,
+    })
+}
+
 export const updateModel = model => {
     return AJAX({
         url: `/loudml/api/models/${model.name}`,
@@ -169,6 +178,18 @@ export const deleteModelHook = (name, hookName) => {
         url: `/loudml/api/models/${name}/hooks/${hookName}`,
         excludeBasepath: true,
     })
+}
+
+export const getTemplates = async () => {
+    try {
+        return await AJAX({
+            url: '/loudml/api/templates',
+            excludeBasepath: true,
+        })
+    } catch (error) {
+        console.error(error)
+        throw error
+    }
 }
 
 export const nab = datasource => {
