@@ -170,7 +170,7 @@ class ModelPage extends Component {
                     {isLoading ? (
                         <PageSpinner />
                     ) : (
-                        <div className="panel">
+                        <div>
                             <ModelHeader
                                 name={model.name}
                                 isEditing={isEditing}
@@ -178,13 +178,11 @@ class ModelPage extends Component {
                                 onSave={this.handleSave}
                                 validationError={this.validationError}
                                 />
-                            <div className="panel-body">
-                                <ModelTabs
-                                sections={this.modelSubSections}
-                                activeSection={activeSection}
-                                onTabClick={this.handleTabClick}
-                                />
-                            </div>
+                            <ModelTabs
+                            sections={this.modelSubSections}
+                            activeSection={activeSection}
+                            onTabClick={this.handleTabClick}
+                            />
                         </div>
                     )}
                 </Page.Contents>

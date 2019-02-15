@@ -121,11 +121,12 @@ class LoudMLPage extends Component {
 
         this._asyncRequest = api.getModels()
         .then(res => {
-            this._asyncRequest = null;
             modelsLoaded(res.data)
         })
         .catch(error => {
             notify(notifyErrorGettingModels(parseError(error)))
+        })
+        .finally(() => {
             this._asyncRequest = null
         })
     }
