@@ -1,4 +1,4 @@
-[![CircleCI](https://img.shields.io/circleci/project/github/regel/chronograf/loudml177.svg?style=flat)](https://circleci.com/gh/regel/chronograf/tree/loudml177)
+[![CircleCI](https://img.shields.io/circleci/project/github/regel/chronograf/loudml173.svg?style=flat)](https://circleci.com/gh/regel/chronograf/tree/loudml173)
 
 # Chronograf + LoudML extension
 
