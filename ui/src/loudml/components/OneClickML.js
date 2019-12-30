@@ -7,6 +7,7 @@ import classnames from 'classnames'
 import ReactTooltip from 'react-tooltip'
 
 import {notify as notifyAction} from 'shared/actions/notifications'
+import {SourceContext} from 'src/CheckSources'
 
 import {convertTimeRange} from 'src/loudml/utils/timerange'
 import {parseError} from 'src/loudml/utils/error'
@@ -19,7 +20,7 @@ import {
 import {
     createModel,
     trainAndStartModel,
-    getDatasources,
+    createAndGetBucket,
     createModelHook,
 } from 'src/loudml/apis'
 
@@ -35,22 +36,15 @@ import {
     notifyModelTrainingFailed,
 } from 'src/loudml/actions/notifications'
 
-import {DEFAULT_MODEL, DEFAULT_LOUDML_RP} from 'src/loudml/constants'
+import {DEFAULT_MODEL} from 'src/loudml/constants'
 import {ANOMALY_HOOK} from 'src/loudml/constants/anomaly'
 
-const UNDEFINED_DATASOURCE = 'Unable to find LoudML datasource for selected database. Check configuration'
 const SELECT_FEATURE = 'Select one field'
 const SELECT_BUCKET_INTERVAL = 'Select a \'Group by\' value'
 const SELECT_ONLY_ONE_TAG_VALUE = 'Select only one value per tag'
 const LINEAR_NOTSUPPORTED = 'Linear mode not supported'
 
-const formatNotification = s => {
-    return `<code>${s}</code>`
-}
-const notifyDatasource = datasource => {
-    datasource = (datasource&&formatNotification(datasource))||UNDEFINED_DATASOURCE
-    return `<h1>Loud ML Datasource:</h1><p>${datasource}</p>`
-}
+const formatNotification = s => `<code>${s}</code>`
 
 const notifyFeature = fields => {
     const feature = (
@@ -109,10 +103,10 @@ const notifyTagsAccepted = areTagsAccepted => {
     return ''
 }
 
-const checkTags = (tags) => {
+const checkTags = (tags) => 
     // really length > 1. Can we have zero length?
-    return Object.values(tags).some(v => v.length>1) === false
-}
+     Object.values(tags).some(v => v.length>1) === false
+
 
 const tagsToName = (tags) => {
     const entries = Object.entries(tags)
@@ -123,48 +117,45 @@ const tagsToName = (tags) => {
     return null
 }
 
+
+
 class OneClickML extends Component {
     constructor(props) {
         super(props)
     
         this.state = {
-            datasource: null,
             uuidTooltip: uuid.v4(),
         }
-    }
-
-    componentDidMount() {
-        this._getDatasource()
-    }
-
-    componentDidUpdate(prevProps) {
-        if (this.props.settings.database !== prevProps.settings.database
-            ||this.props.settings.retentionPolicy !== prevProps.settings.retentionPolicy) {
-            this._getDatasource();
-        }
+        this.oneClickModel = this.oneClickModel.bind(this);
     }
 
     render() {
         const {uuidTooltip} = this.state
+
         return (
-            <div className={classnames('btn', 'btn-sm', 'btn-default', {
-                'disabled': !this.isValid,
-                })}
-                onClick={this.oneClickModel}
-                data-for={uuidTooltip}
-                data-tip={this.sourceNameTooltip}
-            >
-                <span className="icon loudml-gradcap" />
-                Create baseline
-                <ReactTooltip
-                    id={uuidTooltip}
-                    effect="solid"
-                    html={true}
-                    place="bottom"
-                    class="influx-tooltip"
-                />
-            </div>
+            <SourceContext.Consumer>
+              {(source) => (
+                <div className={classnames('btn', 'btn-sm', 'btn-default', {
+                    'disabled': !this.isValid,
+                    })}
+                    onClick={this.oneClickModel.bind(this, source)}
+                    data-for={uuidTooltip}
+                    data-tip={this.sourceNameTooltip}
+                >
+                    <span className="icon loudml-gradcap" />
+                    Create Baseline
+                    <ReactTooltip
+                        id={uuidTooltip}
+                        effect="solid"
+                        html={true}
+                        place="bottom"
+                        class="influx-tooltip"
+                    />
+                </div>
+            )}
+            </SourceContext.Consumer>
         )
+          
     }
 
     _trainModel = async (name) => {
@@ -195,13 +186,6 @@ class OneClickML extends Component {
         }
     }
 
-    _getDatasource = async () => {
-        const {settings: {database, retentionPolicy}} = this.props
-        const {data} = await getDatasources()
-        const datasource = data.find(d => d.database === database && (d.retention_policy||DEFAULT_LOUDML_RP) === retentionPolicy)
-        this.setState({datasource: datasource&&datasource.name})
-    }
-
     get name() {
         const {
             settings: {
@@ -222,9 +206,11 @@ class OneClickML extends Component {
         ].join('_')
     }
 
-    _createAndTrainModel = async () => {
+    _createAndTrainModel = async (source) => {
         const {
             settings: {
+                database,
+                retentionPolicy, 
                 groupBy: {time},
                 fields,
                 measurement,
@@ -234,14 +220,15 @@ class OneClickML extends Component {
             modelActions: {modelCreated},
             notify,
         } = this.props
-        const {datasource} = this.state
+        const bucket = await createAndGetBucket(
+            database, retentionPolicy, measurement, source)
         const model = {
             ...DEFAULT_MODEL,
             max_evals: 10,
             name: this.name,
             interval: normalizeInterval(time),
             span: normalizeSpan(time),
-            default_datasource: datasource,
+            default_bucket: bucket.name,
             bucket_interval: time,
             features: fields.map(
                 (field) => ({
@@ -253,25 +240,19 @@ class OneClickML extends Component {
                         default: normalizeFeatureDefault(fill),
                         match_all: Object
                             .keys(tags)
-                            .map(k => {
-                                return tags[k]
-                                    .map(v => {
-                                        return {
+                            .map(k => tags[k]
+                                    .map(v => ({
                                             tag: k,
                                             value: v,
-                                        }
-                                    })
-                            })
-                            .reduce((a, v) => {
-                                return [...a, ...v]
-                            }, []),
+                                        })))
+                            .reduce((a, v) => [...a, ...v], []),
                     })
                 ),
         }
 
         try {
             await createModel(model)
-            await createModelHook(model.name, createHook(ANOMALY_HOOK, model.default_datasource))
+            await createModelHook(model.name, createHook(ANOMALY_HOOK, model.default_bucket))
             modelCreated(model)
             notify(notifyModelCreated(model.name))
             this._trainModel(model.name)
@@ -281,9 +262,9 @@ class OneClickML extends Component {
         }
     }
     
-    oneClickModel = () => {
+    oneClickModel = (source) => {
         if (this.isValid) {
-            this._createAndTrainModel()
+            this._createAndTrainModel(source)
         }
     }
 
@@ -299,7 +280,6 @@ class OneClickML extends Component {
                 areTagsAccepted,
             }
         } = this.props
-        const {datasource} = this.state
         
         const isCheckTags = checkTags(tags)
         const checkTagsAccepted = (Object.keys(tags).length>0 && isCheckTags
@@ -311,7 +291,6 @@ class OneClickML extends Component {
             formatStaticTip('This will create a new model, and run training to fit the baseline to your data.'),
             formatStaticTip('You can visualise the baseline, and forecast future data using the Loud ML tab on the left panel once training is completed.'),
             '<br/>',
-            notifyDatasource(datasource),
             notifyFeature(fields),
             notifyInterval(time),
             notifyMatch(tags),
@@ -328,14 +307,12 @@ class OneClickML extends Component {
             fill,
             areTagsAccepted,
         }} = this.props
-        const {datasource} = this.state
         const isCheckTags = checkTags(tags)
         const checkTagsAccepted = (Object.keys(tags).length>0 && isCheckTags
         ? areTagsAccepted
         : true)  // don't care
 
-        return (datasource)
-            && (fields&&fields.length===1)
+        return (fields&&fields.length===1)
             && (time!==null&&time!=='auto')
             && (isCheckTags===true)
             && (fill!=='linear')

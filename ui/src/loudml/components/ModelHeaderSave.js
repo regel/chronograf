@@ -7,8 +7,7 @@ import classnames from 'classnames'
 const ModelHeaderSave = ({
     onSave,
     validationError
-}) => {
-    return (
+}) => (
         <div className="page-header__right">
             <div className={classnames('btn', 'btn-sm', 'btn-success', {
                 'disabled': validationError,
@@ -27,7 +26,6 @@ const ModelHeaderSave = ({
             </div>
         </div>
     )
-}
 
 const {func, string} = PropTypes
 

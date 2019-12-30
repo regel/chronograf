@@ -9,8 +9,7 @@ const ModelHeader = ({
     onEdit,
     onSave,
     validationError
-}) => {
-    return (
+}) => (
         <div className="panel-heading">
             <NameSection
                 name={name}
@@ -26,7 +25,6 @@ const ModelHeader = ({
             </div>
         </div>
     )
-}
 
 const {func, string, bool} = PropTypes
 

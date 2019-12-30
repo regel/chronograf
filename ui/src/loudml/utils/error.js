@@ -1,7 +1,6 @@
 import _ from 'lodash'
 
-export const parseError = error => {
-    return _.get(
+export const parseError = error => _.get(
         error,
         'data.message',
         _.get(
@@ -14,5 +13,4 @@ export const parseError = error => {
             )
         )
     )
-}
 

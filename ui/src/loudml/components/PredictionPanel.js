@@ -4,8 +4,7 @@ import PropTypes from 'prop-types'
 const PredictionPanel = ({
     model,
     onInputChange,
-}) => {
-    return (
+}) => (
         <div className="panel panel-solid">
             <div className="panel-heading">
                 <h2 className="panel-title">
@@ -37,7 +36,6 @@ const PredictionPanel = ({
             </div>
         </div>
     )
-}
 
 const {func, shape} = PropTypes
 

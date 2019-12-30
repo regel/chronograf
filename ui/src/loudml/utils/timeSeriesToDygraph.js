@@ -34,9 +34,7 @@ const timeSeriesTransform = (raw = []) => {
     // collect each series
     const serieses = reduce(
         results,
-        (acc, {series = [], responseIndex}, index) => {
-            return [...acc, ...map(series, item => ({...item, responseIndex, index}))]
-        },
+        (acc, {series = [], responseIndex}, index) => [...acc, ...map(series, item => ({...item, responseIndex, index}))],
         []
     )
 

@@ -9,7 +9,7 @@ import LockablePanel from 'src/loudml/components/LockablePanel';
 
 import {showMeasurements} from 'src/shared/apis/metaQuery'
 import showMeasurementsParser from 'src/shared/parsing/showMeasurements'
-import { findSource } from 'src/loudml/utils/datasource';
+import { findSource } from 'src/loudml/utils/bucket';
 
 import {TEN_SECONDS} from 'shared/constants/index'
 import {DEFAULT_FEATURE, DEFAULT_LOUDML_RP} from 'src/loudml/constants'
@@ -48,16 +48,16 @@ class FeaturesPanel extends Component {
     getMeasurements = async () => {
         const {
             sources,
-            datasource,
+            bucket,
         } = this.props
 
-        if (!datasource) {
+        if (!bucket) {
             return
         }
 
         try {
-            const source = findSource(sources, datasource)
-            const {database} = datasource
+            const source = findSource(sources, bucket)
+            const {database} = bucket
             const {data} = await showMeasurements(source.links.proxy, database)
             const {measurementSets} = showMeasurementsParser(data)
             const measurements = measurementSets[0].measurements
@@ -150,7 +150,7 @@ class FeaturesPanel extends Component {
         const {
             features,
             locked,
-            datasource,
+            bucket,
         } = this.props
         
         const {
@@ -168,7 +168,7 @@ class FeaturesPanel extends Component {
                     <button
                         className="btn btn-sm btn-primary"
                         disabled={!!features.some(f => f.isEditing)
-                            ||locked||!datasource}
+                            ||locked||!bucket}
                         onClick={this.addFeature}
                         >
                         <span className="icon plus" /> Add feature
@@ -188,7 +188,7 @@ class FeaturesPanel extends Component {
                                 measurements={measurements}
                                 source={source}
                                 database={database}
-                                retentionPolicy={datasource.retention_policy||DEFAULT_LOUDML_RP}
+                                retentionPolicy={bucket.retention_policy||DEFAULT_LOUDML_RP}
                                 locked={locked}
                             />))
                         : <i>No feature</i>}
@@ -205,7 +205,7 @@ FeaturesPanel.propTypes = {
     features: arrayOf(shape({})),
     onInputChange: func.isRequired,
     notify: func.isRequired,
-    datasource: shape(),
+    bucket: shape(),
     sources: arrayOf(shape()),
     locked: bool.isRequired,
 }

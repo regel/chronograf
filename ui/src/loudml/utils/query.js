@@ -16,67 +16,41 @@ const QUERY_CONFIG = {
 
 const createErrorQueryFields = (prefix, model) => {
     const {features} = model
-
     return features
         .map(
-            f => ({
+            feature => ({
                 type: 'func',
                 value: 'LAST',
-                alias: prefix,
                 args: [
                     {
                         type: 'field',
-                        alias: '',
-                        value: `${prefix}_${f.metric}_${f.field}`,
+                        value: `${prefix}${feature.name}`,
                     }
                 ],
             })
         )
 }
 
-const createModelQueryFields = (model) => {
-    const {features} = model
 
-    return features
-        .map(
-            f => ({
-                type: 'func',
-                value: f.metric,
-                alias: f.name,
-                args: [
-                    {
-                        type: 'field',
-                        alias: '',
-                        value: f.field,
-                    }
-                ],
-            })
-        )
-}
-
-const getTags = feature => {
-    return feature.match_all
+const getTags = feature => feature.match_all
         .reduce((a, m) => {
             a[m.tag] = [m.value]
             return a
     }, {})
-}
 
-const getErrorTags = (feature, name) => {
-    return Object.assign(
+const getErrorTags = (feature, name) => Object.assign(
         getTags(feature),
         {model: [name]})
-}
 
-const createErrorQueryConfig = (prefix, model, datasource) => {
+const createErrorQueryConfig = (prefix, model) => {
     const {features, name} = model
     const feature = features[0]
 
     return {
         ...QUERY_CONFIG,
         fields: createErrorQueryFields(prefix, model),
-        database: datasource.database,
-        retentionPolicy: datasource.retention_policy||DEFAULT_LOUDML_RP,
+        database: 'loudml',
+        retentionPolicy: DEFAULT_LOUDML_RP,
         measurement: 'loudml',
         tags: getErrorTags(feature, name),
         fill: null,
@@ -87,29 +61,9 @@ const createErrorQueryConfig = (prefix, model, datasource) => {
     }
 }
 
-const createModelQueryConfig = (model, datasource) => {
-    const {features} = model
-    const feature = features[0]
-    const measurement = feature.measurement
 
-    return {
-        ...QUERY_CONFIG,
-        fields: createModelQueryFields(model),
-        database: datasource.database,
-        retentionPolicy: datasource.retention_policy||DEFAULT_LOUDML_RP,
-        measurement,
-        tags: getTags(feature),
-        fill: feature.default,
-        groupBy: {
-            time: model.bucket_interval,
-            tags: [],
-        }
-    }
-}
-
-export const createQueryFromModel = (model, source, datasource) => {
+export const createQueryFromModel = (model) => {
     const {settings} = model
-    const {links: {self}} = source
     
     const features = FeaturesUtils.deserializedFeatures(settings.features)
         .filter(feature => feature.io!=='i')
@@ -121,22 +75,19 @@ export const createQueryFromModel = (model, source, datasource) => {
 
     const configs = [
         { queryConfig: createErrorQueryConfig(
-            'lower',
-            m,
-            datasource),
-        },
-        { queryConfig: createModelQueryConfig(
-            m,
-            datasource),
+            'lower_',
+            m),
         },
         { queryConfig: createErrorQueryConfig(
-            'upper',
-            m,
-            datasource),
+            '@',
+            m),
+        },
+        { queryConfig: createErrorQueryConfig(
+            'upper_',
+            m),
         },
     ]
     return [{
-        source: self,
         query: configs.map(
             c => (
                 buildQuery(TYPE_QUERY_CONFIG, c.queryConfig.range, c.queryConfig)

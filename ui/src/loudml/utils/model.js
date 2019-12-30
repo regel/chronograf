@@ -15,7 +15,7 @@ export const normalizeInterval = bucketInterval => {
         return MIN_INTERVAL_UNIT
     }
 
-    const duration = moment.duration(Number.parseInt(interval[1], 10), interval[2]).asSeconds()
+    const duration = moment.duration(parseInt(interval[1], 10), interval[2]).asSeconds()
     if (!duration) {
         return MIN_INTERVAL_UNIT
     }
@@ -38,7 +38,7 @@ export const normalizeSpan = bucketInterval => {
         return MIN_SPAN
     }
 
-    const duration = moment.duration(Number.parseInt(interval[1], 10), interval[2]).asSeconds()
+    const duration = moment.duration(parseInt(interval[1], 10), interval[2]).asSeconds()
     if (!duration) {
         return MIN_SPAN
     }
@@ -51,8 +51,8 @@ export const normalizeFeatureDefault = fill => {
         fill = null
     }
     // try to parse number
-    const parsed = Number.parseFloat(fill)
-    if (Number.isNaN(parsed)) {
+    const parsed = parseFloat(fill)
+    if (isNaN(parsed)) {
         return fill
     }
     return parsed

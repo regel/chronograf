@@ -82,7 +82,6 @@ gradient linear-gradient(252deg, transparent 50%, #22ADF6 50%),
                 linear-gradient(90deg, ${backgroundColor} 50%, transparent 50%)`
             : `linear-gradient(90deg, ${backgroundColor} 50%, transparent 50%)`)
 
-        console.log('gradient', gradient)
         return gradient
     }
 

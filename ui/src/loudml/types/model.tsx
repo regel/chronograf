@@ -4,31 +4,21 @@ interface Feature {
     transform?: string|null
 }
 
-interface Seasonality {
-    daytime: boolean
-    weekday: boolean
-}
-
 export interface ModelSettings {
     name: string
     type: string
     run?: {}
     features: Feature[]
-    default_datasource: string
-    default_datasink?: string
+    default_bucket: string
     bucket_interval: string
     interval: string
     max_evals: number
     offset: string
-    seasonality?: Seasonality
     forecast?: number
     span: number
     grace_period?: number
     max_threshold: number
     min_threshold: number
-    width?: number
-    height?: number
-    key?: string
     timestamp_field?: string
 }
 
@@ -56,10 +46,11 @@ export interface Job {
     id: string
     name: string
     type: string
+    model?: string
 }
 
 export interface ModelType {
     name: string
     type: string
-    default: boolean
+        default: boolean
 }

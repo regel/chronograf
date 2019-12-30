@@ -10,17 +10,14 @@ export const MODEL_TYPE_LIST = [
 
 export const DEFAULT_MODEL = {
     bucket_interval: '20m',
-    default_datasource: null,
+    default_bucket: null,
     features: [],
     interval: '1m',
     max_evals: 20,
     name: '',   // input value cannot be null
     offset: '10s',
     span: 10,
-    forecast: 5,
     type: MODEL_TYPE_LIST[0].type,
-    min_threshold: 0,   // auto
-    max_threshold: 0,   // auto
 }
 
 export const DEFAULT_FEATURE = {
@@ -49,4 +46,5 @@ export const MODELS_LOADED = 'MODELS_LOADED';
 export const MODEL_DELETED = 'MODEL_DELETED';
 export const START_JOB = 'START_LOUDML_JOB';
 export const STOP_JOB = 'STOP_LOUDML_JOB';
+export const JOB_DELETED = 'LOUDML_JOB_DELETED';
 export const UPDATE_JOBS = 'UPDATE_LOUDML_JOBS'

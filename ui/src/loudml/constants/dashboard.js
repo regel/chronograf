@@ -1,3 +1,5 @@
+import {EMPTY_DASHBOARD} from 'src/dashboards/constants'
+
 export const DEFAULT_ERROR_CELL =
     {
         "x": 0,
@@ -64,7 +66,5 @@ export const DEFAULT_ERROR_CELL =
 
 export const DEFAULT_ERROR_DASHBOARD = 
 {
-    "cells": [],
-    "templates": [],
-    "organization": "default",
+    ...EMPTY_DASHBOARD
 }

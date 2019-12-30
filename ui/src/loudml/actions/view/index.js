@@ -5,6 +5,7 @@ import {
     MODEL_UPDATED,
     START_JOB,
     STOP_JOB,
+    JOB_DELETED,
     UPDATE_JOBS,
 } from 'src/loudml/constants'
 
@@ -37,6 +38,11 @@ export const jobStart = job => ({
 
 export const jobStop = job => ({
     type: STOP_JOB,
+    payload: job
+})
+
+export const jobDeleted = job => ({
+    type: JOB_DELETED,
     payload: job
 })
 

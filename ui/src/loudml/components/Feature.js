@@ -5,7 +5,6 @@ import _ from 'lodash'
 
 import FancyScrollbar from 'shared/components/FancyScrollbar';
 import Dropdown from 'shared/components/Dropdown'
-import OptIn from 'src/shared/components/OptIn';
 
 import FeatureHeader from 'src/loudml/components/FeatureHeader'
 import FillFeature from 'src/loudml/components/FillFeature'
@@ -33,43 +32,6 @@ const safeValue = (collection, value) => {
         return item.text
     }
     return ''
-}
-
-const EnabledWatermarkValue = ({
-    value,
-    onEdit
-}) => {
-    return (
-        <OptIn
-            type="number"
-            onSetValue={onEdit}
-            customPlaceholder="ex 0"
-            customValue={value}
-            fixedPlaceholder="none"
-            fixedValue=""
-            />
-    )
-}
-
-const WatermarkComponent = ({
-    watermark,
-    onEdit,
-    disabled,
-}) => {
-    function formatWatermark(value) {
-        return (value?value:'none')
-    }
-
-    if (disabled) {
-        return (<DisabledValue value={formatWatermark(watermark)} />)
-    }
-
-    return (
-        <EnabledWatermarkValue
-            value={watermark}
-            onEdit={onEdit}
-            />
-    )
 }
 
 const FeatureDropdown = (props) => {
@@ -141,12 +103,6 @@ class Feature extends Component {
         } catch (err) {
             console.error(err)
         }
-    }
-        
-    handleWatermarkValue = field => value => {
-        const {feature, onEdit} = this.props
-        const formatted = (value===''?null:value)
-        onEdit(feature, {[field]: formatted})
     }
 
     handleTextChoose = key => item => {
@@ -355,24 +311,6 @@ class Feature extends Component {
                 />)
             },
             {
-                label: 'Low watermark',
-                customClass: "col-md-5",
-                component: (<WatermarkComponent
-                    watermark={feature.low_watermark}
-                    onEdit={this.handleWatermarkValue('low_watermark')}
-                    disabled={locked}
-                    />)
-            },
-            {
-                label: 'High watermark',
-                customClass: "col-xs-offset-1 col-xs-5",
-                component: (<WatermarkComponent
-                    watermark={feature.high_watermark}
-                    onEdit={this.handleWatermarkValue('high_watermark')}
-                    disabled={locked}
-                    />)
-            },
-            {
                 label: 'Anomaly type',
                 customClass: "col-xs-4",
                 component: (<FeatureDropdown
@@ -390,17 +328,6 @@ class Feature extends Component {
 }
 
 const {func, shape, arrayOf, string, bool, number, oneOfType} = PropTypes
-
-EnabledWatermarkValue.propTypes = {
-    value: number,
-    onEdit: func.isRequired,
-}
-
-WatermarkComponent.propTypes = {
-    watermark: number,
-    onEdit: func.isRequired,
-    disabled: bool.isRequired,
-}
 
 FeatureDropdown.propTypes = {
     selected: oneOfType([string, number]),

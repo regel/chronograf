@@ -3,8 +3,7 @@ import {PropTypes} from 'prop-types'
 
 const JobStatus = ({
     jobs,
-}) => {
-    return (
+}) => (
         <div>
             {jobs
                 .filter(job => job.type==='forecast')
@@ -16,7 +15,6 @@ const JobStatus = ({
             }
         </div>
     )
-}
 
 const {shape, arrayOf} = PropTypes
 

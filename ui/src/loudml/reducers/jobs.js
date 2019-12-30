@@ -1,6 +1,7 @@
 import {
     START_JOB,
     STOP_JOB,
+    JOB_DELETED,
     UPDATE_JOBS,
 } from 'src/loudml/constants'
 
@@ -28,6 +29,12 @@ export default function jobs(state = initialState, action) {
 				jobs: [...state.jobs].filter(job => job.name !== action.payload.name)
 			}
         }
+        case JOB_DELETED: {
+			return {
+				...state,
+				jobs: [...state.jobs].filter(job => job.name !== action.payload.name)
+			}
+    	}
         case UPDATE_JOBS: {
             return {
                 ...state,

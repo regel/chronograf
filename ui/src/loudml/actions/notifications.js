@@ -106,9 +106,9 @@ export const notifyDashboardCellCreationFailed = (name, message) => notifyError(
     `cannot create prediction cell for model '${name}': ${message}`,
 )
 
-export const notifyErrorGettingDatasources = message => notifyError(
+export const notifyErrorGettingBuckets = message => notifyError(
     TEN_SECONDS,
-    `cannot get Loud ML datasources: ${message}`,
+    `cannot get Loud ML buckets: ${message}`,
 )
 
 export const notifyErrorGettingModelHook = (model, hook, message) => notifyError(
@@ -116,11 +116,3 @@ export const notifyErrorGettingModelHook = (model, hook, message) => notifyError
     `cannot get hook '${hook}' for model ${model}: ${message}`,
 )
 
-export const notifyNabLoading = database => notifySuccess(`loading nab dataset into database '${database}'...`)
-
-export const notifyNabLoadingFailed = (database, message) => notifyError(
-    INFINITE,
-    `cannot load nab dataset into database '${database}': ${message}`,
-)
-
-export const notifyNabLoaded = database => notifySuccess(`nab dataset loaded successfully into database '${database}'`)

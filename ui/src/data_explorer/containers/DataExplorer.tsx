@@ -32,7 +32,6 @@ import defaultQueryConfig from 'src/utils/defaultQueryConfig'
 
 import {Source, QueryConfig, TimeRange} from 'src/types'
 import {ErrorHandling} from 'src/shared/decorators/errors'
-import LoadData from 'src/loudml/components/LoadData';
 
 interface Props {
   source: Source
@@ -199,9 +198,6 @@ export class DataExplorer extends PureComponent<Props, State> {
       <>
         <GraphTips />
         <OneClickML />
-        <LoadData
-          source={source}
-          />
         <div
           className="btn btn-sm btn-default"
           onClick={this.handleOpenWriteData}

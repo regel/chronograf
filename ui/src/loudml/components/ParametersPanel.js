@@ -7,9 +7,7 @@ const ParametersPanel = ({
     model,
     onInputChange,
     locked,
-}) => {
-    
-    return (
+}) => (
         <LockablePanel locked={locked}>
             <div className="panel-heading">
                 <h2 className="panel-title"></h2>
@@ -44,7 +42,6 @@ const ParametersPanel = ({
             </div>
         </LockablePanel>
     )
-}
 
 const {func, shape, bool} = PropTypes
 

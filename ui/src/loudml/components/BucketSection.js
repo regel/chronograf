@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 import Dropdown from 'shared/components/Dropdown'
 
-class DatasourceSection extends Component {
+class BucketSection extends Component {
     constructor(props) {
         super(props)
 
@@ -15,23 +15,23 @@ class DatasourceSection extends Component {
 
     render() {
         const {
-            datasource,
-            datasources,
+            bucket,
+            buckets,
             buttonSize,
             disabled,
             name,        
         } = this.props
 
-        if (!datasources) {
-            return <p>No datasources</p>
+        if (!buckets) {
+            return <p>No buckets</p>
         }
 
         return (
             <Dropdown
                 name={name}
-                items={datasources.map(ds => ({text: ds.name}))}
+                items={buckets.map(ds => ({text: ds.name}))}
                 onChoose={this.handleOnChoose}
-                selected={datasource || ''}
+                selected={bucket || ''}
                 className="dropdown-stretch"
                 buttonSize={buttonSize}
                 disabled={disabled}
@@ -40,19 +40,19 @@ class DatasourceSection extends Component {
     }
 }
 
-DatasourceSection.defaultProps = {
-    datasources: [],
+BucketSection.defaultProps = {
+    buckets: [],
 }
 
 const {func, string, arrayOf, shape, bool} = PropTypes
 
-DatasourceSection.propTypes = {
+BucketSection.propTypes = {
     name: string.isRequired,
-    datasource: string,
-    datasources: arrayOf(shape()),
+    bucket: string,
+    buckets: arrayOf(shape()),
     onChoose: func.isRequired,
     buttonSize: string,
     disabled: bool,
 }
 
-export default DatasourceSection
+export default BucketSection

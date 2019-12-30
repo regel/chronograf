@@ -1,19 +1,21 @@
+import _ from 'lodash'
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 
 import {Link, withRouter} from 'react-router'
 
-import {errorThrown as errorThrownAction} from 'shared/actions/errors'
-import {notify as notifyAction} from 'shared/actions/notifications'
+import {errorThrown as errorThrownAction} from 'src/shared/actions/errors'
+import {notify as notifyAction} from 'src/shared/actions/notifications'
 import PageHeader from 'src/reusable_ui/components/page_layout/PageHeader'
-import FancyScrollbar from 'shared/components/FancyScrollbar'
+import FancyScrollbar from 'src/shared/components/FancyScrollbar'
 import SearchBar from 'src/hosts/components/SearchBar'
 
 import {ErrorHandling} from 'src/shared/decorators/errors'
 
 import ModelsTable from 'src/loudml/components/ModelsTable'
 import QuestionMark from 'src/loudml/components/QuestionMark'
+import {Model, Job} from 'src/loudml/types/model'
 
 import {
     getDashboards,
@@ -24,15 +26,14 @@ import {
 import {createQueryFromModel} from 'src/loudml/utils/query'
 import {convertTimeRange} from 'src/loudml/utils/timerange'
 import {parseError} from 'src/loudml/utils/error'
-import {findSource} from 'src/loudml/utils/datasource';
 import * as api from 'src/loudml/apis'
-import {getSources} from 'src/shared/apis';
 import {
     modelsLoaded as modelsLoadedAction,
     modelDeleted as modelDeletedAction,
     modelCreated as modelCreatedAction,
     jobStart as jobStartAction,
     jobStop as jobStopAction,
+    jobDeleted as jobDeletedAction,
     jobsUpdate as jobsUpdateAction,
 } from "src/loudml/actions/view"
 
@@ -66,68 +67,70 @@ import {ANOMALY_HOOK_NAME} from 'src/loudml/constants/anomaly'
 
 import 'src/loudml/styles/notification.scss'
 
+
 @ErrorHandling
 class LoudMLPage extends Component {
+    timer: NodeJS.Timer
     constructor(props) {
         super(props)
 
         this.state = {
             searchTerm: '',
             dashboards: [],
+            models: [],
           }      
     }
 
     componentDidMount() {
-        this._loadModels()
-
-        this.jobFetchID = setInterval(
-            () => this.fetchJobsState(),
-            10000
-        )
-        this.jobStatusID = setInterval(
-            () => this.notifyJobsState(),
-            10000
-        )
-        this.fetchModelsID = setInterval(
-            () => this._loadModels(),
-            10000
-        )
+        this.getDashboards()
+        this.fetchAllModels()
+        this.timer = setTimeout(function tick() {
+            const {
+                jobs,
+            } = this.props
+            this.fetchJobsState()
+            this.notifyJobsState()
+            if (Array.isArray(jobs)) {
+                const modelNames = jobs.map(job => job.model).filter(function (el) { return el != null });
+                if (modelNames.length > 0) {
+                    this.fetchModelsByName(modelNames)
+                }
+            }
+            this.timer = setTimeout(tick.bind(this), 5000)
+          }.bind(this), 5000);
     }
 
     componentWillUnmount() {
-        if (this._asyncRequest) {
-            this._asyncRequest.cancel();
+        clearTimeout(this.timer);
+    }
+ 
+    fetchAllModels = async () => {
+        try {
+            const {data: models} = await api.getModels()           
+            this.setState({models})
+        } catch (error) {
+            console.error(error)
         }
-        clearInterval(this.fetchModelsID)
-        this.fetchModelsID = false
-        clearInterval(this.jobStatusID)
-        this.jobStatusID = false
-        clearInterval(this.jobFetchID)
-        this.jobFetchID = false
     }
 
-    _loadModels() {
-        const {
-            modelActions: {modelsLoaded},
-            notify,
-            isFetching,
-        } = this.props
+    fetchModelsByName = async (names = []) => {
+        try {
+            let models = [...this.state.models]
+            const {data: fetched} = await api.getModels(names)
+            fetched.forEach(model => {
+                const modelName = model.settings.name
+                let j = _.findIndex(models, function(o) {return o['settings']['name'] == modelName});
 
-        if (isFetching && this._asyncRequest) {
-            return
+                if (j >= 0) {
+                    Object.assign(models[j], model)
+                } else {
+                    models.push(model)
+                }
+            });         
+            this.setState({models})
+        } catch (error) {
+            console.error(error)
         }
-
-        this.getDashboards()
-
-        this._asyncRequest = api.getModels()
-        .then(res => {
-            this._asyncRequest = null;
-            modelsLoaded(res.data)
-        })
-        .catch(error => {
-            notify(notifyErrorGettingModels(parseError(error)))
-            this._asyncRequest = null
-        })
     }
 
     notifyJobsState() {
@@ -157,15 +160,9 @@ class LoudMLPage extends Component {
         if (!jobs || !jobs.length) {
             return
         }
-
-        Promise.all(
-            jobs.map(
-                job => api.getJob(job.id)
-            )
-        )
+        api.getJobs(jobs.map(job => job.id))
             .then(res => {
-                const datas = res.map(v => v.data)
-                jobsUpdate(datas)
+                jobsUpdate(res.data)
             })
             .catch(error => {
                 errorThrown(error)
@@ -176,10 +173,9 @@ class LoudMLPage extends Component {
         const {
             modelActions: {modelCreated},
             router,
-            models,
             source: {id},
         } = this.props
-
+        const { models } = this.state
         const copy = {
             ...models.find(m => m.settings.name === name).settings
         }
@@ -211,16 +207,21 @@ class LoudMLPage extends Component {
 
     deleteModel = name => {
         const {
-            modelActions: {modelDeleted},
+            modelActions: {modelDeleted, jobDeleted},
+            jobs,
             notify
         } = this.props
-
         api.deleteModel(name)
             .then(() => {
+                jobs.filter(job => job.model === name)
+                    .forEach(job => jobDeleted(job))
                 modelDeleted(name)
                 notify(notifyModelDeleted(name))
+                const models = [...this.state.models].filter(
+                    model => model.settings.name !== name)
+                this.setState({models}) // FIXME: use Redux
             })
-              .catch(error => {
+            .catch(error => {
                 notify(notifyModelDeleteFailed(name, error))
             })
     }
@@ -320,7 +321,7 @@ class LoudMLPage extends Component {
     }
 
     stopTrain = name => () => {
-        const {models} = this.props
+        const {models} = this.state
 
         // get job
         const id = models
@@ -340,10 +341,10 @@ class LoudMLPage extends Component {
         this.stopJob(name, id)
     }
 
-    createPredictionDashboard = (model, source, datasource) => {
+    createPredictionDashboard = async (model) => {
         const {settings: {name}} = model
-        const cellName = `${name} prediction`
-        const queries = createQueryFromModel(model, source, datasource)
+        const cellName = `${name} Autogen`
+        const queries = createQueryFromModel(model)
 
         const dashboard = {
             ...DEFAULT_ERROR_DASHBOARD,
@@ -356,13 +357,13 @@ class LoudMLPage extends Component {
                 }
             ]
         }
-        return createDashboard(dashboard)
+        return await createDashboard(dashboard)
     }
 
-    updatePredictionDashboard = (dashboard, model, source, datasource) => {
+    updatePredictionDashboard = (dashboard, model) => {
         const {settings: {name}} = model
-        const cellName = `${name} prediction`
-        const queries = createQueryFromModel(model, source, datasource)
+        const cellName = `${name} Autogen`
+        const queries = createQueryFromModel(model)
 
         const cell = dashboard.cells.find(item => item.name === cellName)
         if (cell===undefined) {
@@ -400,19 +401,16 @@ class LoudMLPage extends Component {
     onNewDashboard = async (model) => {
         const {notify} = this.props
         const {settings} = model
-        
-        try {
-            const {data} = await api.getDatasources()
-            const datasource = data.find(d => d.name === settings.default_datasource)
-            const {data: {sources}} = await getSources()
-            const source = findSource(sources, datasource)
-            await this.createPredictionDashboard(model, source, datasource)
+        this.createPredictionDashboard(model)
+        .then(
+        () => {
             notify(notifyDashboardCreated(settings.name))
             this.getDashboards()    // update for Dashboard dropdown
-        } catch (error) {
+        },
+        (error) => {
             console.error(error)
             notify(notifyDashboardCreationFailed(settings.name, parseError(error)))
-        }
+        })
     }
 
     onAddToDashboard = async (model, dashboard) => {
@@ -420,11 +418,7 @@ class LoudMLPage extends Component {
         const {settings} = model
         
         try {
-            const {data} = await api.getDatasources()
-            const datasource = data.find(d => d.name === settings.default_datasource)
-            const {data: {sources}} = await getSources()
-            const source = findSource(sources, datasource)
-            await this.updatePredictionDashboard(dashboard, model, source, datasource)
+            await this.updatePredictionDashboard(dashboard, model)
             notify(notifyDashboardCellCreated(settings.name))
         } catch (error) {
             console.error(error)
@@ -433,12 +427,8 @@ class LoudMLPage extends Component {
     }
 
     render() {
-        const {isFetching, jobs, source} = this.props
+        const {jobs, source} = this.props
         const {dashboards} = this.state
-
-        if (isFetching) {
-            return <div className="page-spinner" />
-        }
 
         return (
             <div className="page">
@@ -505,7 +495,7 @@ class LoudMLPage extends Component {
       }
       
     get panelTitle() {
-        const {models} = this.props
+        const {models} = this.state
     
         if (models === null) {
             return 'Loading Models...'
@@ -521,9 +511,7 @@ class LoudMLPage extends Component {
     }
     
     get filteredModels() {
-        const {models} = this.props
-        const {searchTerm} = this.state
-    
+        const {models, searchTerm} = this.state
         return models.filter(m =>
             m.settings.name.toLowerCase().includes(searchTerm.toLowerCase())
         )
@@ -538,14 +526,13 @@ LoudMLPage.propTypes = {
     router: shape({
         push: func.isRequired,
     }).isRequired,
-    models: arrayOf(shape()).isRequired,
-    isFetching: bool.isRequired,
-    jobs: arrayOf(shape()).isRequired,
+    jobs: arrayOf(PropTypes.any).isRequired,
     modelActions: shape({
         modelsLoaded: func.isRequired,
         modelDeleted: func.isRequired,
         jobStart: func.isRequired,
         jobStop: func.isRequired,
+        jobDeleted: func.isRequired,
         jobsUpdate: func.isRequired,
     }).isRequired,
     notify: func.isRequired,
@@ -553,12 +540,9 @@ LoudMLPage.propTypes = {
 }
 
 function mapStateToProps(state) {
-    const { isFetching, models } = state.loudml.models
     const { jobs } = state.loudml.jobs
 
     return {
-        models,
-        isFetching,
         jobs
     }
 }
@@ -570,6 +554,7 @@ const mapDispatchToProps = dispatch => ({
         modelDeleted: name => dispatch(modelDeletedAction(name)),
         jobStart: job => dispatch(jobStartAction(job)),
         jobStop: job => dispatch(jobStopAction(job)),
+        jobDeleted: job => dispatch(jobDeletedAction(job)),
         jobsUpdate: jobs => dispatch(jobsUpdateAction(jobs)),
     },
     notify: message => dispatch(notifyAction(message)),

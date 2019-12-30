@@ -13,9 +13,7 @@ const AboutTextStyle = {
 
 const AboutPanel = ({
     version,
-}) => {
-    
-    return (
+}) => (
         <div className="panel panel-solid">
             <div className="panel-heading">
                 <h2 className="panel-title" />
@@ -36,7 +34,6 @@ const AboutPanel = ({
             </div>
         </div>
     )
-}
 
 const {string} = PropTypes
 

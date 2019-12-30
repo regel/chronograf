@@ -1,5 +1,5 @@
-export const createHook = (hook, datasource) => {
+export const createHook = (hook, bucket) => {
     const h = {...hook}
-    h.config.datasource = datasource
+    h.config.bucket = bucket
     return h
 }

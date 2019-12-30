@@ -10,8 +10,8 @@ export const ANOMALY_HOOK = {
     "type": "annotations",
     "name": ANOMALY_HOOK_NAME,
     "config": {
-        "id": "not-used",
+        "id": null,
         "type": "loudml",
-        "datasource": null,
+        "bucket": null,
     },
 }

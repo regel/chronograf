@@ -18,10 +18,10 @@ import {
     getModel as getModelApi,
     createModel as createModelApi,
     updateModel as updateModelApi,
+    getBuckets as getBucketsApi,
     getModelHooks as getModelHookApi,
     createModelHook as createModelHookApi,
     deleteModelHook as deleteModelHookApi,
-    getDatasources as getDatasourcesApi,
     getVersion as getVersionApi,
 } from 'src/loudml/apis'
 import {
@@ -39,7 +39,7 @@ import {
     notifyModelCreationFailed,
     notifyModelUpdated,
     notifyModelUpdateFailed,
-    notifyErrorGettingDatasources,
+    notifyErrorGettingBuckets,
     notifyErrorGettingModelHook,
 } from 'src/loudml/actions/notifications'
 import {parseError} from 'src/loudml/utils/error'
@@ -59,14 +59,14 @@ class ModelPage extends Component {
         this.state = {
             isLoading: true,
             annotation: false,
-            datasources: [],
+            buckets: [],
             training: {},
             state: {},
             activeSection: 'general',
         }
     }
 
-    componentDidMount = async () => {
+    async componentDidMount() {
         const {
             params: {name},
             notify,
@@ -82,7 +82,6 @@ class ModelPage extends Component {
             :{...DEFAULT_MODEL}
         )
 
-        const cb = this.loadDatasources
         this.getVersion()
 
         if (name&&model) {
@@ -92,7 +91,7 @@ class ModelPage extends Component {
             const annotation = (isEditing
                 ?settings.annotation
                 :await this.hasHook(name))
-            return this.setState({
+            this.setState({
                 isLoading: false,
                 isEditing,
                 model: {
@@ -102,13 +101,15 @@ class ModelPage extends Component {
                 state,
                 training: training||{},
                 annotation,
-            }, cb)
+            })
+            this.loadBuckets()
+            return
         }
 
         if (!name) {
             // new
             try {
-                return this.setState(
+                this.setState(
                     {
                         isLoading: false,
                         isEditing: true,
@@ -117,17 +118,19 @@ class ModelPage extends Component {
                             features: FeaturesUtils.deserializedFeatures(model.features),
                         },
                     },
-                    cb
                 )
+                this.loadBuckets()
+                return
             } catch (error) {
                 notify(notifyErrorGettingModel(parseError(error)))
-                return this.setState({isLoading: false}, cb)
+                this.setState({isLoading: false})
+                this.loadBuckets()
             }
         }
 
         try {
             // fetch
-            const {data: {settings, state, training}} = await getModelApi(name)
+            const {data: [{settings, state, training}]} = await getModelApi(name)
             const annotation = await this.hasHook(name)
             this.setState({
                 model: {
@@ -139,7 +142,9 @@ class ModelPage extends Component {
                 isLoading: false,
                 isEditing: false,
                 annotation,
-            }, cb)
+            })
+            this.loadBuckets()
+            return
         } catch (error) {
             notify(notifyErrorGettingModel(parseError(error)))
             this._redirect()
@@ -202,15 +207,15 @@ class ModelPage extends Component {
         }
     }
 
-    loadDatasources = async () => {
+    loadBuckets = async () => {
         const {notify} = this.props
 
         try {
-            const {data: datasources} = await getDatasourcesApi()
-            const filtered = datasources.filter(ds => ds.type === 'influxdb')
-            this.setState({datasources: filtered})
+            const {data: buckets} = await getBucketsApi()
+            const filtered = buckets.filter(ds => ds.type === 'influxdb')
+            this.setState({buckets: filtered})
         } catch (error) {
-            notify(notifyErrorGettingDatasources(parseError(error)))
+            notify(notifyErrorGettingBuckets(parseError(error)))
         }
     }
 
@@ -234,8 +239,8 @@ class ModelPage extends Component {
             return 'Your model has no name'
         }
 
-        if (!model.default_datasource) {
-            return 'Please choose a datasource'
+        if (!model.default_bucket) {
+            return 'Please choose a bucket'
         }
 
         if (model.features.some(f => f.isEditing)) {
@@ -306,7 +311,7 @@ class ModelPage extends Component {
         try {
             await createModelApi(model)
             if (annotation) {
-                await createModelHookApi(model.name, createHook(ANOMALY_HOOK, model.default_datasource))
+                await createModelHookApi(model.name, createHook(ANOMALY_HOOK, model.default_bucket))
             }
             modelCreated(model)
             this._redirect()
@@ -328,7 +333,7 @@ class ModelPage extends Component {
             const {data: hooks} = await getModelHookApi(model.name)
             const hook = hooks.find(h => h === ANOMALY_HOOK_NAME)
             if (annotation && !hook) {
-                await createModelHookApi(model.name, createHook(ANOMALY_HOOK, model.default_datasource))
+                await createModelHookApi(model.name, createHook(ANOMALY_HOOK, model.default_bucket))
             }
             if (!annotation && hook) {
                 await deleteModelHookApi(model.name, ANOMALY_HOOK_NAME)
@@ -365,11 +370,11 @@ class ModelPage extends Component {
         const {
             model,
             annotation,
-            datasources,
+            buckets,
             version,
         } = this.state
 
-        const datasource = datasources.find(ds => ds.name === model.default_datasource)
+        const bucket = buckets.find(ds => ds.name === model.default_bucket)
         const locked = this.isLocked
 
         return [
@@ -382,7 +387,7 @@ class ModelPage extends Component {
                         model={model}
                         onDropdownChoose={this.onDropdownChoose}
                         onEdit={this.handleEdit}
-                        datasources={datasources}
+                        buckets={buckets}
                         modelTypes={MODEL_TYPE_LIST}
                         locked={locked}
                         />
@@ -408,7 +413,7 @@ class ModelPage extends Component {
                     <FeaturesPanel
                         features={model.features}
                         onInputChange={this.onInputChange}
-                        datasource={datasource}
+                        bucket={bucket}
                         locked={locked}
                     />
                 ),

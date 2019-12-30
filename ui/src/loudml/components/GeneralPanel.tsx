@@ -1,16 +1,16 @@
 import React, { SFC } from 'react'
 
-import DatasourceSection from 'src/loudml/components/DatasourceSection'
+import BucketSection from 'src/loudml/components/BucketSection'
 import ModelTypeSection from 'src/loudml/components/ModelTypeSection';
 
-import { Datasource } from 'src/loudml/types/datasource';
+import { Bucket } from 'src/loudml/types/bucket';
 import { ModelSettings, ModelType } from 'src/loudml/types/model';
   
 interface Props {
     model: ModelSettings
     onEdit: (field: string, value: string|number) => void
     onDropdownChoose: (e: any) => void
-    datasources: Datasource[]
+    buckets: Bucket[]
     modelTypes: ModelType[]
     locked: boolean
 }
@@ -19,7 +19,7 @@ const GeneralPanel: SFC<Props> = ({
     model,
     onEdit,
     onDropdownChoose,
-    datasources,
+    buckets,
     modelTypes,
     locked,
 }) => {
@@ -49,25 +49,15 @@ const GeneralPanel: SFC<Props> = ({
                     </div>
                 </div>
                 <div className="form-group col-xs-offset-2 col-xs-6">
-                    <label>Data source</label>
-                    <DatasourceSection
-                        name="default_datasource"
-                        datasource={model.default_datasource}
-                        datasources={datasources}
+                    <label>Bucket</label>
+                    <BucketSection
+                        name="default_bucket"
+                        bucket={model.default_bucket}
+                        buckets={buckets}
                         onChoose={onDropdownChoose}
                         buttonSize="btn-md"
                         disabled={locked}
                     />
-                </div>
-                <div className="form-group col-xs-offset-6 col-xs-6">
-                    <label>Data sink</label>
-                    <DatasourceSection
-                        name="default_datasink"
-                        datasource={model.default_datasink}
-                        datasources={datasources}
-                        onChoose={onDropdownChoose}
-                        buttonSize="btn-md"
-                        />
                 </div>
                 <div className="form-group col-xs-offset-6 col-xs-6">
                     <label htmlFor="max_evals">Max training hyper-parameters iterations</label>
