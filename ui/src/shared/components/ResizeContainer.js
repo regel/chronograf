@@ -13,6 +13,13 @@ const defaultInitialBottomHeight = '50%'
 
 @ErrorHandling
 class ResizeContainer extends Component {
+  static defaultProps = {
+    minTopHeight: defaultMinTopHeight,
+    minBottomHeight: defaultMinBottomHeight,
+    initialTopHeight: defaultInitialTopHeight,
+    initialBottomHeight: defaultInitialBottomHeight,
+  }
+
   constructor(props) {
     super(props)
     this.state = {
@@ -20,13 +27,6 @@ class ResizeContainer extends Component {
       topHeight: props.initialTopHeight,
       bottomHeight: props.initialBottomHeight,
     }
-  }
-
-  static defaultProps = {
-    minTopHeight: defaultMinTopHeight,
-    minBottomHeight: defaultMinBottomHeight,
-    initialTopHeight: defaultInitialTopHeight,
-    initialBottomHeight: defaultInitialBottomHeight,
   }
 
   componentDidMount() {

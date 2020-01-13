@@ -232,9 +232,7 @@ export function getMeasurementsForHost(source, host) {
     }
 
     const series = _.get(data, ['results', '0', 'series', '0'])
-    return series.values.map(measurement => {
-      return measurement[0]
-    })
+    return series.values.map(measurement => measurement[0])
   })
 }
 

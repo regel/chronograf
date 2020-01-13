@@ -44,8 +44,7 @@ class HostRow extends Component {
           {isNaN(load) ? 'N/A' : `${load.toFixed(2)}`}
         </div>
         <div className="hosts-table--td">
-          {apps.map((app, index) => {
-            return (
+          {apps.map((app, index) => (
               <span key={app}>
                 <Link
                   style={{marginLeft: '2px'}}
@@ -58,8 +57,7 @@ class HostRow extends Component {
                 </Link>
                 {index === apps.length - 1 ? null : ', '}
               </span>
-            )
-          })}
+            ))}
         </div>
       </div>
     )

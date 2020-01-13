@@ -266,8 +266,8 @@ class TableGraph extends Component<Props, State> {
       ''
     )
     if (
-      !_.get(this.props, ['tableOptions', 'sortBy', 'internalName'], '') ===
-      internalName
+      !(_.get(this.props, ['tableOptions', 'sortBy', 'internalName'], '') ===
+      internalName)
     ) {
       sort.direction = DEFAULT_SORT_DIRECTION
       sort.field = internalName

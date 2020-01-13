@@ -26,8 +26,7 @@ const DatabaseTable = ({
   onUpdateRetentionPolicy,
   onRemoveRetentionPolicy,
   onDeleteRetentionPolicy,
-}) => {
-  return (
+}) => (
     <div
       className={classnames('db-manager', {
         'db-manager--edit': database.isEditing,
@@ -68,8 +67,7 @@ const DatabaseTable = ({
           <tbody>
             {_.sortBy(database.retentionPolicies, ({name}) =>
               name.toLowerCase()
-            ).map(rp => {
-              return (
+            ).map(rp => (
                 <DatabaseRow
                   key={rp.links.self}
                   database={database}
@@ -81,14 +79,12 @@ const DatabaseTable = ({
                   isRFDisplayed={isRFDisplayed}
                   isDeletable={database.retentionPolicies.length > 1}
                 />
-              )
-            })}
+              ))}
           </tbody>
         </table>
       </div>
     </div>
   )
-}
 
 DatabaseTable.propTypes = {
   onEditDatabase: func,

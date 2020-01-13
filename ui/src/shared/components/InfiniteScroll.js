@@ -13,6 +13,9 @@ class InfiniteScroll extends Component {
   // Should not be setState as need not trigger a re-render
   scrollbarsScrollTop = 0
   scrollbarsClientHeight = 0
+  throttledHandleScroll = _.throttle(this.handleScroll, 100)
+  throttledHandleResize = _.throttle(this.handleResize, 100)
+
 
   state = {
     topIndex: 0,
@@ -67,13 +70,9 @@ class InfiniteScroll extends Component {
     }
   }
 
-  throttledHandleScroll = _.throttle(this.handleScroll, 100)
-
   handleResize = () => {
     this.setState({windowHeight: window.innerHeight})
   }
-
-  throttledHandleResize = _.throttle(this.handleResize, 100)
 
   handleMakeDiv = className => props => (
     <div {...props} className={`fancy-scroll--${className}`} />

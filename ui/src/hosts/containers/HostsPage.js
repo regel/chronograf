@@ -90,7 +90,7 @@ export class HostsPage extends Component {
     }
     await this.fetchHostsData()
     if (autoRefresh && this.componentIsMounted) {
-      this.intervalID = setInterval(() => this.fetchHostsData(), autoRefresh)
+      this.intervalID = setInterval(() => {this.fetchHostsData()}, autoRefresh)
     }
   }
 
@@ -103,7 +103,7 @@ export class HostsPage extends Component {
 
       if (nextProps.autoRefresh) {
         this.intervalID = setInterval(
-          () => this.fetchHostsData(),
+          () => {this.fetchHostsData()},
           nextProps.autoRefresh
         )
       }

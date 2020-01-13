@@ -9,16 +9,6 @@ import {ErrorHandling} from 'src/shared/decorators/errors'
 
 @ErrorHandling
 export class Dropdown extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      isOpen: false,
-      searchTerm: '',
-      filteredItems: this.props.items,
-      highlightedItemIndex: null,
-    }
-  }
-
   static defaultProps = {
     actions: [],
     buttonSize: 'btn-sm',
@@ -27,6 +17,15 @@ export class Dropdown extends Component {
     useAutoComplete: false,
     disabled: false,
     tabIndex: 0,
+  }
+  constructor(props) {
+    super(props)
+    this.state = {
+      isOpen: false,
+      searchTerm: '',
+      filteredItems: this.props.items,
+      highlightedItemIndex: null,
+    }
   }
 
   handleClickOutside = () => {

@@ -1,10 +1,8 @@
 import {toString} from './ast'
 
-const InfluxQL = ast => {
-  return {
+const InfluxQL = ast => ({
     // select: () =>
     toString: () => toString(ast),
-  }
-}
+  })
 
 export default InfluxQL

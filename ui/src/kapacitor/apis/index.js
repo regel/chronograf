@@ -11,20 +11,16 @@ const rangeRule = rule => {
   return rule
 }
 
-export const createRule = (kapacitor, rule) => {
-  return AJAX({
+export const createRule = (kapacitor, rule) => AJAX({
     method: 'POST',
     url: kapacitor.links.rules,
     data: rangeRule(rule),
   })
-}
 
-export const getRules = kapacitor => {
-  return AJAX({
+export const getRules = kapacitor => AJAX({
     method: 'GET',
     url: kapacitor.links.rules,
   })
-}
 
 export const getRule = async (kapacitor, ruleID) => {
   try {
@@ -38,28 +34,22 @@ export const getRule = async (kapacitor, ruleID) => {
   }
 }
 
-export const editRule = rule => {
-  return AJAX({
+export const editRule = rule => AJAX({
     method: 'PUT',
     url: rule.links.self,
     data: rangeRule(rule),
   })
-}
 
-export const deleteRule = rule => {
-  return AJAX({
+export const deleteRule = rule => AJAX({
     method: 'DELETE',
     url: rule.links.self,
   })
-}
 
-export const updateRuleStatus = (rule, status) => {
-  return AJAX({
+export const updateRuleStatus = (rule, status) => AJAX({
     method: 'PATCH',
     url: rule.links.self,
     data: {status},
   })
-}
 
 export const createTask = async (kapacitor, {id, dbrps, tickscript, type}) => {
   try {

@@ -28,9 +28,7 @@ class HostsTable extends Component {
       // search each tag for the presence of the search term
       let tagResult = false
       if (h.tags) {
-        tagResult = Object.keys(h.tags).reduce((acc, key) => {
-          return acc || h.tags[key].toLowerCase().includes(filterText)
-        }, false)
+        tagResult = Object.keys(h.tags).reduce((acc, key) => acc || h.tags[key].toLowerCase().includes(filterText), false)
       } else {
         tagResult = false
       }

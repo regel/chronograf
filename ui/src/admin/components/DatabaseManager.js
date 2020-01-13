@@ -23,8 +23,7 @@ const DatabaseManager = ({
   onUpdateRetentionPolicy,
   onRemoveRetentionPolicy,
   onDeleteRetentionPolicy,
-}) => {
-  return (
+}) => (
     <div className="panel panel-solid">
       <div className="panel-heading">
         <h2 className="panel-title">
@@ -66,7 +65,6 @@ const DatabaseManager = ({
       </div>
     </div>
   )
-}
 
 const {arrayOf, bool, func, shape} = PropTypes
 

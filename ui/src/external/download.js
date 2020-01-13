@@ -8,12 +8,12 @@
 // https://github.com/rndme/download
 
 const dataUrlToBlob = (myBlob, strUrl) => {
-  const parts = strUrl.split(/[:;,]/),
-    type = parts[1],
-    decoder = parts[2] === 'base64' ? atob : decodeURIComponent,
-    binData = decoder(parts.pop()),
-    mx = binData.length,
-    uiArr = new Uint8Array(mx)
+  const parts = strUrl.split(/[:;,]/);
+    const type = parts[1];
+    const decoder = parts[2] === 'base64' ? atob : decodeURIComponent;
+    const binData = decoder(parts.pop());
+    const mx = binData.length;
+    const uiArr = new Uint8Array(mx)
 
   for (let i = 0; i < mx; ++i) {
     uiArr[i] = binData.charCodeAt(i)
@@ -42,7 +42,7 @@ const download = (data, strFileName, strMimeType) => {
       .pop()
       .split('?')[0]
     anchor.href = url // assign href prop to temp anchor
-    if (anchor.href.indexOf(url) !== -1) {
+    if (anchor.href.includes(url)) {
       // if the browser determines that it's a potentially valid url path:
       const ajax = new XMLHttpRequest()
       ajax.open('GET', url, true)

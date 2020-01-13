@@ -101,9 +101,7 @@ export const toString = ast => {
     strs.push('ORDER BY')
     strs.push(
       orderbys
-        .map(({name, order}) => {
-          return `${name} ${order === 'descending' ? 'DESC' : 'ASC'}`
-        })
+        .map(({name, order}) => `${name} ${order === 'descending' ? 'DESC' : 'ASC'}`)
         .join(',')
     )
   }

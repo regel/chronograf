@@ -4,7 +4,6 @@ const get = require('lodash/get')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const ProgressBarPlugin = require('progress-bar-webpack-plugin')
 
@@ -77,16 +76,6 @@ const config = {
     ],
     rules: [
       {
-        test: /\.ts(x?)$/,
-        exclude: /node_modules/,
-        loader: 'tslint-loader',
-        enforce: 'pre',
-        options: {
-          emitErrors: true,
-          configFile: path.resolve(__dirname, '..', 'tslint.json'),
-        },
-      },
-      {
         test: /\.js$/,
         exclude: [/node_modules/, /(_s|S)pec\.js$/],
         use: 'eslint-loader',
@@ -136,9 +125,6 @@ const config = {
   plugins: [
     new webpack.DefinePlugin({
       VERSION: JSON.stringify(require('../package.json').version),
-    }),
-    new ForkTsCheckerWebpackPlugin({
-      checkSyntacticErrors: true,
     }),
     new webpack.LoaderOptionsPlugin({
       postcss: require('./postcss'),

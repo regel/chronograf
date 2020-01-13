@@ -6,7 +6,6 @@ import {
   RELATIVE_LOWER,
   RELATIVE_UPPER,
 } from 'shared/constants/timeRange'
-const now = /^now/
 
 export const timeRangeType = ({upper, lower, type}) => {
   if (!upper && !lower) {
@@ -26,12 +25,12 @@ export const timeRangeType = ({upper, lower, type}) => {
   }
 
   // {lower: now - <Duration>, upper: <empty>}
-  if (now.test(lower) && !upper) {
+  if (lower.startsWith("now") && !upper) {
     return RELATIVE_LOWER
   }
 
   // {lower: <Date>, upper: now() - <Duration>}
-  if (isLowerValid && now.test(upper)) {
+  if (isLowerValid && upper.startsWith("now")) {
     return RELATIVE_UPPER
   }
 

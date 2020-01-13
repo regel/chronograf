@@ -4,9 +4,7 @@ import _ from 'lodash'
 export const fieldWalk = (fields, fn, acc = []) =>
   _.compact(
     _.flattenDeep(
-      fields.reduce((a, f) => {
-        return [...a, fn(f), fieldWalk(_.get(f, 'args', []), fn, acc)]
-      }, acc)
+      fields.reduce((a, f) => [...a, fn(f), fieldWalk(_.get(f, 'args', []), fn, acc)], acc)
     )
   )
 

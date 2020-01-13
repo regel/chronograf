@@ -90,9 +90,7 @@ class CustomTimeRange extends Component {
    * the string literal, i.e. "'2015-09-23T18:00:00.000Z'".  Remove them
    * before passing the string to be parsed.
    */
-  _formatTimeRange = timeRange => {
-    return formatTimeRange(timeRange)
-  }
+  _formatTimeRange = timeRange => formatTimeRange(timeRange)
 
   handleClick = () => {
     const {onApplyTimeRange, onClose} = this.props
@@ -112,8 +110,7 @@ class CustomTimeRange extends Component {
     }
   }
 
-  handleTimeRangeShortcut = shortcut => {
-    return () => {
+  handleTimeRangeShortcut = shortcut => () => {
       let lower
       const upper = moment()
 
@@ -152,7 +149,6 @@ class CustomTimeRange extends Component {
 
       this.handleRefreshCals()
     }
-  }
 
   render() {
     const {isNow} = this.state

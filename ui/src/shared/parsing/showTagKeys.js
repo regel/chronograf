@@ -13,9 +13,7 @@ export default function parseShowTagKeys(response) {
     return {errors: [], tagKeys: []}
   }
 
-  const tagKeys = series.values.map(v => {
-    return v[0]
-  })
+  const tagKeys = series.values.map(v => v[0])
 
   return {errors: [], tagKeys}
 }

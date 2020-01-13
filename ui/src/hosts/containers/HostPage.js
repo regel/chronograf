@@ -101,8 +101,7 @@ class HostPage extends Component {
     const pageWidth = 12
 
     let cellCount = 0
-    const autoflowCells = autoflowLayouts.reduce((allCells, layout) => {
-      return allCells.concat(
+    const autoflowCells = autoflowLayouts.reduce((allCells, layout) => allCells.concat(
         layout.cells.map(cell => {
           const x = (cellCount * cellWidth) % pageWidth
           const y = Math.floor(cellCount * cellWidth / pageWidth) * cellHeight
@@ -114,8 +113,7 @@ class HostPage extends Component {
             y,
           })
         })
-      )
-    }, [])
+      ), [])
 
     const staticLayouts = layouts.filter(layout => !layout.autoflow)
     staticLayouts.unshift({cells: autoflowCells})

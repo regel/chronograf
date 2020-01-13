@@ -4,12 +4,10 @@ import {fieldWalk} from 'src/shared/reducers/helpers/fields'
 import {PERMISSIONS} from 'shared/constants'
 
 export function buildRoles(roles) {
-  return roles.map(role => {
-    return Object.assign({}, role, {
+  return roles.map(role => Object.assign({}, role, {
       permissions: buildPermissionsWithResources(role.permissions),
       users: role.users || [],
-    })
-  })
+    }))
 }
 
 function buildPermissionsWithResources(rawPermissions) {
@@ -92,12 +90,10 @@ export function buildPermission(permissionName, resources) {
 }
 
 export function buildClusterAccounts(users = [], roles = []) {
-  return users.map(user => {
-    return Object.assign({}, user, {
+  return users.map(user => Object.assign({}, user, {
       roles: getRolesForUser(roles, user),
       permissions: buildPermissionsWithResources(user.permissions),
-    })
-  })
+    }))
 }
 
 function getRolesForUser(roles, user) {

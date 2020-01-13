@@ -202,7 +202,7 @@ class SourcePage extends PureComponent<Props, State> {
 
   private redirectToApp = source => {
     const {location, router} = this.props
-    const {redirectPath} = location.query
+    const redirectPath = location.pathname
 
     if (!redirectPath) {
       return router.push(`/sources/${source.id}/hosts`)

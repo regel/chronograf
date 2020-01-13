@@ -10,19 +10,15 @@ class UserEditName extends Component {
     super(props)
   }
 
-  handleKeyPress = user => {
-    return e => {
+  handleKeyPress = user => e => {
       if (e.key === 'Enter') {
         this.props.onSave(user)
       }
     }
-  }
 
-  handleEdit = user => {
-    return e => {
+  handleEdit = user => e => {
       this.props.onEdit(user, {[e.target.name]: e.target.value})
     }
-  }
 
   render() {
     const {user} = this.props

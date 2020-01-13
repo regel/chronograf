@@ -26,14 +26,5 @@ module.exports = {
       displayName: 'eslint',
       testMatch: ['<rootDir>/test/**/*.test.js'],
     },
-    {
-      runner: 'jest-runner-tslint',
-      displayName: 'tslint',
-      moduleFileExtensions: ['ts', 'tsx'],
-      testMatch: [
-        '<rootDir>/test/**/*.test.ts',
-        '<rootDir>/test/**/*.test.tsx',
-      ],
-    },
   ],
 }

@@ -17,10 +17,9 @@ export interface PageSection {
   enabled: boolean
 }
 
-export interface Constructable<T> {
+export type Constructable<T> =
   new (
     container: HTMLElement | string,
     data: dygraphs.Data | (() => dygraphs.Data),
     options?: dygraphs.Options
-  ): T
-}
+  ) => T

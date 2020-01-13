@@ -126,8 +126,7 @@ class MultiSelectDropdown extends Component {
           autoHeight={true}
           maxHeight={DROPDOWN_MENU_MAX_HEIGHT}
         >
-          {items.map((listItem, i) => {
-            return (
+          {items.map((listItem, i) => (
               <li
                 key={i}
                 className={classnames('multi-select--item', {
@@ -138,8 +137,7 @@ class MultiSelectDropdown extends Component {
                 <div className="multi-select--checkbox" />
                 <span>{listItem.name}</span>
               </li>
-            )
-          })}
+            ))}
         </FancyScrollbar>
       </ul>
     )

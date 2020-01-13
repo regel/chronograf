@@ -16,15 +16,13 @@ export default function parseShowRetentionPolicies(result) {
   const replicationIndex = columns.indexOf('replicaN')
   const defaultIndex = columns.indexOf('default')
 
-  const retentionPolicies = series.values.map(arr => {
-    return {
+  const retentionPolicies = series.values.map(arr => ({
       name: arr[nameIndex],
       duration: arr[durationIndex],
       shardGroupDuration: arr[shardGroupDurationIndex],
       replication: arr[replicationIndex],
       isDefault: arr[defaultIndex],
-    }
-  })
+    }))
 
   return {errors: [], retentionPolicies}
 }

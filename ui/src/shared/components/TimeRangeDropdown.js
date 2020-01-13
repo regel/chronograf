@@ -129,15 +129,13 @@ class TimeRangeDropdown extends Component {
               <li className="dropdown-header">
                 {preventCustomTimeRange ? '' : 'Relative '}Time
               </li>
-              {timeRanges.map(item => {
-                return (
+              {timeRanges.map(item => (
                   <li className="dropdown-item" key={item.menuOption}>
                     <a href="#" onClick={this.handleSelection(item)}>
                       {item.menuOption}
                     </a>
                   </li>
-                )
-              })}
+                ))}
             </FancyScrollbar>
           </ul>
         </div>

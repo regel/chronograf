@@ -5,9 +5,7 @@ export const parseHandlersFromRule = (rule, handlersFromConfig) => {
   const handlersOfKind = {}
   const handlersOnThisAlert = []
 
-  const handlersFromRule = _.pickBy(rule.alertNodes, (v, k) => {
-    return k in HANDLERS_TO_RULE_THEM_ALL
-  })
+  const handlersFromRule = _.pickBy(rule.alertNodes, (v, k) => k in HANDLERS_TO_RULE_THEM_ALL)
 
   _.forEach(handlersFromRule, (v, alertKind) => {
     const thisAlertFromConfig = _.find(

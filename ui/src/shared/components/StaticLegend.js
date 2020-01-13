@@ -18,14 +18,14 @@ const staticLegendItemClassname = (visibilities, i, hoverEnabled) => {
 
 @ErrorHandling
 class StaticLegend extends Component {
-  constructor(props) {
-    super(props)
-  }
-
   state = {
     visibilities: [],
     clickStatus: false,
   }
+  constructor(props) {
+    super(props)
+  }
+
 
   componentDidMount = () => {
     const {height} = this.staticLegendRef.getBoundingClientRect()

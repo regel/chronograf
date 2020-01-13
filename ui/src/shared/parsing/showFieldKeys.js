@@ -14,9 +14,7 @@ export default function parseShowFieldKeys(response) {
 
     const series = result.series[0]
     const fieldKeyIndex = series.columns.indexOf('fieldKey')
-    const fields = series.values.map(value => {
-      return value[fieldKeyIndex]
-    })
+    const fields = series.values.map(value => value[fieldKeyIndex])
     const measurement = series.name
 
     fieldSets[measurement] = fields

@@ -91,7 +91,7 @@ const flattenGroupBySeries = (
       responseIndex,
       isGroupBy: true,
     },
-  ]
+  ]  // tslint:disable-line
 
   return flattenedSeries
 }

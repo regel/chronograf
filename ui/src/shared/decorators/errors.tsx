@@ -20,6 +20,7 @@ export function ErrorHandlingWith(
   Error: ComponentClass, // Must be a class based component and not an SFC
   alwaysDisplay = false
 ) {
+  // tslint:disable
   return <P, S, T extends {new (...args: any[]): Component<P, S>}>(
     constructor: T
   ) => {

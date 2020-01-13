@@ -191,7 +191,6 @@ export class DataExplorer extends PureComponent<Props, State> {
       autoRefresh,
       onManualRefresh,
       handleChooseAutoRefresh,
-      source,
     } = this.props
 
     return (

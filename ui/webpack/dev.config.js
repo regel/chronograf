@@ -6,7 +6,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const HtmlWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin')
 const keys = require('lodash/keys')
 const difference = require('lodash/difference')
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const ProgressBarPlugin = require('progress-bar-webpack-plugin')
 
 const buildDir = path.resolve(__dirname, '../build')
@@ -89,16 +88,6 @@ module.exports = {
     ],
     rules: [
       {
-        test: /\.ts(x?)$/,
-        exclude: /node_modules/,
-        loader: 'tslint-loader',
-        enforce: 'pre',
-        options: {
-          emitWarning: true,
-          configFile: path.resolve(__dirname, '..', 'tslint.json'),
-        },
-      },
-      {
         test: /\.js$/,
         exclude: /node_modules/,
         loader: 'eslint-loader',
@@ -175,9 +164,6 @@ module.exports = {
     new webpack.DllReferencePlugin({
       context: process.cwd(),
       manifest: require('../build/vendor.dll.json'),
-    }),
-    new ForkTsCheckerWebpackPlugin({
-      checkSyntacticErrors: true,
     }),
     new webpack.LoaderOptionsPlugin({
       options: {

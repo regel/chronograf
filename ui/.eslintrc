@@ -1,6 +1,7 @@
 {
-   "parser": "babel-eslint",
+   "parser": "@typescript-eslint/parser",
    "plugins": [
+      "@typescript-eslint",
       "react",
       "babel",
       "jest"
@@ -195,7 +196,6 @@
       "new-cap": 0,
       "newline-after-var": 0,
       "no-array-constructor": 2,
-      "no-negated-condition": 2,
       "no-inline-comments": 0,
       "no-lonely-if": 2,
       "no-nested-ternary": 2,
@@ -236,12 +236,6 @@
       "prefer-const": 2,
       "prefer-template": 2,
       "react/display-name": 0,
-      "react/jsx-no-bind": [
-         2,
-         {
-            "ignoreRefs": true
-         }
-      ],
       "react/jsx-boolean-value": [
          2,
          "always"

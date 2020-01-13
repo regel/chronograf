@@ -9,9 +9,7 @@ const parseShowDatabases = response => {
     return {errors: [], databases: []}
   }
 
-  const databases = series.values.map(s => {
-    return s[0]
-  })
+  const databases = series.values.map(s => s[0])
 
   if (!databases.length) {
     alert('No databases were found.') // eslint-disable-line no-alert

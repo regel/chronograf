@@ -11,10 +11,8 @@ export const getMeRole = me => {
   return me.superAdmin ? SUPERADMIN_ROLE : currentRole
 }
 
-export const isSameUser = (userA, userB) => {
-  return (
+export const isSameUser = (userA, userB) => (
     userA.name === userB.name &&
     userA.provider === userB.provider &&
     userA.scheme === userB.scheme
   )
-}

@@ -77,8 +77,7 @@ export const getRule = (kapacitor, ruleID) => async dispatch => {
   }
 }
 
-export const loadDefaultRule = () => {
-  return dispatch => {
+export const loadDefaultRule = () => dispatch => {
     const queryID = uuid.v4()
     dispatch({
       type: 'LOAD_DEFAULT_RULE',
@@ -88,7 +87,6 @@ export const loadDefaultRule = () => {
     })
     dispatch(addQuery(queryID))
   }
-}
 
 export const fetchRules = kapacitor => async dispatch => {
   try {
