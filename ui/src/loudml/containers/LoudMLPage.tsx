@@ -15,6 +15,7 @@ import {ErrorHandling} from 'src/shared/decorators/errors'
 
 import ModelsTable from 'src/loudml/components/ModelsTable'
 import QuestionMark from 'src/loudml/components/QuestionMark'
+import SponsorButton from 'src/loudml/components/SponsorButton'
 import {Model, Job} from 'src/loudml/types/model'
 
 import {
@@ -489,6 +490,7 @@ class LoudMLPage extends Component {
                         <span className="icon plus" />
                         Create a model
                     </Link>
+                    <SponsorButton/>
                 </div>
             </div>
         )
