@@ -6,25 +6,26 @@
   "description": "",
   "repository": {
     "type": "git",
-    "url": "github:influxdata/chronograf"
+    "url": "github:loudml/chronograf"
   },
   "scripts": {
-    "build": "yarn run clean && webpack --config ./webpack/prod.config.js",
+    "build": "npm run clean && webpack --config ./webpack/prod.config.js",
     "build:dev": "webpack --config ./webpack/dev.config.js",
     "build:vendor": "webpack --config webpack/vendor.config.js",
-    "start": "yarn run clean && yarn run build:vendor && webpack --watch --config ./webpack/dev.config.js",
+    "start": "npm run clean && npm run build:vendor && webpack --watch --config ./webpack/dev.config.js",
     "start:fast": "webpack --watch --config ./webpack/dev.config.js",
     "start:hmr": "webpack-dev-server --open --config ./webpack/dev.config.js",
     "lint": "esw src/",
     "test": "jest",
-    "test:lint": "yarn run lint; yarn run test",
+    "test:lint": "npm run lint; npm run test",
     "test:watch": "jest --watch",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --watch",
     "clean": "rm -rf ./build/*",
     "eslint:fix": "eslint src --fix",
     "prettier": "prettier --single-quote --trailing-comma es5 --bracket-spacing false --semi false --write \"{src,spec}/**/*.js\"",
-    "lint:fix": "yarn run prettier && yarn run eslint:fix",
-    "eslint-check": "eslint --print-config .eslintrc | eslint-config-prettier-check"
+    "lint:fix": "npm run prettier && npm run eslint:fix",
+    "eslint-check": "eslint --print-config .eslintrc | eslint-config-prettier-check",
+    "upgrade-interactive": "npm-check --update"
   },
   "author": "",
   "eslintConfig": {
@@ -98,6 +99,7 @@
     "json-loader": "^0.5.7",
     "mini-css-extract-plugin": "^0.4.0",
     "node-sass": "^4.5.3",
+    "npm-check": "^5.9.0",
     "optimize-css-assets-webpack-plugin": "^4.0.2",
     "postcss-browser-reporter": "^0.4.0",
     "postcss-calc": "^5.2.0",

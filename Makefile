@@ -3,7 +3,6 @@
 VERSION ?= $(shell git describe --always --tags)
 COMMIT ?= $(shell git rev-parse --short=8 HEAD)
 GOBINDATA := $(shell go list -f {{.Root}}  github.com/kevinburke/go-bindata 2> /dev/null)
-YARN := $(shell command -v yarn 2> /dev/null)
 
 SOURCES := $(shell find . -name '*.go' ! -name '*_gen.go' -not -path "./vendor/*" )
 UISOURCES := $(shell find ui -type f -not \( -path ui/build/\* -o -path ui/node_modules/\* -prune \) )
@@ -70,7 +69,7 @@ canned/bin_gen.go: canned/*.json
 	cd ui && yarn run build:dev
 	@touch .dev-jssrc
 
-dep: .jsdep .godep
+dep: .godep .jsdep 
 
 .godep:
 ifndef GOBINDATA
@@ -79,13 +78,9 @@ ifndef GOBINDATA
 endif
 	@touch .godep
 
-.jsdep: ui/yarn.lock
-ifndef YARN
-	$(error Please install yarn 0.19.1+)
-else
-	cd ui && yarn --no-progress --no-emoji
+.jsdep: ui/package-lock.json
+	cd ui && npm ci
 	@touch .jsdep
-endif
 
 gen: internal.pb.go
 
