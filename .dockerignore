@@ -1,6 +1,9 @@
 Dockerfile
 .dockerignore
 .gitignore
+.godep
+.jsdep
 README.md
+vendor/
 ui/build
 ui/node_modules
