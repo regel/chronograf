@@ -1,3 +1,8 @@
+docker_deploy: &docker_deploy
+  context: org-global
+  requires:
+    - build
+
 workflows:
   version: 2
   main:
@@ -7,136 +12,103 @@ workflows:
             tags:
               only:
                 /.*/
-      - deploy-nightly:
-          requires:
-            - build
+      - deploy:
+          <<: *docker_deploy
+          tag: nightly
           filters:
             branches:
               only: master
-      - deploy-pre-release:
-          requires:
-            - build
+      - deploy:
+          <<: *docker_deploy
+          tag: rc
           filters:
             branches:
               ignore: /.*/
             tags:
               only: /^[0-9]+(\.[0-9]+)*(\S*)([a|rc|beta]([0-9]+))+$/
-      - deploy-release:
-          requires:
-            - build
+      - deploy:
+          <<: *docker_deploy
+          tag: latest
+          release: true
           filters:
             branches:
               ignore: /.*/
             tags:
               only: /^[0-9]+(\.[0-9]+)*$/
 
+ALIASES:
+  - &restore_cache
+    restore_cache:
+      keys:
+        - v1-{{ .Branch }}
+      paths:
+        - /caches/app.tar
+  - &docker_load
+    run:
+      name: Load Docker image layer cache
+      command: |
+        set +o pipefail
+        docker load -i /caches/app.tar | true
+  - &docker_build
+    run:
+      name: Build application Docker image
+      command: |
+        docker build --cache-from=app -t app .
+  - &docker_save
+    run:
+      name: Save Docker image layer cache
+      command: |
+        mkdir -p /caches
+        docker save -o /caches/app.tar app
+  - &save_cache
+    save_cache:
+      key: v1-{{ .Branch }}-{{ epoch }}
+      paths:
+        - /caches/app.tar
 
-version: 2
+
+version: 2.1
 jobs:
   build:
-    environment:
-      DOCKER_TAG: chronograf-20180327
-    machine: true
+    working_directory: /app
+    docker:
+      - image: docker:18.06.0-ce-git
     steps:
       - checkout
-      - run: |
-          ls -lah
-          pwd
-      - run: ./etc/scripts/docker/pull.sh
-      - run:
-          name: "Run Tests"
-          command: >
-            ./etc/scripts/docker/run.sh
-            --debug
-            --test
-            --no-build
-      - persist_to_workspace:
-          root: /home/circleci
-          paths:
-            - project
+      - setup_remote_docker
+      - *restore_cache
+      - *docker_load
+      - *docker_build
+      - *docker_save
+      - *save_cache
 
-  deploy-nightly:
-    environment:
-      DOCKER_TAG: chronograf-20180327
-    machine: true
+  deploy:
+    parameters:
+      tag:
+        type: string
+      release:
+        type: boolean
+        default: false
+    docker:
+      - image: docker:18.06.0-ce-git
     steps:
-      - attach_workspace:
-          at: /home/circleci
+      - checkout
+      - setup_remote_docker
+      - *restore_cache
+      - *docker_load
+      - *docker_build
+      - *docker_save
+      - *save_cache
       - run: |
-          ./etc/scripts/docker/run.sh \
-            --debug \
-            --clean \
-            --package \
-            --platform all \
-            --arch all \
-            --upload \
-            --nightly \
-            --bucket=dl.influxdata.com/chronograf/releases
-          cp build/linux/static_amd64/chronograf .
-          cp build/linux/static_amd64/chronoctl .
-          docker build -t chronograf .
-          docker login -u "$QUAY_USER" -p $QUAY_PASS quay.io
-          docker tag chronograf quay.io/influxdb/chronograf:nightly
-          docker push quay.io/influxdb/chronograf:nightly
-      - store_artifacts:
-          path: ./build/
-
-  deploy-pre-release:
-    environment:
-      DOCKER_TAG: chronograf-20180327
-    machine: true
-    steps:
-      - attach_workspace:
-          at: /home/circleci
-      - run: |
-          ./etc/scripts/docker/run.sh \
-            --clean \
-            --debug \
-            --release \
-            --package \
-            --platform all \
-            --arch all \
-            --upload-overwrite \
-            --upload \
-            --bucket dl.influxdata.com/chronograf/releases
-          cp build/linux/static_amd64/chronograf .
-          cp build/linux/static_amd64/chronoctl .
-          docker build -t chronograf .
-          docker login -u "$QUAY_USER" -p $QUAY_PASS quay.io
-          docker tag chronograf quay.io/influxdb/chronograf:${CIRCLE_SHA1:0:7}
-          docker push quay.io/influxdb/chronograf:${CIRCLE_SHA1:0:7}
-          docker tag chronograf quay.io/influxdb/chronograf:${CIRCLE_TAG}
-          docker push quay.io/influxdb/chronograf:${CIRCLE_TAG}
-      - store_artifacts:
-          path: ./build/
-
-  deploy-release:
-    environment:
-      DOCKER_TAG: chronograf-20180327
-    machine: true
-    steps:
-      - attach_workspace:
-          at: /home/circleci
-      - run: |
-          ./etc/scripts/docker/run.sh \
-            --clean \
-            --debug \
-            --release \
-            --package \
-            --platform all \
-            --arch all \
-            --upload-overwrite \
-            --upload \
-            --bucket dl.influxdata.com/chronograf/releases
-          cp build/linux/static_amd64/chronograf .
-          cp build/linux/static_amd64/chronoctl .
-          docker build -t chronograf .
-          docker login -u "$QUAY_USER" -p $QUAY_PASS quay.io
-          docker tag chronograf quay.io/influxdb/chronograf:${CIRCLE_SHA1:0:7}
-          docker push quay.io/influxdb/chronograf:${CIRCLE_SHA1:0:7}
-          docker tag chronograf quay.io/influxdb/chronograf:${CIRCLE_TAG}
-          docker push quay.io/influxdb/chronograf:${CIRCLE_TAG}
-          docker tag chronograf quay.io/influxdb/chronograf:latest
-          docker push quay.io/influxdb/chronograf:latest
-      - store_artifacts:
-          path: ./build/
+          echo "${DOCKER_PASSWORD}" | \
+              docker login -u "${DOCKER_ID_USER}" --password-stdin
+          docker tag app loudml/chronograf:<< parameters.tag >>
+          docker push loudml/chronograf:<< parameters.tag >>
+      - when:
+          condition: << parameters.release >>
+          steps:
+            - run: |
+                docker tag app loudml/chronograf:${CIRCLE_SHA1:0:7}
+                docker push loudml/chronograf:${CIRCLE_SHA1:0:7}
+                docker tag app loudml/chronograf:${CIRCLE_TAG}
+                docker push loudml/chronograf:${CIRCLE_TAG}
