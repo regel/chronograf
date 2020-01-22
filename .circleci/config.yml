@@ -6,6 +6,13 @@ docker_deploy: &docker_deploy
 workflows:
   version: 2
   main:
+    triggers:
+      - schedule:
+          cron: "0 2 * * *"
+          filters:
+            branches:
+              only:
+                - develop
     jobs:
       - build:
           filters:
