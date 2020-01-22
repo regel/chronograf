@@ -1,128 +1,24 @@
-[![CircleCI](https://circleci.com/gh/regel/chronograf/tree/loudml16.svg?style=svg)](https://circleci.com/gh/regel/chronograf/tree/loudml16)
+[![CircleCI](https://circleci.com/gh/loudml/chronograf.svg?style=svg)](https://circleci.com/gh/loudml/chronograf)
 
-# Chronograf + LoudML extension
+# What makes you TICK-L
 
-This is a fork of Chronograf that embeds a LoudML extension.
-
-For further information about Chronograf and LoudML, see:
-* https://github.com/influxdata/chronograf
-* https://github.com/regel/loudml
+## What is the TICK-L stack
 
 Chronograf is an open-source web application written in Go and React.js that
 provides the tools to visualize your monitoring data and easily create alerting
 and automation rules.
 
-<p align="left">
-  <img src="https://github.com/influxdata/chronograf/blob/master/docs/images/overview-readme.png"/>
-</p>
+Loud ML is an open-source AI application written in Python that provides the
+tools to discover abnormal and normal patterns in time series datasets, without
+the need for advanced AI knowledge.
 
-## Features
+Just hit 'Create Baseline' button in the data explorer.
 
-### Host List
+For further information about Chronograf and Loud ML, see:
+* https://github.com/influxdata/chronograf
+* https://github.com/regel/loudml
 
-* List and sort hosts
-* View general CPU and load stats
-* View and access dashboard templates for configured apps
-
-### Dashboard Templates
-
-Chronograf's
-[pre-canned dashboards](https://github.com/influxdata/chronograf/tree/master/canned)
-for the supported [Telegraf](https://github.com/influxdata/telegraf) input
-plugins. Currently, Chronograf offers dashboard templates for the following
-Telegraf input plugins:
-
-* [Apache](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/apache)
-* [Consul](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/consul)
-* [Docker](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/docker)
-* [Elastic](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/elasticsearch)
-* etcd
-* [HAProxy](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/haproxy)
-* IIS
-* [InfluxDB](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/influxdb)
-* [Kubernetes](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/kubernetes)
-* [Memcached](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/memcached)
-* [Mesos](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/mesos)
-* [MongoDB](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/mongodb)
-* [MySQL](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/mysql)
-* Network
-* [NGINX](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/nginx)
-* [NSQ](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/nsq)
-* [PHPfpm](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/phpfpm)
-* [Ping](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/ping)
-* [PostgreSQL](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/postgresql)
-* Processes
-* [RabbitMQ](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/rabbitmq)
-* [Redis](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/redis)
-* [Riak](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/riak)
-* [System](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/system/SYSTEM_README.md)
-  * [CPU](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/system/CPU_README.md)
-  * [Disk](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/system/DISK_README.md)
-  * [DiskIO](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/system/disk.go#L136)
-  * [Memory](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/system/MEM_README.md)
-  * [Net](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/system/net.go)
-  * [Netstat](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/system/NETSTAT_README.md)
-  * [Processes](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/system/PROCESSES_README.md)
-  * [Procstat](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/procstat/README.md)
-* [Varnish](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/varnish)
-* [Windows Performance Counters](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/win_perf_counters)
-
-> Note: If a `telegraf` instance isn't running the `system` and `cpu` plugins
-> the canned dashboards from that instance won't be generated.
-
-### Data Explorer
-
-Chronograf's graphing tool that allows you to dig in and create personalized
-visualizations of your data.
-
-* Generate and edit
-  [InfluxQL](https://docs.influxdata.com/influxdb/latest/query_language/)
-  statements with the query editor
-* Use Chronograf's query templates to easily explore your data
-* Create visualizations and view query results in tabular format
-
-### Dashboards
-
-Create and edit customized dashboards. The dashboards support several
-visualization types including line graphs, stacked graphs, step plots, single
-statistic graphs, and line-single-statistic graphs.
-
-Use Chronograf's template variables to easily adjust the data that appear in
-your graphs and gain deeper insight into your data.
-
-### Kapacitor UI
-
-A UI for [Kapacitor](https://github.com/influxdata/kapacitor) alert creation and
-alert tracking.
-
-* Simply generate threshold, relative, and deadman alerts
-* Preview data and alert boundaries while creating an alert
-* Configure alert destinations - Currently, Chronograf supports sending alerts
-  to:
-  * [Alerta](https://docs.influxdata.com/kapacitor/latest/nodes/alert_node/#alerta)
-  * [Exec](https://docs.influxdata.com/kapacitor/latest/nodes/alert_node/#exec)
-  * [HipChat](https://docs.influxdata.com/kapacitor/latest/nodes/alert_node/#hipchat)
-  * [HTTP/Post](https://docs.influxdata.com/kapacitor/latest/nodes/alert_node/#post)
-  * [OpsGenie](https://docs.influxdata.com/kapacitor/latest/nodes/alert_node/#opsgenie)
-  * [PagerDuty](https://docs.influxdata.com/kapacitor/latest/nodes/alert_node/#pagerduty)
-  * [Sensu](https://docs.influxdata.com/kapacitor/latest/nodes/alert_node/#sensu)
-  * [Slack](https://docs.influxdata.com/kapacitor/latest/nodes/alert_node/#slack)
-  * [SMTP/Email](https://docs.influxdata.com/kapacitor/latest/nodes/alert_node/#email)
-  * [Talk](https://docs.influxdata.com/kapacitor/latest/nodes/alert_node/#talk)
-  * [Telegram](https://docs.influxdata.com/kapacitor/latest/nodes/alert_node/#telegram)
-  * [TCP](https://docs.influxdata.com/kapacitor/latest/nodes/alert_node/#tcp)
-  * [VictorOps](https://docs.influxdata.com/kapacitor/latest/nodes/alert_node/#victorops)
-* View all active alerts at a glance on the alerting dashboard
-* Enable and disable existing alert rules with the check of a box
-* Configure multiple Kapacitor instances per InfluxDB source
-
-### User and Query Management
-
-Manage users, roles, permissions for
-[OSS InfluxDB](https://github.com/influxdata/influxdb) and InfluxData's
-[Enterprise](https://docs.influxdata.com/enterprise/v1.2/) product. View
-actively running queries and stop expensive queries on the Query Management
-page.
+## Configuration
 
 ### TLS/HTTPS Support
 
@@ -143,41 +39,17 @@ option.
 
 ## Versions
 
-The most recent version of Chronograf is
-[v1.6.1](https://www.influxdata.com/downloads/).
+The most recent version is the nightly Docker
+[image](https://hub.docker.com/r/loudml/chronograf).
 
 Spotted a bug or have a feature request? Please open
-[an issue](https://github.com/influxdata/chronograf/issues/new)!
-
-### Known Issues
-
-The Chronograf team has identified and is working on the following issues:
-
-* Chronograf requires users to run Telegraf's
-  [CPU](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/system/CPU_README.md)
-  and
-  [system](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/system/SYSTEM_README.md)
-  plugins to ensure that all Apps appear on the
-  [HOST LIST](https://github.com/influxdata/chronograf/blob/master/docs/GETTING_STARTED.md#host-list)
-  page.
+[an issue](https://github.com/loudml/chronograf/issues/new)!
 
 ## Installation
 
-Check out the
-[INSTALLATION](https://docs.influxdata.com/chronograf/v1.4/introduction/installation/)
-guide to get up and running with Chronograf with as little configuration and
-code as possible.
-
-We recommend installing Chronograf using one of the
-[pre-built packages](https://influxdata.com/downloads/#chronograf). Then start
-Chronograf using:
-
-* `service chronograf start` if you have installed Chronograf using an official
-  Debian or RPM package.
-* `systemctl start chronograf` if you have installed Chronograf using an
-  official Debian or RPM package, and are running a distro with `systemd`. For
-  example, Ubuntu 15 or later.
-* `$GOPATH/bin/chronograf` if you have built Chronograf from source.
+We recommend using using one of the Docker
+[pre-built images](https://hub.docker.com/r/loudml/chronograf/tags). Then start
+Chronograf using the usual docker-compose or kubectl commands.
 
 By default, chronograf runs on port `8888`.
 
@@ -186,51 +58,12 @@ By default, chronograf runs on port `8888`.
 To get started right away with Docker, you can pull down our latest release:
 
 ```sh
-docker pull chronograf:1.6.1
+docker pull loudml/chronograf:nightly
 ```
 
-### From Source
-
-* Chronograf works with go 1.10+, node 8.x, and yarn 1.5+.
-
-LoudML extension
-* Chronograf requires [Kapacitor](https://github.com/influxdata/kapacitor)
-  1.2.x+ to create and store alerts.
-
-1. [install LoudML](http://loudml.io/guide/en/loudml/reference/current/setup.html)
-1. [Install Go](https://golang.org/doc/install)
-1. [Install Node and NPM](https://nodejs.org/en/download/)
-1. [Install yarn](https://yarnpkg.com/docs/install)
-1. [Setup your GOPATH](https://golang.org/doc/code.html#GOPATH)
-1. Get Chronograf sources
-    ```bash
-    go get github.com/influxdata/chronograf
-    ```
-1. Setup `github.com/regel/chronograf` as remote:
-    ```bash
-    cd src/github.com/influxdata/chronograf
-    git remote add regel git@github.com:regel/chronograf.git
-    ```
-1. Switch to `regel/loudml` branch:
-    ```bash
-    git fetch regel
-    git checkout -b loudml regel/loudml
-    ```
-1. Then, you can build Chronograf with LoudML extension:
-
-   ```bash
-   make
-   ```
-
-To build the Docker image, execute:
-```bash
-make docker
-```
-
-To start Chronograf in development mode:
-```bash
-cd chronograf/ui
-npm install
-yarn build:vendor
-yarn start:hmr
+Or run docker-compose from this repository:
+ 
+```sh
+docker-compose pull
+docker-compose up --build
 ```
