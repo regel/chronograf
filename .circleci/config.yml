@@ -17,7 +17,7 @@ workflows:
           tag: nightly
           filters:
             branches:
-              only: master
+              only: develop
       - deploy:
           <<: *docker_deploy
           tag: rc
