@@ -1,3 +1,6 @@
+orbs:
+  sonarcloud: sonarsource/sonarcloud@1.0.1
+
 docker_deploy: &docker_deploy
   context: org-global
   requires:
@@ -5,7 +8,7 @@ docker_deploy: &docker_deploy
 
 workflows:
   version: 2
-  main:
+  nightly:
     triggers:
       - schedule:
           cron: "0 2 * * *"
@@ -25,6 +28,16 @@ workflows:
           filters:
             branches:
               only: develop
+
+  main:
+    jobs:
+      - sonar:
+          context: org-global
+      - build:
+          filters:
+            tags:
+              only:
+                /.*/
       - deploy:
           <<: *docker_deploy
           tag: rc
@@ -76,6 +89,14 @@ ALIASES:
 
 version: 2.1
 jobs:
+  sonar:
+    docker:
+      - image: circleci/openjdk:11-node
+    steps:
+      - checkout
+      - run: npm install typescript
+      - sonarcloud/scan
+
   build:
     working_directory: /app
     docker:
