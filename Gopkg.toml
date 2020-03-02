@@ -42,7 +42,7 @@ required = ["github.com/kevinburke/go-bindata","github.com/gogo/protobuf/proto",
 
 [[constraint]]
   name = "github.com/kevinburke/go-bindata"
-  revision = "46eb4c183bfc1ebb527d9d19bcded39476302eb8"
+  version = "^3.18.0"
 
 [[constraint]]
   name = "github.com/satori/go.uuid"
