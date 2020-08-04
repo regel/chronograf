@@ -96,17 +96,17 @@ export const createAndGetBucket = async (database, retentionPolicy, measurement,
         const bucketName = [
             database,
             retentionPolicy,
-            measurement,
         ].join('_')
         const settings = {
             type: 'influxdb',
             name: bucketName,
             retention_policy: retentionPolicy,
             database,
-            measurement,
             addr: `${host}:${port}`,
-            username: source.username,
-            password: source.password,
+            dbuser: source.username,
+            dbuser_password: source.password,
+            verify_ssl: !source.insecureSkipVerify,
+            use_ssl: source.url.startsWith('https'),
         }
         await AJAX({
             url: '/loudml/api/buckets',
