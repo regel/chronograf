@@ -9,11 +9,12 @@
   revision = "6710af535839f57c687b62c4c23d649f9545d885"
 
 [[projects]]
-  digest = "1:41b30611fbfa27d897a9a7375f1495aa3b2f2b5792223345c3345b26bd24db08"
+  digest = "1:2f8f9b60ebe029a83f92a7549926145eb6014c01d256946058a5a8768efd4522"
   name = "github.com/Sirupsen/logrus"
   packages = ["."]
   pruneopts = ""
-  revision = "3ec0642a7fb6488f65b06f9040adc67e3990296a"
+  revision = "6699a89a232f3db797f2e280639854bbc4b89725"
+  version = "v1.7.0"
 
 [[projects]]
   digest = "1:6e31308326ae23950f1c842f858833aa49e80deff07525239d3a941bf8e00ac7"
@@ -232,7 +233,10 @@
   branch = "master"
   digest = "1:e8efaf355e422c977bc540db3f5697c48fc59caac9e666c181254c943d9d81cf"
   name = "golang.org/x/sys"
-  packages = ["unix"]
+  packages = [
+    "unix",
+    "windows",
+  ]
   pruneopts = ""
   revision = "655fe14d7479994387fe12003042545d0c2859a5"
 
