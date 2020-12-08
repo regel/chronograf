@@ -192,11 +192,12 @@
   revision = "b061729afc07e77a8aa4fad0a2fd840958f1942a"
 
 [[projects]]
-  digest = "1:14fdc42c4956756f3502675320afeaaa48052e6863b1b1346ae0155bf4626178"
+  digest = "1:f6f53c0657325168d1ee4b3b2cc87ec071c1c6edcef45f14d44be43d299a326a"
   name = "github.com/sergi/go-diff"
   packages = ["diffmatchpatch"]
   pruneopts = ""
-  revision = "1d28411638c1e67fe1930830df207bef72496ae9"
+  revision = "58c5cb1602ee9676b5d3590d782bedde80706fcc"
+  version = "v1.1.0"
 
 [[projects]]
   digest = "1:8143ea52154df4cf52589d780ad447f625978a4c29713200842ccaa7c532350a"
