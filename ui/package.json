@@ -113,7 +113,7 @@
     "style-loader": "^0.21.0",
     "thread-loader": "^1.1.5",
     "ts-jest": "^22.4.2",
-    "ts-loader": "^4.4.1",
+    "ts-loader": "^8.0.11",
     "tslib": "^1.9.0",
     "tslint": "^5.20.1",
     "typescript": "^3.6.0",
