@@ -14,7 +14,7 @@ required = ["github.com/kevinburke/go-bindata","github.com/gogo/protobuf/proto",
 
 [[constraint]]
   name = "github.com/bouk/httprouter"
-  revision = "ee8b3818a7f51fbc94cc709b5744b52c2c725e91"
+  version = "^2.0"
 
 [[constraint]]
   name = "github.com/dgrijalva/jwt-go"
