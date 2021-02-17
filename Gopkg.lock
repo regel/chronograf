@@ -9,11 +9,12 @@
   revision = "6710af535839f57c687b62c4c23d649f9545d885"
 
 [[projects]]
-  digest = "1:41b30611fbfa27d897a9a7375f1495aa3b2f2b5792223345c3345b26bd24db08"
+  digest = "1:e8ddcdd18ce83141d17403d3f592c87cedd2af05482043e129df4feb222ba02b"
   name = "github.com/Sirupsen/logrus"
   packages = ["."]
   pruneopts = ""
-  revision = "3ec0642a7fb6488f65b06f9040adc67e3990296a"
+  revision = "15ca3c069407c43d647261dc2a4a8e76a05094b4"
+  version = "v1.7.1"
 
 [[projects]]
   digest = "1:6e31308326ae23950f1c842f858833aa49e80deff07525239d3a941bf8e00ac7"
@@ -177,6 +178,20 @@
   revision = "46eb4c183bfc1ebb527d9d19bcded39476302eb8"
 
 [[projects]]
+  digest = "1:e194fb33726530d36a1d2dceffd3459e90a11002b60e901d5bf636f78dd622f3"
+  name = "github.com/magefile/mage"
+  packages = [
+    "internal",
+    "mage",
+    "mg",
+    "parse",
+    "sh",
+  ]
+  pruneopts = ""
+  revision = "07afc7d24f4d6d6442305d49552f04fbda5ccb3e"
+  version = "v1.11.0"
+
+[[projects]]
   digest = "1:c45802472e0c06928cd997661f2af610accd85217023b1d5f6331bebce0671d3"
   name = "github.com/pkg/errors"
   packages = ["."]
@@ -232,7 +247,10 @@
   branch = "master"
   digest = "1:e8efaf355e422c977bc540db3f5697c48fc59caac9e666c181254c943d9d81cf"
   name = "golang.org/x/sys"
-  packages = ["unix"]
+  packages = [
+    "unix",
+    "windows",
+  ]
   pruneopts = ""
   revision = "655fe14d7479994387fe12003042545d0c2859a5"
 
