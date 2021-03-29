@@ -30,7 +30,7 @@ required = ["github.com/kevinburke/go-bindata","github.com/gogo/protobuf/proto",
 
 [[constraint]]
   name = "github.com/google/go-github"
-  revision = "1bc362c7737e51014af7299e016444b654095ad9"
+  version = "^34.0.0"
 
 [[constraint]]
   name = "github.com/influxdata/usage-client"
