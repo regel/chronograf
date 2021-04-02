@@ -50,7 +50,7 @@ required = ["github.com/kevinburke/go-bindata","github.com/gogo/protobuf/proto",
 
 [[constraint]]
   name = "github.com/sergi/go-diff"
-  revision = "1d28411638c1e67fe1930830df207bef72496ae9"
+  version = "^1.2.0"
 
 [[constraint]]
   name = "github.com/tylerb/graceful"
